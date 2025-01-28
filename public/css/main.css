@@ -296,6 +296,18 @@
   /*---------------------------------------------
     7) Responsive (Media Queries)
   ---------------------------------------------*/
+
+@media (max-width: 650px){
+  .cta {
+    display: flex
+;
+    margin-top: 16px;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+}
   @media (max-width: 1238px) {
 
     .site-header{

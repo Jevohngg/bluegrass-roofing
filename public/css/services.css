@@ -501,6 +501,10 @@
   
   /* RESPONSIVENESS */
   @media (max-width: 640px) {
+
+    form.quote-form{
+      min-width: 0px;
+    }
     .quote-header h2 {
       font-size: 2.2rem;
     }

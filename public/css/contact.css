@@ -210,6 +210,9 @@
   
   /* RESPONSIVENESS */
   @media (max-width: 640px) {
+    form.quote-form{
+      min-width: 0px;
+    }
     .claims-cta {
         margin-top: 2rem;
         display: flex

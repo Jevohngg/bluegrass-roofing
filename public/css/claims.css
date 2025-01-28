@@ -168,6 +168,11 @@
   }
   
   @media (max-width: 600px) {
+
+    form.quote-form{
+      min-width: 0px !important;
+    }
+
     .claims-grid {
       grid-template-columns: 1fr;
       margin-bottom: 40px;

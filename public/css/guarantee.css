@@ -122,6 +122,10 @@
   }
   
   @media (max-width: 600px) {
+
+    form.quote-form{
+      min-width: 0px;
+    }
     /* Make the heading slightly smaller on mobile */
     .price-guarantee-header h2 {
       font-size: 2.2rem;
