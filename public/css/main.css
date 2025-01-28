@@ -1,0 +1,329 @@
+/****************************************
+ * main.css
+ * Site-wide global styles
+ ****************************************/
+
+/*---------------------------------------------
+  1) CSS Variables
+---------------------------------------------*/
+:root {
+    /* Base brand colors */
+    --color-cream: #f9f3ee; /* Site background */
+    --color-text: #333;     /* Main text color */
+    --color-accent: #E18263; /* New brand accent color */
+    --color-accent-hover: #dd6f51; /* Accent hover */
+    --color-white: #fff;
+    --color-subtext: #666;
+    --color-btn-secondary-hover: #f1f1f1;
+    --color-accent-secondary:#26BFA3;
+
+    
+  
+    /* Additional brand / highlight colors */
+    --color-highlight: #f0f8ff;
+    --color-bg-grey: #f8f8f8;
+    --bg-container: #f9ebdd;
+  
+    /* Named colors for transparency, shadows, etc. */
+    --color-black-08: rgba(0, 0, 0, 0.08);
+    --color-black-05: rgba(0, 0, 0, 0.05);
+    --color-black-0a: rgba(0, 0, 0, 0.048);
+  
+    /* Extended text/section colors */
+    --color-darktext: #444;
+    --color-title: #161616;
+    --color-midtext: #555;
+    --color-lighttext: #999;
+    --color-section-offwhite: #f9fafc;
+  
+    /* Claims & Guarantee Section Colors */
+    --color-claims-section-bg: #f5faff;
+    --color-claims-badge-bg: #d9edff;
+    --color-claims-badge-text: #0666ca;
+    --color-guarantee-badge-bg: #e0fde6;
+    --color-guarantee-badge-text: #058543;
+    --color-guarantee-highlight-bg: #ddfbe3;
+    --color-guarantee-highlight-text: #055f2e;
+  
+    /* Quote & Price Guarantee Section Colors */
+    --color-quote-section-bg: #16233a;
+    --color-quote-box-bg: #1c2b45;
+    --color-price-guarantee-bg: #f0fff5;
+  
+    /* Borders & lines */
+    --color-border: #ebebeb;
+    --color-input-border: #e7e7e7;
+  
+    /* Outline for focus states (used in .quote-form focus) */
+    --color-accent-outline: rgba(255, 165, 129, 0.2);
+  }
+  
+  /*---------------------------------------------
+    2) Global Reset & Base
+  ---------------------------------------------*/
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--color-cream);
+    color: var(--color-text);
+  }
+  
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  ul {
+    list-style: none;
+  }
+
+  /* For all other pages, set the header to white */
+.site-header.white-header {
+    background-color: #fff;
+  }
+  
+  /*---------------------------------------------
+    3) Header & Navigation
+  ---------------------------------------------*/
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 5rem;
+    background-color: var(--color-cream);
+    color: var(--color-text);
+    transition: background-color 0.3s ease;
+  }
+  
+  .navbar {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .nav-list {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0;
+  }
+  
+  .nav-item {
+    list-style: none;
+  }
+  
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--color-text);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+  }
+  
+  .nav-link:hover {
+    color: var(--color-accent);
+  }
+  
+  .nav-link i {
+    font-size: 1rem;
+    line-height: 1;
+  }
+  
+  .nav-link.active {
+    color: var(--color-accent);
+
+    font-weight: 600;
+  }
+  
+  
+  .nav-quote {
+    background-color: var(--color-accent);
+    color: var(--color-white) !important;
+    font-weight: 600;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+  }
+  
+  .nav-quote:hover {
+    background-color: var(--color-accent-hover);
+    opacity: 1;
+  }
+  
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+    color: var(--color-text);
+    margin-right: 2rem;
+  }
+  
+  .logo {
+    height: 40px;
+    margin-right: 0.5rem;
+  }
+  
+  .brand-name {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-right: 0.3rem;
+  }
+  
+  .sub-brand {
+    font-size: 1rem;
+    opacity: 0.7;
+  }
+  
+  .hamburger {
+    display: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+  }
+
+
+
+    /* Smooth rotation of the hamburger icon */
+    .hamburger i {
+        transition: transform 0.3s ease;
+    }
+    
+    /* When .hamburger has .active, rotate the icon 180 degrees */
+    .hamburger.active i {
+        transform: rotate(180deg);
+    }
+
+    /* main.css or equivalent file */
+
+/* Use a higher specificity (site-header.white-header) if desired */
+.site-header.white-header {
+    background-color: #fff; 
+    transition: background-color 0.3s ease;
+  }
+  
+  
+  
+  /*---------------------------------------------
+    4) Footer
+  ---------------------------------------------*/
+  .site-footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: var(--color-bg-grey);
+    color: var(--color-subtext);
+  }
+  
+  /*---------------------------------------------
+    5) Buttons
+  ---------------------------------------------*/
+  .btn {
+    gap: 8px;
+    display: flex;
+    padding: 0.85rem 1.35rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .btn-primary {
+    background-color: var(--color-accent);
+    color: var(--color-white);
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--color-accent-hover);
+  }
+  
+  .btn-secondary {
+    background-color: var(--color-white);
+    color: var(--color-accent);
+  }
+  
+  .btn-secondary:hover {
+    background-color: var(--color-accent);
+    color: white !important;
+  }
+  
+  /*---------------------------------------------
+    6) Forms
+  ---------------------------------------------*/
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group label {
+    margin-bottom: 0.3rem;
+    font-weight: 500;
+  }
+  
+  .form-group input,
+  .form-group textarea {
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem;
+    font-size: 1rem;
+    color: var(--color-text);
+  }
+  
+  button[type="submit"] {
+    background: var(--color-accent);
+    color: var(--color-white);
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    padding: 0.75rem;
+  }
+  
+  button[type="submit"]:hover {
+    background: var(--color-accent-hover);
+  }
+  
+  /*---------------------------------------------
+    7) Responsive (Media Queries)
+  ---------------------------------------------*/
+  @media (max-width: 1238px) {
+
+    .site-header{
+        padding: 1rem 3rem;
+    }
+    .nav-list {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      flex-direction: column;
+      background-color: var(--color-white);
+      width: 200px;
+      box-shadow: 0 4px 8px var(--color-black-08);
+      padding: 1rem;
+      border-radius: 8px;
+      z-index: 1000;
+      width: 100%;
+    }
+  
+    .nav-list.open {
+      display: flex;
+      align-content: flex-start;
+      align-items: flex-start;
+    }
+  
+    .hamburger {
+      display: block;
+    }
+  }
+  

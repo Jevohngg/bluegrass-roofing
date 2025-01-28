@@ -1,0 +1,128 @@
+
+extends layouts/mainLayout
+
+block pageStyles
+  // Link to the NEW claims-specific stylesheet
+  link(rel="stylesheet", href="/css/claims.css")
+
+block content
+
+  // HERO / INTRO SECTION
+  section.claims-hero
+    .hero-content
+      span.claims-badge
+        i.fas.fa-shield-alt
+        | Insurance Support
+      h1.claims-title Comprehensive Claims Assistance
+      p.claims-subtitle We handle your insurance claims from start to finish, or guide you if you’d rather do it yourself.
+
+  // FULL-SERVICE VS SELF-MANAGED SECTION
+  section.claims-info
+    .claims-info-header
+      h2 Full-Service or Self-Managed
+      p Choose the level of support that best fits your situation.
+
+    .claims-options
+      .claims-box
+        h3 Full-Service Handling
+        ul
+          li We communicate directly with your insurance provider
+          li We manage documents and secure approvals
+          li We schedule and oversee all repairs
+        p Perfect for busy homeowners wanting zero-hassle assistance.
+
+      .claims-box
+        h3 Self-Managed Guidance
+        ul
+          li We provide step-by-step claim filing instructions
+          li You handle direct communication with insurance
+          li Consultations for complex steps
+        p Ideal for those who want total control over their claim process.
+
+    .claims-cta
+      a.btn.btn-primary(href="/contact")
+        p Get Started
+        i.fas.fa-arrow-right
+      a.btn.btn-secondary(href="/guarantee")
+        p Learn About Our Guarantee
+        i.fas.fa-arrow-right
+
+  // CLAIM DOCUMENTS / STEPS
+  section.claims-section
+    .claims-header
+      span.claims-badge
+        i.fas.fa-hand-holding-medical
+        | Claim Documents
+      h2 Insurance Claims Made Simple
+      p We streamline the entire insurance process, making it easy for you to get your roof repaired or replaced.
+
+    .claims-grid
+      .claim-card
+        .claim-card-header
+          i.fas.fa-file-contract.claim-icon
+          h3.claim-title Assignment of Benefits (AOB)
+        p Allows us to file and manage your claim directly with your insurance company, with payments sent straight to us.
+
+      .claim-card
+        .claim-card-header
+          i.fas.fa-phone.claim-icon
+          h3.claim-title Authorization to Contact Insurer (ACI)
+        p Required for our price guarantee, enabling direct communication with your insurance company.
+
+      .claim-card
+        .claim-card-header
+          i.fas.fa-file-signature.claim-icon
+          h3.claim-title Letter of Intent (LOI)
+        p Enables direct insurance company communication about AOB, while you maintain control of the claim process.
+
+      .claim-card
+        .claim-card-header
+          i.fas.fa-check-double.claim-icon
+          h3.claim-title Letter of Completion (LOC)
+        p Signed upon work completion, allowing the insurance company to release final payment.
+
+    // COVERAGE PACKAGES
+    h3.coverage-heading Choose Your Coverage Package
+    p.coverage-subtext Select the level of support that works best for you.
+
+    .coverage-packages
+      .coverage-package
+        h4 Traditional Package
+        p.package-desc Basic package where you manage the process yourself.
+        ul
+          li Complete control over your claim
+          li Direct communication with insurance
+          li Flexible payment arrangements
+        p.price-note Price guarantee not included
+
+      .coverage-package
+        h4 Intermediate Package
+        p.package-desc Balanced approach with shared responsibilities.
+        ul
+          li Expert claim review
+          li Direct insurance company negotiations
+          li Full coverage verification
+          li Price guarantee included
+
+      .coverage-package.recommended
+        span.recommended-tag Recommended
+        h4 Hassle-Free Package
+        p.package-desc Our most popular option – we handle everything while you relax.
+        ul
+          li Zero hassle guarantee
+          li Complete claim filing service
+          li Direct insurance communication
+          li Full payment management
+          li Price guarantee included
+          li Priority service & support
+        p.note Most homeowners choose this option for maximum peace of mind and minimal out-of-pocket costs.
+
+    .claims-cta
+      a.btn.btn-primary(href="/contact")
+        p Schedule Your Free Claim Review
+        i.fas.fa-arrow-right
+      a.btn.btn-secondary(href="/services")
+        p Explore Other Services
+        i.fas.fa-arrow-right
+
+  include home/_quote

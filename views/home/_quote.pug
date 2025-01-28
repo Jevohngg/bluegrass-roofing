@@ -1,0 +1,49 @@
+
+section.quote-section#quote-section
+  .quote-header
+    // A badge at the top, similar to the claims-badge style
+    span.quote-badge
+      i.fas.fa-user-check
+      | Contact
+
+    h2 Get in touch
+    p.quote-subtitle Have questions about our services or ready to begin? Drop us a message, and we’ll respond promptly.
+
+  .quote-content
+    // CONTACT INFO / "Cards"
+    .quote-details
+      .quote-box
+        .quote-box-header
+          i.fas.fa-phone.quote-icon
+          h3.quote-title Call Us
+        p Available Mon-Fri, 8am-6pm
+        p (123) 456-7890
+
+      .quote-box
+        .quote-box-header
+          i.fas.fa-envelope.quote-icon
+          h3.quote-title Email Us
+        p We'll respond within 24 hours
+        p info@example.com
+
+    // CONTACT FORM
+    form.quote-form.quote-form-2(action="/contact" method="POST")
+      .form-group
+        label(for="fullName") Full Name
+        input(type="text" id="fullName" name="fullName" required)
+
+      .form-group
+        label(for="emailAddress") Email Address
+        input(type="email" id="emailAddress" name="emailAddress" required)
+
+      .form-group
+        label(for="phoneNumber") Phone Number
+        input(type="tel" id="phoneNumber" name="phoneNumber")
+
+      .form-group
+        label(for="message") Your Message
+        textarea(id="message" name="message" rows="4")
+
+      button.btn.btn-primary(type="submit")
+        p Send Message
+        i.fas.fa-arrow-right

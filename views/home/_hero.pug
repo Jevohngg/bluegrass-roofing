@@ -1,0 +1,53 @@
+// views/home/_hero.pug
+section.hero
+  .hero-content
+    img.hero-image(src="/images/house.png" alt="Roof Replacement")
+
+    .hero-components
+        span.badge.badge-experts
+          i.fas.fa-shield-alt
+          |  Local Roofing Experts ★ 5.0
+
+        h1.hero-title Quality Roofing Made Simple
+        p.hero-subtitle Expert roofing solutions with instant quotes and hassle-free service.
+
+        // Benefits row
+        .hero-benefits
+            span.hero-benefit
+              i.fas.fa-check-circle
+              |  Free Instant Quotes
+            span.hero-benefit
+              i.fas.fa-check-circle
+              |  Insurance Claim Support
+            span.hero-benefit
+              i.fas.fa-check-circle
+              |  5-Star Rated Service
+
+        // Hero CTA buttons
+        .hero-ctas
+            a.btn.btn-primary(href="#quote-section") 
+                p Get Your Free Quote Now 
+                i.fas.fa-arrow-right 
+            a.btn.btn-secondary(href="/services") Explore Services
+
+    form.quote-form(action="/contact" method="POST")
+        h4.quote-form-header Got a quick question?
+        .form-group
+            label(for="fullName") Full Name
+            input(type="text" id="fullName" name="fullName" required)
+
+        .form-group
+            label(for="emailAddress") Email Address
+            input(type="email" id="emailAddress" name="emailAddress" required)
+
+        .form-group
+            label(for="phoneNumber") Phone Number
+            input(type="tel" id="phoneNumber" name="phoneNumber")
+
+        .form-group
+            label(for="message") Your Message
+            textarea(id="message" name="message" rows="4")
+
+        button.btn.btn-primary(type="submit")
+            | Send Message
+            i.fas.fa-arrow-right 

@@ -1,0 +1,39 @@
+
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+
+    // 1. Import Inter from Google Fonts
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css")
+
+
+    title BlueGrass Roofing
+
+    // Minimal CSS
+    link(rel="stylesheet" href="/css/main.css")
+
+    // GSAP for animations
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js")
+
+    // Optionally, if you'd like smooth scroll or scroll triggers, you can load them too:
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js")
+    block pageStyles
+
+  body
+    // HEADER
+    include ../partials/header
+
+    // MAIN CONTENT
+    main
+      block content
+
+    // FOOTER
+    include ../partials/footer
+
+    // MAIN JS
+    script(src="/js/animations.js")
+    script(src="/js/mobile-nav.js")
+

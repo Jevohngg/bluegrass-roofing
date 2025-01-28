@@ -1,0 +1,13 @@
+extends ../layouts/mainLayout
+
+
+block pageStyles
+  link(rel="stylesheet", href="/css/home.css")
+
+block content
+  // Include each partial in the desired order
+  include _hero
+  include _services
+  include _claims
+  include _guarantee
+  include _quote

@@ -1,0 +1,252 @@
+   /****************************************
+ * Quote Section (Home)
+ ****************************************/
+ .quote-section {
+    background: var(--color-quote-section-bg); /* e.g. #16233a or your chosen color */
+    color: var(--color-white);
+    padding: 4rem 2rem; /* matches services/claims spacing */
+    text-align: center;
+  }
+  
+  /* Header area, akin to claims-header or services-header */
+  .quote-header {
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  /* A small badge up top, like .claims-badge or .price-badge */
+  .quote-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    background-color: var(--color-accent);
+    color: #fff;
+    font-size: 0.875rem;
+    box-shadow: 0 1px 3px var(--color-black-05);
+  }
+  
+  /* H2 for the main heading, p for subtle subtitle */
+  .quote-header h2 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .quote-subtitle {
+    font-size: 1.2rem;
+    max-width: 600px;
+
+  }
+  
+  /* 
+    The content container: 
+    left side for "quote-details" (cards),
+    right side for "quote-form".
+  */
+  .quote-content {
+    display: flex
+;
+    flex-wrap: nowrap;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    justify-content: center;
+    flex-direction: row;
+    justify-content: flex-start;
+
+  }
+  
+  /* The left column with call/email boxes */
+  .quote-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* more space between boxes */
+  }
+  
+  /* Each box with icon + title, like .claim-card or .service-card */
+  .quote-box {
+    background: var(--color-quote-box-bg); /* e.g. #1c2b45 or something slightly lighter/darker */
+    padding: 1.5rem;
+    border-radius: 6px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    box-shadow: 0 2px 5px var(--color-black-05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  /* Slight hover lift */
+  .quote-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px var(--color-black-08);
+  }
+  
+  /* Icon + Title row, like .claim-card-header or .service-card-header */
+  .quote-box-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .quote-icon {
+    font-size: 1.5rem;
+    color: var(--color-accent);
+  }
+  
+  .quote-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  /* CONTACT FORM STYLES */
+  form.quote-form-2{
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px var(--color-black-05);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  form.quote-form {
+    gap: 24px;
+    display: flex
+;
+    min-width: 457px;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #fff;
+    border: 1px solid #ebebeb;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Keep consistent spacing and styling for form fields */
+  .quote-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  
+  .quote-form .form-group label {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  
+  .quote-form .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--color-input-border);
+    font-size: 1rem;
+    color: var(--color-text);
+    transition: border-color 0.3s ease;
+    border-radius: 8px;
+  }
+  
+  /* Focus states with accent color outline */
+  .quote-form .form-group input:focus,
+  .form-group textarea:focus {
+    border-color: var(--color-accent);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-accent-outline);
+  }
+  
+  /* Button at full width, consistent with your other forms */
+  .quote-form .btn-primary {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .quote-section form.quote-form-2{
+    margin: 0px;
+    text-align: left;
+    max-width: 630px;
+    width: 100%;
+    background-color: var(--color-quote-box-bg);
+    color: white;
+    border: none;
+  }
+
+  .quote-section form.quote-form-2 input{
+    background-color: #313f59fa;
+    border: none;
+    color: white;
+    
+
+  }
+  .quote-section form.quote-form-2 textarea{
+    background-color: #313f59fa;
+    border: none;
+    color: white;
+    
+
+  }
+
+  .quote-section form.quote-form-2 label{
+    color: white;
+  }
+  
+  /* RESPONSIVENESS */
+  @media (max-width: 640px) {
+    .claims-cta {
+        margin-top: 2rem;
+        display: flex
+    ;
+        gap: 1rem;
+        justify-content: center;
+        flex-direction: column;
+    }
+    .quote-header h2 {
+      font-size: 2.2rem;
+    }
+  
+    .quote-details {
+      margin-bottom: 2rem; /* Some spacing before the form */
+    }
+
+    .quote-details {
+        display: flex
+    ;
+        flex-direction: row;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .quote-content {
+        display: flex
+    ;
+        flex-wrap: wrap;
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        justify-content: center;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .quote-box {
+        width: 100%;
+    }
+  }

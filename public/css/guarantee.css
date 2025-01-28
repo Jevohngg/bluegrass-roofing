@@ -1,0 +1,133 @@
+  
+/****************************************
+ * Price Guarantee Section
+ ****************************************/
+ .price-guarantee {
+    /* A slight gradient to make it stand out */
+    background: linear-gradient(
+      135deg, 
+      var(--color-price-guarantee-bg) 0%, 
+      #ffffff 100%
+    );
+    padding: 4rem 2rem; /* match the spacing used in Services/Claims */
+    text-align: center;
+    min-height: 100vh;
+  }
+  
+  /* BADGE + HEADER STYLES */
+  .price-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    background-color: var(--color-guarantee-badge-bg);
+    color: var(--color-guarantee-badge-text);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px var(--color-black-05);
+  }
+  
+  .price-badge i {
+    font-size: 1rem;
+  }
+  
+  /* HEADINGS & TEXT */
+  .price-guarantee-header {
+    max-width: 1200px;
+    margin: 0 auto 2rem;
+  }
+  
+  .price-guarantee-header h2 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .guarantee-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: var(--color-midtext);
+  }
+  
+  .guarantee-desc {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    
+    margin: 0 auto 1.5rem;
+    color: var(--color-subtext);
+    line-height: 1.6;
+  }
+  
+  .guarantee-highlight {
+    background: var(--color-guarantee-highlight-bg);
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+    color: var(--color-guarantee-highlight-text);
+    font-weight: 600;
+  }
+  
+  /* GUARANTEE GRID & CARDS */
+  .guarantee-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    max-width: 1480px;
+    margin: 0 auto 2rem;
+  }
+  
+  /* Each card: consistent with the claims/services style */
+  .guarantee-card {
+    border: 1px solid #00800026;
+    background: var(--color-white);
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: left;
+    /* box-shadow: 0 2px 5px var(--color-black-05); */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex
+;
+    flex-direction: column;
+    gap: 8px;
+}
+
+  
+
+  
+  /* Icon + title, just like other sections */
+  .guarantee-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .guarantee-icon {
+    font-size: 1.6rem;
+    color: var(--color-accent);
+  }
+  
+  .guarantee-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  /* CTA link at the bottom */
+  .guarantee-cta {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+  }
+  
+  @media (max-width: 600px) {
+    /* Make the heading slightly smaller on mobile */
+    .price-guarantee-header h2 {
+      font-size: 2.2rem;
+    }
+  
+    .guarantee-subtitle {
+      font-size: 1.1rem;
+    }
+  }

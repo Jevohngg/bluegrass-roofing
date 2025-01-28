@@ -1,0 +1,986 @@
+/****************************************
+ * home.css
+ * Styles exclusive to the Home Page
+ ****************************************/
+
+/*---------------------------------------------
+  Home Hero Section
+---------------------------------------------*/
+.hero {
+    padding: 2rem 2rem;
+    text-align: left;
+    color: var(--color-text);
+    background-image: none !important;
+  }
+  
+  .hero-content {
+    display: flex;
+    width: 100%;
+    gap: 8rem;
+    margin: 0 auto;
+    background-color: var(--bg-container);
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 5rem 9rem;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  
+  .hero-image {
+    position: absolute;
+    width: 791px;
+    right: 0;
+    bottom: -51px;
+  }
+  
+  .badge-experts {
+    gap: 8px;
+    background: var(--color-white);
+    display: flex;
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    align-content: center;
+    align-items: center;
+  }
+  
+  .badge-experts .fas {
+    color: var(--color-accent);
+  }
+  
+  .hero-title {
+    font-size: 6.5rem !important;
+    color: var(--color-title);
+    margin-bottom: 1rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem !important;
+    margin-bottom: 1.5rem;
+    color: var(--color-darktext);
+  }
+  
+  .hero-components {
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  
+  .hero-benefits {
+    display: flex;
+    justify-content: flex-start;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .hero-benefit {
+    background: var(--color-black-0a) !important;
+    color: var(--color-text);
+    border-radius: 999px;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.9rem;
+  }
+  
+  .hero-benefit .fas {
+    color: var(--color-accent);
+  }
+  
+  .hero-ctas {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .hero-form {
+    background: var(--color-white);
+    padding: 1rem;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px var(--color-black-05);
+    max-width: 300px;
+    margin-left: auto;
+  }
+  
+  /*---------------------------------------------
+    Services Section (on Home)
+  ---------------------------------------------*/
+  
+  .services-header {
+    max-width: 1000px;
+    margin: 0 auto 2rem;
+  }
+
+  .services-header h2{
+    font-size: 4rem;
+    padding: 24px;
+  }
+
+  .services-header p{
+    margin-bottom: 84px;
+  }
+  
+  
+  .service-card {
+    background: var(--bg-container);
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: left;
+    display: flex
+;
+    flex-direction: column;
+    gap: 8px;
+    
+  }
+  
+  .services-cta {
+  
+    display: flex
+    ;
+        justify-content: center;
+  }
+  
+  .services-note {
+    margin-top: 1rem;
+    color: var(--color-subtext);
+    font-size: 0.9rem;
+  }
+
+
+.services-section {
+    padding: 4rem 2rem;  /* Increased padding for more space */
+    text-align: center;
+  }
+  
+  /* 
+    Force 3 columns on large screens 
+    for a 2-row, 6-card layout.
+  */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;              /* More space between cards */
+    max-width: 1640px;
+    margin: 0 auto 2rem;
+    margin-bottom: 80px;
+  }
+  
+  /* 
+    Down to 2 columns on medium screens 
+    (e.g., tablets or smaller desktops).
+  */
+  @media (max-width: 992px) {
+    .services-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  /* 
+    Down to 1 column on mobile screens 
+    for easy vertical scrolling.
+  */
+  @media (max-width: 600px) {
+
+    .services-grid {
+      grid-template-columns: 1fr;
+      margin-bottom: 40px;
+    }
+    .services-header h2{
+        font-size: 2.5rem;
+        padding: 16px;
+      }
+
+      .services-header p {
+        margin-bottom: 44px;
+      }
+  }
+  
+
+
+/* Align icon & title horizontally, add spacing */
+.service-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  /* Make the icon stand out using your accent color */
+  .service-icon {
+    font-size: 1.5rem;
+    color: var(--color-accent);
+  }
+  
+  /* Styling for the service title itself */
+  .service-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+  
+
+  
+/****************************************
+ * Updated Claims Section Styles
+ ****************************************/
+/* Match the new Services styling */
+.claims-section {
+    padding: 4rem 2rem; /* same spacing as services-section */
+    text-align: center;
+    background-color: white;
+  }
+  
+  /* Larger heading, similar to .services-header h2 */
+  .claims-header h2 {
+    font-size: 4rem;
+    padding: 24px;
+   
+  }
+  .claims-badge p{
+    margin-bottom: 0px !important;
+  }
+  
+  .claims-header p {
+    margin-bottom: 84px;
+  }
+  
+  /* CLAIM CARDS: same "card" styling as services */
+  .claim-card {
+    border: 1px solid #e8e8e887;
+    background: #f9ebdd42;
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: left;
+    display: flex
+;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+
+  
+  /* Icon + title at top of each card, like services */
+  .claim-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .claim-icon {
+    font-size: 1.5rem;
+    color: var(--color-accent);
+  }
+  
+  .claim-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+  
+  /* CLAIMS-GRID: 2 columns on desktop, 1 column on mobile */
+  .claims-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    max-width: 1640px;
+    margin: 0 auto 2rem;
+    margin-bottom: 80px;
+  }
+
+  .claims-badge{
+    gap: 8px;
+    background: var(--color-accent);
+    color: white;
+    display: flex
+;
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+
+    font-size: 0.875rem;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .claims-cta{
+    display: flex
+    ;
+        justify-content: center;
+  }
+
+  .claims-header{
+    display: flex
+    ;
+        flex-direction: column;
+        align-content: center;
+        align-items: center;
+  }
+  
+  /* If the screen is <= 600px, go single column */
+  @media (max-width: 600px) {
+    .claims-grid {
+      grid-template-columns: 1fr;
+      margin-bottom: 40px;
+    }
+  
+    .claims-header h2 {
+      font-size: 2.5rem;
+      padding: 16px;
+    }
+  
+    .claims-header p {
+      margin-bottom: 44px;
+    }
+  }
+
+
+  /****************************************
+ * Enhanced Coverage Packages Tiers
+ ****************************************/
+/* Heading & subtext (centered, like screenshot) */
+.coverage-heading {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+  }
+  
+  .coverage-subtext {
+    text-align: center;
+    color: var(--color-midtext);
+    max-width: 800px;
+    margin: 0 auto 2rem;
+  }
+  
+  /* The packages container: 3 columns on desktop, 2 on tablets, 1 on mobile */
+  .coverage-packages {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1640px;
+    margin: 0 auto;
+    text-align: left;
+    margin-bottom: 40px;
+    
+  }
+  
+  @media (max-width: 992px) {
+    .coverage-packages {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 600px) {
+
+    .coverage-package ul{
+        padding-left: 0px !important;
+    }
+
+    .coverage-packages {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .coverage-package.recommended .package-desc{
+    color: white;
+  }
+  
+  /* Each package card */
+  .coverage-package {
+    background: #fff;
+    color: var(--color-text);
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 2px 5px var(--color-black-05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    display: flex
+;
+    flex-direction: column;
+    border: 1px solid var(--color-accent);
+    align-items: center;
+  }
+  
+  /* Hover lift & shadow */
+  .coverage-package:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px var(--color-black-08);
+  }
+  
+  /* Title & optional subtitle */
+  .coverage-package h4 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+  
+  .package-desc {
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    color: var(--color-midtext);
+  }
+  
+  /* Replace bullet points with Font Awesome check icons (optional) */
+  .coverage-package ul {
+    padding-left: 24px;
+    width: 100%;
+    list-style: none;
+    margin: 0;
+
+    margin-bottom: 1rem;
+  }
+  
+  .coverage-package ul li {
+    margin-bottom: 0.75rem;
+    position: relative;
+    padding-left: 2rem;
+  }
+  
+  /* Use ::before to inject a check icon for each li */
+  .coverage-package ul li::before {
+    content: "\f00c";
+    font-family: "Font Awesome 6 Free"; /* or 5 Free, depending on your version */
+    font-weight: 900;
+    color: var(--color-accent);
+    position: absolute;
+    left: 0;
+    top: 0.1rem;
+  }
+  
+  /* Price note or final line */
+  .price-note {
+    text-align: center;
+    width: 100%;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--color-subtext);
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-black-05);
+  }
+  
+  /* The recommended plan in your accent color. White text. */
+  .coverage-package.recommended {
+    background: var(--color-accent);
+    color: var(--color-white);
+  }
+  
+  .coverage-package.recommended h4 {
+    color: var(--color-white);
+  }
+  
+  .coverage-package.recommended ul li {
+    color: var(--color-white);
+  }
+  .coverage-package.recommended ul li::before {
+    color: var(--color-white);
+  }
+  
+  /* The "Recommended" label at the top-right corner */
+  .recommended-tag {
+    position: absolute;
+    top: -12px;
+    /* right: 1rem; */
+    background: var(--color-accent-secondary);
+    color: var(--color-white);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.4rem 0.8rem;
+    border-radius: 999px;
+    box-shadow: 0 2px 5px var(--color-black-05);
+  }
+  
+  /* If you have a “most homeowners choose” note near the bottom */
+  .note {
+    margin-top: auto;
+    color: #f9f3ee; /* slightly lighter text on accent background */
+    font-size: 0.9rem;
+    padding-top: 1rem;
+    opacity: 0.9;
+  }
+  
+  
+/****************************************
+ * Price Guarantee Section
+ ****************************************/
+ .price-guarantee {
+    /* A slight gradient to make it stand out */
+    background: linear-gradient(
+      135deg, 
+      var(--color-price-guarantee-bg) 0%, 
+      #ffffff 100%
+    );
+    padding: 4rem 2rem; /* match the spacing used in Services/Claims */
+    text-align: center;
+  }
+  
+  /* BADGE + HEADER STYLES */
+  .price-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    background-color: var(--color-guarantee-badge-bg);
+    color: var(--color-guarantee-badge-text);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px var(--color-black-05);
+  }
+  
+  .price-badge i {
+    font-size: 1rem;
+  }
+  
+  /* HEADINGS & TEXT */
+  .price-guarantee-header {
+    max-width: 1200px;
+    margin: 0 auto 2rem;
+  }
+  
+  .price-guarantee-header h2 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .guarantee-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: var(--color-midtext);
+  }
+  
+  .guarantee-desc {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    
+    margin: 0 auto 1.5rem;
+    color: var(--color-subtext);
+    line-height: 1.6;
+  }
+  
+  .guarantee-highlight {
+    background: var(--color-guarantee-highlight-bg);
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    margin-bottom: 2rem;
+    color: var(--color-guarantee-highlight-text);
+    font-weight: 600;
+  }
+  
+  /* GUARANTEE GRID & CARDS */
+  .guarantee-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    max-width: 1480px;
+    margin: 0 auto 2rem;
+  }
+  
+  .guarantee-card {
+    border: 1px solid #00800026;
+    background: var(--color-white);
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: left;
+    /* box-shadow: 0 2px 5px var(--color-black-05); */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex
+;
+    flex-direction: column;
+    gap: 8px;
+}
+
+  
+  
+
+  
+  /* Icon + title, just like other sections */
+  .guarantee-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .guarantee-icon {
+    font-size: 1.6rem;
+    color: var(--color-accent);
+  }
+  
+  .guarantee-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  /* CTA link at the bottom */
+  .guarantee-cta {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+  }
+  
+  @media (max-width: 600px) {
+    /* Make the heading slightly smaller on mobile */
+    .price-guarantee-header h2 {
+      font-size: 2.2rem;
+    }
+  
+    .guarantee-subtitle {
+      font-size: 1.1rem;
+    }
+  }
+  
+ /****************************************
+ * Quote Section (Home)
+ ****************************************/
+.quote-section {
+    background: var(--color-quote-section-bg); /* e.g. #16233a or your chosen color */
+    color: var(--color-white);
+    padding: 4rem 2rem; /* matches services/claims spacing */
+    text-align: center;
+  }
+  
+  /* Header area, akin to claims-header or services-header */
+  .quote-header {
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  /* A small badge up top, like .claims-badge or .price-badge */
+  .quote-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    background-color: var(--color-accent);
+    color: #fff;
+    font-size: 0.875rem;
+    box-shadow: 0 1px 3px var(--color-black-05);
+  }
+  
+  /* H2 for the main heading, p for subtle subtitle */
+  .quote-header h2 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .quote-subtitle {
+    font-size: 1.2rem;
+    max-width: 600px;
+
+  }
+  
+  /* 
+    The content container: 
+    left side for "quote-details" (cards),
+    right side for "quote-form".
+  */
+  .quote-content {
+    display: flex
+;
+    flex-wrap: nowrap;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    justify-content: center;
+    flex-direction: row;
+    justify-content: flex-start;
+
+  }
+  
+  /* The left column with call/email boxes */
+  .quote-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* more space between boxes */
+  }
+  
+  /* Each box with icon + title, like .claim-card or .service-card */
+  .quote-box {
+    background: var(--color-quote-box-bg); /* e.g. #1c2b45 or something slightly lighter/darker */
+    padding: 1.5rem;
+    border-radius: 6px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    box-shadow: 0 2px 5px var(--color-black-05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  /* Slight hover lift */
+  .quote-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px var(--color-black-08);
+  }
+  
+  /* Icon + Title row, like .claim-card-header or .service-card-header */
+  .quote-box-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .quote-icon {
+    font-size: 1.5rem;
+    color: var(--color-accent);
+  }
+  
+  .quote-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  /* CONTACT FORM STYLES */
+  form.quote-form-2{
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px var(--color-black-05);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  form.quote-form {
+    gap: 24px;
+    display: flex
+;
+    min-width: 457px;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #fff;
+    border: 1px solid #ebebeb;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Keep consistent spacing and styling for form fields */
+  .quote-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  
+  .quote-form .form-group label {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  
+  .quote-form .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--color-input-border);
+    font-size: 1rem;
+    color: var(--color-text);
+    transition: border-color 0.3s ease;
+    border-radius: 8px;
+  }
+  
+  /* Focus states with accent color outline */
+  .quote-form .form-group input:focus,
+  .form-group textarea:focus {
+    border-color: var(--color-accent);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-accent-outline);
+  }
+  
+  /* Button at full width, consistent with your other forms */
+  .quote-form .btn-primary {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .quote-section form.quote-form-2{
+    margin: 0px;
+    text-align: left;
+    max-width: 630px;
+    width: 100%;
+    background-color: var(--color-quote-box-bg);
+    color: white;
+    border: none;
+  }
+
+  .quote-section form.quote-form-2 input{
+    background-color: #313f59fa;
+    border: none;
+    color: white;
+    
+
+  }
+  .quote-section form.quote-form-2 textarea{
+    background-color: #313f59fa;
+    border: none;
+    color: white;
+    
+
+  }
+
+  .quote-section form.quote-form-2 label{
+    color: white;
+  }
+  
+  /* RESPONSIVENESS */
+  @media (max-width: 640px) {
+    .quote-header h2 {
+      font-size: 2.2rem;
+    }
+  
+    .quote-details {
+      margin-bottom: 2rem; /* Some spacing before the form */
+    }
+
+    .quote-details {
+        display: flex
+    ;
+        flex-direction: row;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .quote-content {
+        display: flex
+    ;
+        flex-wrap: wrap;
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        justify-content: center;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .quote-box {
+        width: 100%;
+    }
+  }
+  
+
+
+
+  
+  /*---------------------------------------------
+    Responsive (Media Queries)
+  ---------------------------------------------*/
+  @media (max-width: 1544px) {
+    .hero-content {
+      gap: 4rem;
+    }
+  }
+  
+  @media (max-width: 1583px) {
+    .hero-content {
+      padding: 5rem 6rem;
+    }
+  }
+  
+  @media (max-width: 1378px) {
+    .hero-content {
+      padding: 4rem 4rem;
+      gap: 1rem;
+    }
+  }
+  
+  @media (max-width: 1268px) {
+    .hero-content {
+      gap: 2rem;
+      flex-direction: column;
+      padding: 4rem 8rem;
+    }
+  
+    form.quote-form {
+      width: 100%;
+      max-width: none;
+    }
+  }
+  
+  @media (max-width: 835px) {
+    .hero-content {
+      gap: 2rem;
+      flex-direction: column;
+      padding: 4rem 4rem;
+    }
+  
+    form.quote-form {
+      width: 100%;
+      max-width: none;
+    }
+  
+    .hero-benefits {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  }
+  
+  @media (max-width: 647px) {
+    .hero-subtitle {
+      text-align: center;
+    }
+  
+    .hero-content {
+      padding: 2rem 2rem;
+    }
+  
+    .hero-components {
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+  
+    .hero-title {
+      font-size: 3.5rem !important;
+      text-align: center;
+    }
+  
+    .badge-experts {
+      font-size: 14px;
+    }
+  
+    .hero-ctas {
+      flex-direction: column;
+      width: 100%;
+    }
+  
+    form.quote-form {
+      min-width: 0px;
+    }
+  }
+  
+  @media (max-width: 647px) {
+    .hero-title {
+      font-size: 2.5rem !important;
+    }
+  
+    .badge-experts {
+      font-size: 12px;
+    }
+  }
+  

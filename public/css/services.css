@@ -1,0 +1,564 @@
+/****************************************
+ * services.css
+ * Styles specific to the Services Page
+ ****************************************/
+
+/*---------------------------------------------
+  1) Services Hero
+---------------------------------------------*/
+.services-hero {
+    background: var(--color-section-offwhite);
+    padding: 4rem 2rem;
+    text-align: center;
+    color: var(--color-text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .services-hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .services-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+    background-color: var(--color-accent);
+    color: #fff;
+    font-size: 0.875rem;
+    box-shadow: 0 2px 5px var(--color-black-05);
+  }
+  
+  .services-title {
+    font-size: 3rem;
+    margin: 0;
+  }
+  
+  .services-subtitle {
+    font-size: 1.2rem;
+    max-width: 600px;
+    color: var(--color-midtext);
+  }
+  
+
+/****************************************
+ * Skeleton Loading (Services)
+ ****************************************/
+
+/* 
+  1) The .skeleton class triggers placeholders.
+     We hide actual content inside until the skeleton is removed.
+*/
+.service-item.skeleton {
+    position: relative;
+    overflow: hidden; /* ensures skeleton covers the item content */
+  }
+  
+  /* Hide the real content while in skeleton mode */
+  .service-item.skeleton .service-image-container,
+  .service-item.skeleton .service-details {
+    visibility: hidden; /* or display: none; if you prefer */
+  }
+  
+  /* 2) The skeleton-loader overlay (white background above everything) */
+  .skeleton-loader {
+    position: absolute;
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
+    z-index: 2;
+    background: #fff;
+    padding: 1rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    justify-content: flex-start;
+  }
+  
+  /* 
+    3) Individual skeleton elements 
+       (a big 'image' block + smaller 'text' lines)
+  */
+  .skeleton-image {
+    width: 100%;
+    height: 180px;
+    border-radius: 6px;
+    background: var(--color-black-05);
+    animation: skeleton-shimmer 1.5s infinite linear;
+    background: linear-gradient(90deg, #f0f0f0 25%, #ecebeb 37%, #f0f0f0 63%);
+    background-size: 400% 100%;
+  }
+  
+  .skeleton-box {
+    height: 16px;
+    border-radius: 4px;
+    background: #f0f0f0;
+    animation: skeleton-shimmer 1.5s infinite linear;
+    background: linear-gradient(90deg, #f0f0f0 25%, #ecebeb 37%, #f0f0f0 63%);
+    background-size: 400% 100%;
+  }
+
+  .services-outro .btn-secondary:hover{
+    color: white !important;
+  }
+  
+  /* 4) The shimmer animation */
+  @keyframes skeleton-shimmer {
+    0% {
+      background-position: -200px 0;
+    }
+    100% {
+      background-position: calc(200px + 100%) 0;
+    }
+  }
+  
+  /* 
+    Once .skeleton is removed (by JS), 
+    the skeleton-loader is no longer visible,
+    and the real content is visible.
+  */
+  .service-item:not(.skeleton) .skeleton-loader {
+    display: none;
+  }
+  .service-item:not(.skeleton) .service-image-container,
+  .service-item:not(.skeleton) .service-details {
+    visibility: visible; /* or display: block; or whatever you prefer */
+  }
+  
+
+
+  /*---------------------------------------------
+    2) Main Services List
+  ---------------------------------------------*/
+  .services-list.extended {
+    background: var(--color-section-offwhite);
+    padding: 1rem 1rem 7rem 1rem;
+    text-align: center;
+  }
+  
+  .services-intro {
+    max-width: 800px;
+    margin: 0 auto 2rem;
+  }
+  
+  .services-intro h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .services-intro p {
+    font-size: 1rem;
+    color: var(--color-subtext);
+    line-height: 1.6;
+  }
+  
+  /* Container holding all service items */
+  .services-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  
+  /* Each .service-item row: image on one side, text on the other (stack on mobile) */
+  .service-item {
+    height: 400px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 2px 5px var(--color-black-05);
+    padding: 2rem;
+    align-items: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .service-details .btn p{
+    color: white !important;
+  }
+
+  .cta{
+    display: flex
+    ;
+        margin-top: 16px;
+  }
+
+  .services-outro .btn-primary p{
+    color: white;
+
+  }
+
+
+  .service-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px var(--color-black-08);
+  }
+  
+  /* The image side */
+  .service-image-container {
+    border-radius: 6px;
+    flex: 1 1 400px;
+    text-align: center;
+    height: 100%;
+    overflow: hidden;
+    display: flex
+;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .service-image {
+    max-width: 100%;
+    border-radius: 6px;
+    object-fit: cover;
+  }
+  
+  /* The text side */
+  .service-details {
+    flex: 1 1 400px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .service-details h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  
+  .service-details p {
+    line-height: 1.6;
+    color: var(--color-text);
+  }
+  
+  .service-details .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+  }
+
+  #services-wrapper {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  #services-wrapper.page-loaded {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  
+  /*---------------------------------------------
+    3) Services Outro
+  ---------------------------------------------*/
+  .services-outro {
+    margin-top: 3rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    color: var(--color-midtext);
+  }
+  
+  .services-outro p {
+
+    max-width: 600px;
+    line-height: 1.6;
+  }
+  
+  .services-outro .btn {
+    margin: 0 0.5rem;
+  }
+  
+
+ /****************************************
+ * Quote Section (Home)
+ ****************************************/
+ .quote-section {
+    background: var(--color-quote-section-bg); /* e.g. #16233a or your chosen color */
+    color: var(--color-white);
+    padding: 4rem 2rem; /* matches services/claims spacing */
+    text-align: center;
+  }
+  
+  /* Header area, akin to claims-header or services-header */
+  .quote-header {
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  /* A small badge up top, like .claims-badge or .price-badge */
+  .quote-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    background-color: var(--color-accent);
+    color: #fff;
+    font-size: 0.875rem;
+    box-shadow: 0 1px 3px var(--color-black-05);
+  }
+  
+  /* H2 for the main heading, p for subtle subtitle */
+  .quote-header h2 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .quote-subtitle {
+    font-size: 1.2rem;
+    max-width: 600px;
+
+  }
+  
+  /* 
+    The content container: 
+    left side for "quote-details" (cards),
+    right side for "quote-form".
+  */
+  .quote-content {
+    display: flex
+;
+    flex-wrap: nowrap;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    justify-content: center;
+    flex-direction: row;
+    justify-content: flex-start;
+
+  }
+  
+  /* The left column with call/email boxes */
+  .quote-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* more space between boxes */
+  }
+  
+  /* Each box with icon + title, like .claim-card or .service-card */
+  .quote-box {
+    background: var(--color-quote-box-bg); /* e.g. #1c2b45 or something slightly lighter/darker */
+    padding: 1.5rem;
+    border-radius: 6px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    box-shadow: 0 2px 5px var(--color-black-05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  /* Slight hover lift */
+  .quote-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px var(--color-black-08);
+  }
+  
+  /* Icon + Title row, like .claim-card-header or .service-card-header */
+  .quote-box-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .quote-icon {
+    font-size: 1.5rem;
+    color: var(--color-accent);
+  }
+  
+  .quote-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  /* CONTACT FORM STYLES */
+  form.quote-form-2{
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px var(--color-black-05);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  form.quote-form {
+    gap: 24px;
+    display: flex
+;
+    min-width: 457px;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #fff;
+    border: 1px solid #ebebeb;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Keep consistent spacing and styling for form fields */
+  .quote-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  
+  .quote-form .form-group label {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  
+  .quote-form .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--color-input-border);
+    font-size: 1rem;
+    color: var(--color-text);
+    transition: border-color 0.3s ease;
+    border-radius: 8px;
+  }
+  
+  /* Focus states with accent color outline */
+  .quote-form .form-group input:focus,
+  .form-group textarea:focus {
+    border-color: var(--color-accent);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-accent-outline);
+  }
+  
+  /* Button at full width, consistent with your other forms */
+  .quote-form .btn-primary {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .quote-section form.quote-form-2{
+    margin: 0px;
+    text-align: left;
+    max-width: 630px;
+    width: 100%;
+    background-color: var(--color-quote-box-bg);
+    color: white;
+    border: none;
+  }
+
+  .quote-section form.quote-form-2 input{
+    background-color: #313f59fa;
+    border: none;
+    color: white;
+    
+
+  }
+  .quote-section form.quote-form-2 textarea{
+    background-color: #313f59fa;
+    border: none;
+    color: white;
+    
+
+  }
+
+  .quote-section form.quote-form-2 label{
+    color: white;
+  }
+  
+  /* RESPONSIVENESS */
+  @media (max-width: 640px) {
+    .quote-header h2 {
+      font-size: 2.2rem;
+    }
+  
+    .quote-details {
+      margin-bottom: 2rem; /* Some spacing before the form */
+    }
+
+    .quote-details {
+        display: flex
+    ;
+        flex-direction: row;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .quote-content {
+        display: flex
+    ;
+        flex-wrap: wrap;
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        justify-content: center;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .quote-box {
+        width: 100%;
+    }
+  }
+
+
+  /*---------------------------------------------
+    4) Responsiveness
+  ---------------------------------------------*/
+  @media (max-width: 992px) {
+    .service-item {
+      flex-direction: column;
+      height: auto;
+    }
+    .service-image-container,
+    .service-details {
+      flex: 1 1 100%;
+    }
+    .service-image-container{
+        max-height: 280px;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .services-title {
+      font-size: 2.2rem;
+    }
+  
+    .services-intro h2 {
+      font-size: 2rem;
+    }
+  }
+  

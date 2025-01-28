@@ -1,0 +1,45 @@
+
+header.site-header(class=(currentPage !== 'home' ? 'white-header' : ''))
+  nav.navbar
+    // Logo & Title
+    a.navbar-brand(href="/")
+      img.logo(src="/images/logo.png" alt="BlueGrass Roofing Logo")
+      span.brand-name BlueGrass
+      span.sub-brand Roofing
+
+    // Hamburger Icon (hidden by default, visible on mobile)
+    div.hamburger
+      i.fas.fa-bars
+
+    // Nav List (hidden on mobile by default)
+    ul.nav-list
+      li.nav-item
+        a.nav-link(href="/" class=(currentPage === 'home' ? 'active' : ''))
+          i.fa-solid.fa-house
+          | Home
+
+      li.nav-item
+        a.nav-link(href="/services" class=(currentPage === 'services' ? 'active' : ''))
+          i.fa-solid.fa-screwdriver-wrench
+          | Services
+
+      li.nav-item
+        a.nav-link(href="/claims" class=(currentPage === 'claims' ? 'active' : ''))
+          i.fa-solid.fa-shield
+          | Claims Assistance
+
+      // Example "Quote" Nav
+      li.nav-item
+        a.nav-link.nav-quote.btn-primary(href="/quote" class=(currentPage === 'quote' ? 'active' : ''))
+          i.fa-solid.fa-file-invoice
+          | Free Instant Quote
+
+      li.nav-item
+        a.nav-link(href="/contact" class=(currentPage === 'contact' ? 'active' : ''))
+          i.fa-solid.fa-envelope
+          | Contact
+
+      li.nav-item
+        a.nav-link(href="/login" class=(currentPage === 'login' ? 'active' : ''))
+          i.fa-solid.fa-user
+          | Login

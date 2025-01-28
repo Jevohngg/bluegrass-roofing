@@ -1,0 +1,207 @@
+
+extends layouts/mainLayout
+
+block pageStyles
+  link(rel="stylesheet", href="/css/services.css")
+
+block content
+
+  #services-wrapper
+
+      // HERO SECTION
+      section.services-hero#services-hero
+        .services-hero-content
+          span.services-badge
+            i.fas.fa-screwdriver-wrench
+            | Our Roofing & Claims Services
+          h1.services-title Full Range of Services
+          p.services-subtitle Whether you’re paying out of pocket or filing an insurance claim, we offer comprehensive solutions. Explore the details of each service below.
+    
+      // MAIN SERVICES LIST
+      section.services-list.extended
+        .services-container
+    
+          // 1) ROOF REPLACEMENT
+          .service-item.skeleton
+            .skeleton-loader
+              .skeleton-image
+              .skeleton-box(style="width: 50%")
+              .skeleton-box(style="width: 80%")
+              .skeleton-box(style="width: 90%")
+              .skeleton-box(style="width: 30%")
+    
+            .service-image-container
+              img.service-image(src="/images/service-roof-replacement.jpg" alt="Roof Replacement")
+            .service-details
+              h3 Roof Replacement
+              p We fully remove and replace old or damaged roofs, ensuring quality materials and expert craftsmanship. Ideal for both insurance-covered and private pay customers looking to restore or upgrade their existing roofs.
+              p This service includes proper disposal of old shingles, a thorough inspection of the underlying structure, and the installation of a brand-new, weather-resistant roofing system.
+              a.btn.btn-primary(href="/contact")
+                p Get Started
+                i.fas.fa-arrow-right
+    
+          // 2) NEW CONSTRUCTION
+          .service-item.skeleton
+            .skeleton-loader
+              .skeleton-image
+              .skeleton-box(style="width: 60%")
+              .skeleton-box(style="width: 80%")
+              .skeleton-box(style="width: 70%")
+              .skeleton-box(style="width: 40%")
+    
+            .service-image-container
+              img.service-image(src="/images/service-new-construction.jpg" alt="New Construction Roof")
+            .service-details
+              h3 New Construction Roof Installation
+              p Perfect for newly built homes, we work directly with contractors or homeowners to deliver durable, long-lasting roofs. Our approach ensures the roof is installed according to architectural specifications with high-quality materials.
+              p We stay on schedule, coordinating with other trades to ensure a seamless construction process.
+              a.btn.btn-primary(href="/contact")
+                p Get Started
+                i.fas.fa-arrow-right
+    
+          // 3) ROOF REPAIRS
+          .service-item.skeleton
+            .skeleton-loader
+              .skeleton-image
+              .skeleton-box(style="width: 50%")
+              .skeleton-box(style="width: 65%")
+              .skeleton-box(style="width: 80%")
+              .skeleton-box(style="width: 40%")
+    
+            .service-image-container
+              img.service-image(src="/images/service-repairs.jpg" alt="Roof Repairs")
+            .service-details
+              h3 Roof Repairs
+              p We handle repairs for shingles, gutters, and fascia to keep your roof in prime condition. From minor leaks to storm damage, we act quickly to mitigate further harm and restore your roof’s integrity.
+              p Timely repairs extend the overall lifespan of your roof, saving you money in the long run.
+              a.btn.btn-primary(href="/contact")
+                p Get Started
+                i.fas.fa-arrow-right
+    
+          // 4) GUTTERS
+          .service-item.skeleton
+            .skeleton-loader
+              .skeleton-image
+              .skeleton-box(style="width: 70%")
+              .skeleton-box(style="width: 85%")
+              .skeleton-box(style="width: 60%")
+              .skeleton-box(style="width: 40%")
+    
+            .service-image-container
+              img.service-image(src="/images/service-gutters.jpg" alt="Gutters")
+            .service-details
+              h3 Gutters – New Construction & Replacement
+              p Keep water flowing where it should. We install and replace gutter systems to protect your home’s foundation, siding, and landscaping from water damage.
+              p Whether it’s a new build or an older home in need of updated gutters, we’ll ensure your property stays safe from moisture intrusion.
+              a.btn.btn-primary(href="/contact")
+                p Get Started
+                i.fas.fa-arrow-right
+    
+          // 5) ROOF INSPECTIONS
+          .service-item.skeleton
+            .skeleton-loader
+              .skeleton-image
+              .skeleton-box(style="width: 55%")
+              .skeleton-box(style="width: 75%")
+              .skeleton-box(style="width: 90%")
+              .skeleton-box(style="width: 30%")
+    
+            .service-image-container
+              img.service-image(src="/images/service-inspections.jpg" alt="Roof Inspections")
+            .service-details
+              h3 Roof Inspections
+              p A thorough inspection can reveal hidden issues before they become costly problems. If damage is found, we provide a detailed quote and guide you on whether insurance filing is necessary.
+              p Many homeowners use our inspection report to decide on repairs or determine if a full replacement is more cost-effective.
+              a.btn.btn-primary(href="/contact")
+                p Get Started
+                i.fas.fa-arrow-right
+    
+          // 6) INSURANCE CLAIM FILING
+          .service-item.skeleton
+            .skeleton-loader
+              .skeleton-image
+              .skeleton-box(style="width: 60%")
+              .skeleton-box(style="width: 85%")
+              .skeleton-box(style="width: 65%")
+              .skeleton-box(style="width: 35%")
+    
+            .service-image-container
+              img.service-image(src="/images/service-claim-filing.jpg" alt="Insurance Claim Filing")
+            .service-details
+              h3 Insurance Claim Filing
+              p With an Assignment of Benefits (AOB), we’ll file the claim on your behalf and manage payment releases. This means less paperwork for you and a streamlined process from start to finish.
+              p We liaise with your insurance company, ensuring a smoother, faster claim approval.
+              a.btn.btn-primary(href="/claims")
+                p Learn More
+                i.fas.fa-arrow-right
+    
+          // 7) CLAIM MANAGEMENT
+          .service-item.skeleton
+            .skeleton-loader
+              .skeleton-image
+              .skeleton-box(style="width: 50%")
+              .skeleton-box(style="width: 80%")
+              .skeleton-box(style="width: 90%")
+              .skeleton-box(style="width: 25%")
+    
+            .service-image-container
+              img.service-image(src="/images/service-claim-management.jpg" alt="Claim Management")
+            .service-details
+              h3 Claim Management
+              p We audit your claim to ensure the insurance company is covering everything they should. By communicating directly with the insurer, we make sure all necessary repairs are fully covered.
+              p This added level of oversight protects you from potential underpayment or coverage gaps.
+              a.btn.btn-primary(href="/claims")
+                p Learn More
+                i.fas.fa-arrow-right
+    
+          // 8) CLAIM NEGOTIATION
+          .service-item.skeleton
+            .skeleton-loader
+              .skeleton-image
+              .skeleton-box(style="width: 65%")
+              .skeleton-box(style="width: 80%")
+              .skeleton-box(style="width: 70%")
+              .skeleton-box(style="width: 35%")
+    
+            .service-image-container
+              img.service-image(src="/images/service-claim-negotiation.jpg" alt="Claim Negotiation")
+            .service-details
+              h3 Claim Negotiation
+              p As a public adjuster, we review your insurance policy to verify proper coverage and negotiate with the insurance company on your behalf if needed.
+              p Our expertise helps secure a fair settlement, reducing your out-of-pocket expenses.
+              a.btn.btn-primary(href="/claims")
+                p Learn More
+                i.fas.fa-arrow-right
+    
+          // 9) EMERGENCY SERVICES
+          .service-item.skeleton
+            .skeleton-loader
+              .skeleton-image
+              .skeleton-box(style="width: 60%")
+              .skeleton-box(style="width: 85%")
+              .skeleton-box(style="width: 90%")
+              .skeleton-box(style="width: 50%")
+    
+            .service-image-container
+              img.service-image(src="/images/service-emergency.jpg" alt="Emergency Roof Services")
+            .service-details
+              h3 Emergency Services
+              p When the unexpected happens—storms, leaks, or severe damage—we offer urgent, temporary repairs to stop further harm and protect your home. We’ll then recommend a longer-term solution.
+              p Swift response and reliable workmanship ensure peace of mind in high-stress situations.
+              a.btn.btn-primary(href="/contact")
+                p Call for Emergency Help
+                i.fas.fa-arrow-right
+    
+        // Services Outro
+        .services-outro
+          p Don’t see the service you need? Contact us directly for custom solutions. We’re here to help keep your roof in top shape!
+          .cta
+            a.btn.btn-primary(href="/contact")
+              p Contact Us
+              i.fas.fa-arrow-right
+            a.btn.btn-secondary(href="/claims")
+              p Claims Assistance
+              i.fas.fa-arrow-right
+    
+  // QUOTE SECTION PARTIAL
+  include home/_quote
