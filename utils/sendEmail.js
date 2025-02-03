@@ -21,19 +21,25 @@ async function sendUserConfirmationEmail(lead) {
 }
 
 async function sendInternalNotificationEmail(lead) {
-  const msg = {
-    to: 'gentryofficialmusic@gmail.com', // Your internal team email
-    from: 'devbluegrassroofing@gmail.com',
-    templateId: TEAM_NOTIFY_TEMPLATE_ID,
-    dynamic_template_data: {
-      fullName: lead.fullName,
-      emailAddress: lead.emailAddress,
-      phoneNumber: lead.phoneNumber,
-      message: lead.message,
-      formType: lead.formType
-    }
-  };
-  return sgMail.send(msg);
-}
+    // Combine all lead information into one string.
+    const submissionDetails = `
+  Full Name: ${lead.fullName}
+  Email: ${lead.emailAddress}
+  Phone: ${lead.phoneNumber || 'N/A'}
+  Message: ${lead.message}
+  Form Type: ${lead.formType}
+    `.trim();
+  
+    const msg = {
+      to: 'gentryofficialmusic@gmail.com', // Your internal team email
+      from: 'devbluegrassroofing@gmail.com',
+      templateId: TEAM_NOTIFY_TEMPLATE_ID,
+      dynamic_template_data: {
+        userEmail: lead.emailAddress, // This will replace {{userEmail}}
+        formSubmission: submissionDetails, // This will replace {{formSubmission}}
+      }
+    };
+    return sgMail.send(msg);
+  }
 
 module.exports = { sendUserConfirmationEmail, sendInternalNotificationEmail };
