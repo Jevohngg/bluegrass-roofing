@@ -124,6 +124,7 @@ ul {
 }
 
 .btn-logout {
+    font-size: 14px;
     background-color: #dc3545;
     color: #fff;
     padding: 8px 12px;
@@ -267,6 +268,11 @@ ul {
 
 .tab-content {
     display: none;
+}
+
+.admin-sidebar ul{
+    font-size: 14px;
+
 }
 
 /* Lead Cards Container */
