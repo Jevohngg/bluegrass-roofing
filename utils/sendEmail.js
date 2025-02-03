@@ -21,12 +21,12 @@ async function sendUserConfirmationEmail(lead) {
 }
 
 async function sendInternalNotificationEmail(lead) {
-    // Combine all lead information into one string.
+    // Build a string with HTML line breaks
     const submissionDetails = `
-  Full Name: ${lead.fullName}
-  Email: ${lead.emailAddress}
-  Phone: ${lead.phoneNumber || 'N/A'}
-  Message: ${lead.message}
+  Full Name: ${lead.fullName}<br>
+  Email: ${lead.emailAddress}<br>
+  Phone: ${lead.phoneNumber || 'N/A'}<br>
+  Message: ${lead.message}<br>
   Form Type: ${lead.formType}
     `.trim();
   
@@ -35,11 +35,12 @@ async function sendInternalNotificationEmail(lead) {
       from: 'devbluegrassroofing@gmail.com',
       templateId: TEAM_NOTIFY_TEMPLATE_ID,
       dynamic_template_data: {
-        userEmail: lead.emailAddress, // This will replace {{userEmail}}
-        formSubmission: submissionDetails, // This will replace {{formSubmission}}
+        userEmail: lead.emailAddress, // Replaces {{userEmail}}
+        formSubmission: submissionDetails, // Replaces {{formSubmission}}
       }
     };
     return sgMail.send(msg);
   }
+  
 
 module.exports = { sendUserConfirmationEmail, sendInternalNotificationEmail };

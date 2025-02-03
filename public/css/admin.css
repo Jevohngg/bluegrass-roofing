@@ -435,6 +435,11 @@ ul {
 }
 
 @media (max-width: 600px) {
+
+    .admin-content {
+        flex: 1;
+        padding: 24px;
+    }
     .lead-card {
       width: 100%;
       min-width: 0px;
