@@ -21,8 +21,9 @@ block content
                 .lead-header
                   h3.lead-name #{lead.fullName}
                   p.lead-email #{lead.emailAddress}
-                .lead-info
                   p.lead-phone Phone: #{lead.phoneNumber || 'N/A'}
+                .lead-info
+                  
                   p.lead-submitted 
                     | Submitted: 
                     span.submitted-time(data-timestamp=lead.submittedAt)= new Date(lead.submittedAt).toLocaleString()
@@ -45,8 +46,9 @@ block content
                 .lead-header
                   h3.lead-name #{lead.fullName}
                   p.lead-email #{lead.emailAddress}
-                .lead-info
                   p.lead-phone Phone: #{lead.phoneNumber || 'N/A'}
+                .lead-info
+                  
                   p.lead-submitted 
                     | Submitted: 
                     span.submitted-time(data-timestamp=lead.submittedAt)= new Date(lead.submittedAt).toLocaleString()
@@ -68,8 +70,9 @@ block content
                 .lead-header
                   h3.lead-name #{lead.fullName}
                   p.lead-email #{lead.emailAddress}
-                .lead-info
                   p.lead-phone Phone: #{lead.phoneNumber || 'N/A'}
+                .lead-info
+                  
                   p.lead-submitted 
                     | Submitted: 
                     span.submitted-time(data-timestamp=lead.submittedAt)= new Date(lead.submittedAt).toLocaleString()

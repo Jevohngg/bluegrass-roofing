@@ -168,6 +168,15 @@ ul {
     min-height:100vh;
 }
 
+.dashboard-content{
+    display: flex
+    ;
+        flex-direction: column;
+        gap: 24px;
+
+
+}
+
 .admin-sidebar {
     width: 220px;
     background-color: #ffffff;
@@ -223,7 +232,7 @@ ul {
 /* Admin Content */
 .admin-content {
     flex: 1;
-    padding: 20px;
+    padding: 40px;
     background-color: #fff;
 }
 
@@ -433,8 +442,9 @@ ul {
         display: flex
 ;
         flex-direction: column;
-        justify-content: space-between;
+        /* justify-content: space-between; */
         margin-top: 6px;
+        gap: 40px;
     }
     /* Show hamburger on mobile */
     .hamburger {
