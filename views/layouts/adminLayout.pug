@@ -1,0 +1,46 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Admin Dashboard
+    link(rel="stylesheet", href="/css/admin.css")
+  body
+    // Header Bar
+    header.admin-header
+      .header-content
+        a.navbar-brand(href="/")
+          img.logo(src="/images/logo.png", alt="BlueGrass Roofing Logo")
+          span.brand-name BlueGrass
+          span.sub-brand Roofing
+        // Hamburger button for mobile – toggles side nav
+        button.hamburger(type="button")
+          span.bar
+          span.bar
+          span.bar
+        // Logout button for desktop (hidden on mobile via CSS)
+        a.btn-logout(href="/admin/logout") Logout
+
+    // Main container with side navigation and main content area
+    .admin-container
+      // Side Navigation
+      nav.admin-sidebar
+        ul
+          li
+            a(href="/admin/leads", class=(activeTab=='leads' ? 'active' : ''))
+              i.fa.fa-address-book
+              |  Leads
+          li
+            a(href="/admin/customers", class=(activeTab=='customers' ? 'active' : ''))
+              i.fa.fa-user
+              |  Customers
+        // Logout button for mobile only (hidden on desktop via CSS)
+        a.btn-logout-mobile(href="/admin/logout") Logout
+      // Main Content Area
+      main.admin-content
+        block content
+
+    // Scripts (load alert.js and admin.js)
+    block scripts
+      script(src="/js/alert.js")
+      script(src="/js/admin.js")

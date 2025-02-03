@@ -1,0 +1,82 @@
+extends ../layouts/adminLayout
+
+block content
+  .dashboard-content
+    h2 Leads Management Dashboard
+
+    // --- Sub-Tab Buttons for Leads ---
+    .tabs
+      button.tab-button.active(data-tab="new") New
+      button.tab-button(data-tab="contacted") Contacted
+      button.tab-button(data-tab="archived") Archived
+
+    // --- Sub-Tab Contents ---
+    .tab-contents
+      // New Leads
+      .tab-content#tab-new
+        if groupedLeads.new && groupedLeads.new.length
+          .lead-cards
+            each lead in groupedLeads.new
+              .lead-card(data-id=lead._id)
+                .lead-header
+                  h3.lead-name #{lead.fullName}
+                  p.lead-email #{lead.emailAddress}
+                .lead-info
+                  p.lead-phone Phone: #{lead.phoneNumber || 'N/A'}
+                  p.lead-submitted 
+                    | Submitted: 
+                    span.submitted-time(data-timestamp=lead.submittedAt)= new Date(lead.submittedAt).toLocaleString()
+                .lead-message
+                  h4 Message
+                  p #{lead.message || 'N/A'}
+                .lead-actions
+                  button.btn.btn-contacted(type="button", data-id=lead._id) Mark as Contacted
+                  button.btn.btn-archived(type="button", data-id=lead._id) Mark as Archived
+                  button.btn.btn-delete(type="button", data-id=lead._id) Delete Lead
+        else
+          p No new leads.
+      
+      // Contacted Leads
+      .tab-content#tab-contacted(style="display: none;")
+        if groupedLeads.contacted && groupedLeads.contacted.length
+          .lead-cards
+            each lead in groupedLeads.contacted
+              .lead-card(data-id=lead._id)
+                .lead-header
+                  h3.lead-name #{lead.fullName}
+                  p.lead-email #{lead.emailAddress}
+                .lead-info
+                  p.lead-phone Phone: #{lead.phoneNumber || 'N/A'}
+                  p.lead-submitted 
+                    | Submitted: 
+                    span.submitted-time(data-timestamp=lead.submittedAt)= new Date(lead.submittedAt).toLocaleString()
+                .lead-message
+                  h4 Message
+                  p #{lead.message || 'N/A'}
+                .lead-actions
+                  button.btn.btn-archived(type="button", data-id=lead._id) Mark as Archived
+                  button.btn.btn-delete(type="button", data-id=lead._id) Delete Lead
+        else
+          p No contacted leads.
+      
+      // Archived Leads
+      .tab-content#tab-archived(style="display: none;")
+        if groupedLeads.archived && groupedLeads.archived.length
+          .lead-cards
+            each lead in groupedLeads.archived
+              .lead-card(data-id=lead._id)
+                .lead-header
+                  h3.lead-name #{lead.fullName}
+                  p.lead-email #{lead.emailAddress}
+                .lead-info
+                  p.lead-phone Phone: #{lead.phoneNumber || 'N/A'}
+                  p.lead-submitted 
+                    | Submitted: 
+                    span.submitted-time(data-timestamp=lead.submittedAt)= new Date(lead.submittedAt).toLocaleString()
+                .lead-message
+                  h4 Message
+                  p #{lead.message || 'N/A'}
+                .lead-actions
+                  button.btn.btn-delete(type="button", data-id=lead._id) Delete Lead
+        else
+          p No archived leads.

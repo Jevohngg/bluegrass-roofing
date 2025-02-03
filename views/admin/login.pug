@@ -1,0 +1,10 @@
+extends ../layouts/adminLoginLayout.pug
+
+block content
+  .login-container
+    h1 Login
+    if error
+      p.error-message #{error}
+    form(method="POST", action="/admin/login")
+      input(type="password", name="password", placeholder="Enter Admin Password", required)
+      button(type="submit") Login

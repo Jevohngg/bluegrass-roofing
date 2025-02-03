@@ -5,8 +5,7 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 
-// If you have environment variables, load them
-// require('dotenv').config();
+require('dotenv').config();
 
 const app = express();
 
@@ -32,6 +31,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Session middleware configuration
+const session = require('express-session');
+app.use(session({
+  secret: '2025RoofingBlueGrassAdminSecret!', // Replace with a secure, random secret in production
+  resave: false,
+  saveUninitialized: false,
+}));
+
 // HOME ROUTE
 const homeRoutes = require('./routes/home');
 app.use('/', homeRoutes);
@@ -49,10 +56,12 @@ app.use('/contact', contactRoutes);
 const guaranteeRoutes = require('./routes/guarantee');
 app.use('/guarantee', guaranteeRoutes);
 
+// Admin Route for the internal dashboard (completely separate from the main platform)
+const adminRoutes = require('./routes/admin');
+app.use('/admin', adminRoutes);
+
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
-
-

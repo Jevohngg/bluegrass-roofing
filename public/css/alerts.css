@@ -1,0 +1,46 @@
+/* public/css/alerts.css */
+
+/* Container to hold all alerts in the top-right corner */
+#alert-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+  }
+  
+  /* Base styles for alerts */
+  .alert {
+    opacity: 0;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 16px;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateX(100%);
+  }
+  
+  /* When the alert is shown, fade it in and slide it into place */
+  .alert.show {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
+  /* Type-specific styles */
+  .alert-info {
+    background-color: #17a2b8;
+  }
+  
+  .alert-success {
+    background-color: #28a745;
+  }
+  
+  .alert-warning {
+    background-color: #ffc107;
+    color: #333;
+  }
+  
+  .alert-error {
+    background-color: #dc3545;
+  }
+  
