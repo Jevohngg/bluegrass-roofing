@@ -165,7 +165,7 @@ ul {
 .admin-container {
     padding-top: 60px;
     display: flex;
-    min-height: calc(100vh - 60px); /* header height is approx 60px */
+    min-height:100vh;
 }
 
 .admin-sidebar {
@@ -446,6 +446,7 @@ ul {
     }
     /* Show logout button inside sidebar on mobile */
     .admin-sidebar .btn-logout-mobile {
+        font-size: 14px;
       display: block;
       background-color: #dc3545;
       color: #fff;
@@ -455,5 +456,6 @@ ul {
       text-decoration: none;
       margin-top: 20px;
       text-align: center;
+      margin-bottom: 40px;
     }
 }
