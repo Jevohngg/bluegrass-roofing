@@ -5,6 +5,8 @@ html(lang="en")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     title Admin Dashboard
     link(rel="stylesheet", href="/css/admin.css")
+    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css")
+
   body
     // Header Bar
     header.admin-header
@@ -34,6 +36,10 @@ html(lang="en")
             a(href="/admin/customers", class=(activeTab=='customers' ? 'active' : ''))
               i.fa.fa-user
               |  Customers
+          li
+            a(href="/admin/documents", class=(activeTab=='documents' ? 'active' : ''))
+              i.fa.fa-file
+              |  Documents
         // Logout button for mobile only (hidden on desktop via CSS)
         a.btn-logout-mobile(href="/admin/logout") Logout
       // Main Content Area

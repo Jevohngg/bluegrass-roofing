@@ -22,7 +22,7 @@ async function sendUserConfirmationEmail(lead) {
 
 async function sendInternalNotificationEmail(lead) {
   const msg = {
-    to: 'devbluegrassroofing@gmail.com', // Your internal team email
+    to: 'gentryofficialmusic@gmail.com', // Your internal team email
     from: 'devbluegrassroofing@gmail.com',
     templateId: TEAM_NOTIFY_TEMPLATE_ID,
     dynamic_template_data: {

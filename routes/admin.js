@@ -1,4 +1,3 @@
-// routes/admin.js
 const express = require('express');
 const router = express.Router();
 const Lead = require('../models/Lead');
@@ -41,6 +40,11 @@ router.get('/leads', checkAuth, (req, res) => {
 // GET /admin/customers - display customers dashboard (placeholder)
 router.get('/customers', checkAuth, (req, res) => {
   res.render('admin/customers', { activeTab: 'customers' });
+});
+
+// GET /admin/documents - display documents page (placeholder)
+router.get('/documents', checkAuth, (req, res) => {
+  res.render('admin/documents', { activeTab: 'documents' });
 });
 
 // POST /admin/login - Process login form
