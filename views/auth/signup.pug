@@ -1,0 +1,49 @@
+extends ../layouts/mainLayout
+
+block pageStyles
+  link(rel="stylesheet" href="/css/signup.css")
+
+
+block content
+  section.signup-section
+    // Use data-error to store the server-side error message
+    .signup-container#signup-page-container(data-error=error || '')
+     
+
+
+
+      // Reassuring copy
+
+
+      form.signup-form(action="/signup" method="POST")
+        h1 Create Account
+        p.intro
+          | We are excited to earn your business. Please set up an account 
+          | so we can personalize your experience and better serve you through 
+          | our client portal. Your information will never be shared with a third-party, 
+          | and you will not receive unsolicited calls, emails, or text messages.
+        .form-group
+          label(for="firstName") First Name:
+          input#firstName(type="text" name="firstName" required value=formData && formData.firstName ? formData.firstName : '')
+
+        .form-group
+          label(for="lastName") Last Name:
+          input#lastName(type="text" name="lastName" required value=formData && formData.lastName ? formData.lastName : '')
+
+        .form-group
+          label(for="email") Email Address:
+          input#email(type="email" name="email" required value=formData && formData.email ? formData.email : '')
+
+        .form-group
+          label(for="password") Password:
+          input#password(type="password" name="password" required)
+
+        .form-group
+          label(for="confirmPassword") Confirm Password:
+          input#confirmPassword(type="password" name="confirmPassword" required)
+
+        button.btn.btn-primary(type="submit") Create Account
+
+block pageScripts
+  script(src="/js/alert.js")
+  script(src="/js/signup.js")

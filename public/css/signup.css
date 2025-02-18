@@ -1,0 +1,171 @@
+/****************************************
+ * signup.css
+ * Styles specifically for the signup page
+ ****************************************/
+
+/* 
+   1) Page Layout
+   - Centers the signup form vertically and horizontally
+   - Provides a neutral background
+*/
+.signup-section {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background-color: #f7f7f7;
+  }
+  
+  /*
+     2) Outer Container
+     - This container can hold a heading, intros, etc.
+     - It's centered and constrained in width
+  */
+  .signup-container {
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 1rem;
+    text-align: center;
+  }
+  
+  /*
+     3) Title & Intro 
+     - Center them for a nice layout
+  */
+  .signup-container h1 {
+ 
+    text-align: center;
+  }
+  
+  .signup-container p.intro {
+    margin-bottom: 16px;
+    text-align: center;
+    line-height: 1.5;
+    font-size: 14px;
+    color: grey;
+  }
+
+  .signup-form .btn-primary{
+    margin-top: 16px;
+  }
+  
+  /*
+     4) The Form
+     - Replicating .quote-form styles so the signup form 
+       looks & behaves the same. 
+     - Includes box-shadow, border, spacing, etc.
+  */
+  .signup-form {
+    gap: 24px;
+    display: flex;
+    min-width: 457px; /* matching your quote-form's min-width */
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #fff;
+    border: 1px solid #ebebeb;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    flex-direction: column;
+    align-items: center;
+    text-align: left; /* ensures labels and fields align left */
+  }
+  
+  /* 
+     5) Form Groups
+     - Keep consistent spacing for labels & inputs 
+     - Matches .quote-form .form-group from home.css
+  */
+  .signup-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  
+  /*
+     6) Labels
+     - In your quote form, labels use font-weight: 600 
+       and color: var(--color-text)
+  */
+  .signup-form .form-group label {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  
+  /*
+     7) Inputs & Textareas
+     - Copied from your .quote-form focus states:
+       border, radius, color variables, transitions
+  */
+  .signup-form .form-group input,
+  .signup-form .form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--color-input-border);
+    font-size: 1rem;
+    color: var(--color-text);
+    transition: border-color 0.3s ease;
+    border-radius: 8px;
+  }
+  
+  /*
+     Focus states with accent outline 
+     to match .quote-form logic
+  */
+  .signup-form .form-group input:focus,
+  .signup-form .form-group textarea:focus {
+    border-color: var(--color-accent);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-accent-outline);
+  }
+
+  .signup-form .form-group label {
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.signup-form .form-group input, .form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--color-input-border);
+    font-size: 1rem;
+    color: var(--color-text);
+    transition: border-color 0.3sease;
+    border-radius: 8px;
+}
+  
+  /*
+     8) Submit Button
+     - Full width, matching your "quote form" .btn-primary style
+  */
+  .signup-form button[type="submit"] {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600; /* optional, if you want a bolder text on the button */
+  }
+  
+  /*
+     9) Media Query Adjustments (if needed)
+     - Example: reduce padding on smaller screens
+  */
+  @media (max-width: 600px) {
+    .signup-form {
+      padding: 1.5rem;
+      min-width: 0; /* remove or reduce the min-width for mobile if desired */
+    }
+  }
+
+
+  @media (max-width: 520px) {
+    .signup-section{
+        padding: 0px;
+    }
+  }
+  

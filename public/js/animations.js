@@ -131,5 +131,20 @@ window.addEventListener("load", () => {
         }
       }
     }
+
+
+    // Fade in the signup-section on load
+if (document.querySelector(".signup-section")) {
+  gsap.from(".signup-section", {
+    duration: 1,
+    opacity: 0,
+    y: 30,
+    ease: "power2.out"
+  });
+}
+
+
+
+
   });
   

@@ -1,0 +1,24 @@
+
+extends ../layouts/mainLayout
+
+block pageStyles
+  // Optional: Add a custom CSS file for styling
+  // link(rel="stylesheet", href="/css/portal.css")
+
+block content
+  section.portal-section
+    .portal-container
+      h1 Hello #{userName}!
+
+      if packageName
+        p You have requested our "#{packageName}" package.
+      else
+        p You haven't selected a package yet.
+
+      // Progress indicator
+      .progress-indicator
+        h3 Status: We have received your request
+        p Someone will reach out to you shortly regarding your request.
+
+      // Additional info or actions
+      p Need to update your account details or check on your project? More features coming soon!

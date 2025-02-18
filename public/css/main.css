@@ -257,6 +257,22 @@
     background-color: var(--color-accent);
     color: white !important;
   }
+
+  .coverage-package .btn-primary{
+    margin-top: auto;
+    width: 100%;
+
+  }
+
+  .coverage-package.recommended .btn-primary{
+   background-color: rgba(255, 255, 255, 0.905);
+   color: var(--color-accent);
+  }
+
+  .coverage-package.recommended .btn-primary:hover{
+    background-color: rgb(255, 255, 255);
+    color: var(--color-accent);
+   }
   
   /*---------------------------------------------
     6) Forms
@@ -292,6 +308,63 @@
   button[type="submit"]:hover {
     background: var(--color-accent-hover);
   }
+
+  /*---------------------------------------------
+    Alert
+  ---------------------------------------------*/
+
+  /* Example basic alert styling */
+  #alert-container {
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* Optionally control width so it doesn’t span too wide */
+    max-width: 500px;
+    width: 90%;
+    align-items: center;
+  }
+  
+
+.alert {
+  background-color: #ccc;
+  color: #333;
+  padding: 1rem;
+  border-radius: 5px;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease;
+  opacity: 0;
+  transform: translateY(-10px);
+  font-weight: 500;
+}
+
+/* Show state from JS */
+.alert.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Type-based color variations */
+.alert-info {
+  background-color: #d9edf7;
+  color: #31708f;
+}
+.alert-success {
+  background-color: #dff0d8;
+  color: #3c763d;
+}
+.alert-warning {
+  background-color: #fcf8e3;
+  color: #8a6d3b;
+}
+.alert-error {
+  background-color: #f2dede;
+  color: #a94442;
+}
+
   
   /*---------------------------------------------
     7) Responsive (Media Queries)

@@ -41,6 +41,29 @@ async function sendInternalNotificationEmail(lead) {
     };
     return sgMail.send(msg);
   }
+
+  // Add this function at the bottom:
+async function sendUserSignupEmail(user) {
+  const templateId = process.env.SENDGRID_USER_SIGNUP_TEMPLATE_ID;
+
+  if (!templateId) {
+    throw new Error('SENDGRID_USER_SIGNUP_TEMPLATE_ID not set');
+  }
+
+  const msg = {
+    to: user.email,
+    from: 'devbluegrassroofing@gmail.com', // Your verified sender
+    templateId: templateId,
+    dynamic_template_data: {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      selectedPackage: user.selectedPackage
+      // Add more placeholders as needed in your SendGrid dynamic template
+    }
+  };
+
+  await sgMail.send(msg);
+}
   
 
-module.exports = { sendUserConfirmationEmail, sendInternalNotificationEmail };
+module.exports = { sendUserConfirmationEmail, sendInternalNotificationEmail, sendUserSignupEmail };

@@ -44,6 +44,9 @@ const homeRoutes = require('./routes/home');
 app.use('/', homeRoutes);
 
 // NEW ROUTES
+const authRoutes = require('./routes/auth');
+app.use(authRoutes);
+
 const servicesRoutes = require('./routes/services');
 app.use('/services', servicesRoutes);
 
@@ -59,6 +62,9 @@ app.use('/guarantee', guaranteeRoutes);
 // Admin Route for the internal dashboard (completely separate from the main platform)
 const adminRoutes = require('./routes/admin');
 app.use('/admin', adminRoutes);
+
+
+
 
 // Start server
 const PORT = process.env.PORT || 3000;
