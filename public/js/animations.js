@@ -143,6 +143,16 @@ if (document.querySelector(".signup-section")) {
   });
 }
 
+if (document.querySelector(".login-container")) {
+  gsap.from(".login-container", {
+    duration: 1,
+    opacity: 0,
+    y: 30,
+    ease: "power2.out"
+  });
+}
+
+
 
 
 

@@ -97,22 +97,78 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-// GET /portal
-// Displays the client portal page, showing the user's chosen package and a progress indicator
-router.get('/portal', (req, res) => {
-  // Protect this route so only logged-in users can see it
-  if (!req.session.user) {
-    return res.redirect('/signup');
-  }
-  // If we want to fetch the user from the database:
-  // const user = await User.findById(req.session.user.id);
-  // For simplicity, let's just use session data
-  const { firstName, selectedPackage } = req.session.user;
-  return res.render('auth/portal', {
-    currentPage: 'portal',
-    userName: firstName,
-    packageName: selectedPackage
+
+  
+  
+
+// GET /logout
+router.get('/logout', (req, res) => {
+    req.session.destroy(() => {
+      res.redirect('/'); // Go back to home page
+    });
   });
-});
+  
+
+
+
+// 1) GET /login
+router.get('/login', (req, res) => {
+    return res.render('auth/login', {
+      currentPage: 'login'
+    });
+  });
+  
+  // 2) POST /login
+  router.post('/login', async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      if (!email || !password) {
+        return res.status(400).render('auth/login', {
+          currentPage: 'login',
+          error: 'Please enter both email and password.',
+          formData: { email }
+        });
+      }
+  
+      // Find user by email
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(400).render('auth/login', {
+          currentPage: 'login',
+          error: 'Invalid email or password.',
+          formData: { email }
+        });
+      }
+  
+      // Compare password with hashed password in DB
+      const isMatch = await user.comparePassword(password);
+      if (!isMatch) {
+        return res.status(400).render('auth/login', {
+          currentPage: 'login',
+          error: 'Invalid email or password.',
+          formData: { email }
+        });
+      }
+  
+      // If match, set session
+      req.session.user = {
+        id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        selectedPackage: user.selectedPackage
+      };
+  
+      // Redirect to portal
+      return res.redirect('/portal');
+    } catch (err) {
+      console.error('Error logging in user:', err);
+      return res.status(500).render('auth/login', {
+        currentPage: 'login',
+        error: 'Server error. Please try again later.',
+        formData: {}
+      });
+    }
+  });
+  
 
 module.exports = router;

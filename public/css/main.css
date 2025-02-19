@@ -330,6 +330,11 @@
   }
   
 
+  .linkText{
+    display: flex;
+    gap: 4px;
+  }
+
 .alert {
   background-color: #ccc;
   color: #333;

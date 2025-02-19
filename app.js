@@ -59,6 +59,10 @@ app.use('/contact', contactRoutes);
 const guaranteeRoutes = require('./routes/guarantee');
 app.use('/guarantee', guaranteeRoutes);
 
+const portalRoutes = require('./routes/portal');
+app.use(portalRoutes);
+
+
 // Admin Route for the internal dashboard (completely separate from the main platform)
 const adminRoutes = require('./routes/admin');
 app.use('/admin', adminRoutes);

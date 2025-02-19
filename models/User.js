@@ -2,42 +2,45 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
-// Adjust saltRounds if desired (10-12 is common)
 const SALT_ROUNDS = 10;
 
+const DocumentSchema = new mongoose.Schema({
+  signed: { type: Boolean, default: false },
+  signedAt: { type: Date },
+  docUrl: { type: String } // if you generate a PDF or store a final doc copy
+});
+
 const UserSchema = new mongoose.Schema({
-  firstName: {
-    type: String,
-    required: true,
-    trim: true
+  firstName: { type: String, required: true, trim: true },
+  lastName: { type: String, required: true, trim: true },
+  email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+  password: { type: String, required: true },
+
+  // Existing:
+  selectedPackage: { type: String, default: '' },
+
+  // 1) Claim upload
+  claimUploadUrl: { type: String, default: '' },
+
+  // 2) Documents
+  // If "aob" is signed, no need for "aci" or "loi"
+  documents: {
+    aob: { type: DocumentSchema, default: () => ({}) },
+    aci: { type: DocumentSchema, default: () => ({}) },
+    loi: { type: DocumentSchema, default: () => ({}) }
   },
-  lastName: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-    trim: true
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  // If you want to store the selected package in the user record:
-  selectedPackage: {
-    type: String,
-    default: ''
+
+  // 3) Shingle choice
+  shingleChoice: {
+    name: { type: String, default: '' },
+    imageUrl: { type: String, default: '' }
   }
+
 }, { timestamps: true });
 
-// Pre-save hook to hash password if it's new or modified
+// Pre-save hook to hash password if new or modified
 UserSchema.pre('save', async function (next) {
   try {
-    // Only hash if password is new or has been modified
     if (!this.isModified('password')) {
       return next();
     }
@@ -49,7 +52,6 @@ UserSchema.pre('save', async function (next) {
   }
 });
 
-// Helper method to compare candidate password with hashed password
 UserSchema.methods.comparePassword = function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };

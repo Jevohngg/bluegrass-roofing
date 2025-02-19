@@ -1,0 +1,36 @@
+
+extends ../layouts/mainLayout
+
+block pageStyles
+  // We can copy the style from signup or create a dedicated file (e.g., login.css).
+  // For clarity, let's assume we use a separate login.css with nearly identical rules.
+  link(rel="stylesheet", href="/css/login.css")
+
+block content
+  section.login-section
+    // data-error holds any server-side error message
+    .login-container#login-page-container(data-error=error || '')
+      
+      form.login-form(action="/login" method="POST")
+        h1 Log In
+        p.intro
+          | Welcome back! Please enter your credentials to access your account and client portal.
+
+        .form-group
+          label(for="email") Email Address:
+          input#email(type="email" name="email" required value=(formData && formData.email) ? formData.email : '')
+
+        .form-group
+          label(for="password") Password:
+          input#password(type="password" name="password" required)
+
+        button.btn.btn-primary(type="submit") Sign In
+
+        // Optional link to signup:
+        p.linkText(style="margin-top: 1rem; font-size: 14px; color: grey;")
+          | Don't have an account?
+          a(href="/signup") Sign up now!
+
+block pageScripts
+  script(src="/js/alert.js")
+  script(src="/js/login.js")

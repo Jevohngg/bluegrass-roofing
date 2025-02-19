@@ -43,6 +43,9 @@ block content
           input#confirmPassword(type="password" name="confirmPassword" required)
 
         button.btn.btn-primary(type="submit") Create Account
+        p.linkText(style="margin-top: 1rem; font-size: 14px; color: grey;")
+          | Already have an account?
+          a(href="/login") Log In
 
 block pageScripts
   script(src="/js/alert.js")

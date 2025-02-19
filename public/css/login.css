@@ -1,0 +1,123 @@
+/****************************************
+ * login.css
+ * Styles specifically for the login page
+ ****************************************/
+
+/* 
+   1) Page Layout
+   - Very similar to signup
+*/
+.login-section {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background-color: #f7f7f7;
+  }
+  
+  /*
+     2) Container
+     - This container can hold headings, intros, etc.
+     - Centered and constrained in width
+  */
+  .login-container {
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 1rem;
+    text-align: center;
+  }
+  
+  /*
+     3) Title & Intro 
+  */
+  .login-container h1 {
+    text-align: center;
+  }
+  
+  .login-container p.intro {
+    margin-bottom: 16px;
+    text-align: center;
+    line-height: 1.5;
+    font-size: 14px;
+    color: grey;
+  }
+  
+  /*
+     4) The Form
+     - Same “card” style as .signup-form
+  */
+  .login-form {
+    gap: 24px;
+    display: flex;
+    min-width: 457px;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #fff;
+    border: 1px solid #ebebeb;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    flex-direction: column;
+    align-items: center;
+    text-align: left;
+  }
+  
+  /*
+     5) Form Groups
+  */
+  .login-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  
+  /*
+     6) Labels & Inputs
+  */
+  .login-form .form-group label {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  
+  .login-form .form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--color-input-border);
+    font-size: 1rem;
+    color: var(--color-text);
+    transition: border-color 0.3s ease;
+    border-radius: 8px;
+  }
+  
+  .login-form .form-group input:focus {
+    border-color: var(--color-accent);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-accent-outline);
+  }
+  
+  /*
+     7) Submit Button
+  */
+  .login-form button[type="submit"] {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 600;
+  }
+  
+  /*
+     8) Media Queries
+  */
+  @media (max-width: 600px) {
+    .login-form {
+      padding: 1.5rem;
+      min-width: 0;
+    }
+  }
+  

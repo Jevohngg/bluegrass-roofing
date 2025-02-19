@@ -1,0 +1,484 @@
+/****************************************
+ * portal.css
+ * Styles specifically for the user portal
+ ****************************************/
+
+/* 1) Portal Header */
+.portal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff; /* or any color you prefer */
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.portal-header-left .portal-logo img {
+  height: 40px;
+}
+
+.portal-header-right .logout-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #333;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.portal-header-right .logout-link:hover {
+  color: #e18263; /* your accent color */
+}
+
+.portal-header-right .logout-link i {
+  font-size: 1rem;
+}
+
+/* 2) Portal Main Section */
+.portal-section {
+  min-height: calc(100vh - 60px);
+  background-color: #f7f7f7;
+  padding: 2rem;
+}
+
+.portal-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: #fff; 
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* 3) Welcome & Intro */
+.portal-welcome {
+  margin-bottom: 2rem;
+}
+.portal-welcome h1 {
+  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
+}
+.portal-intro {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* 4) Package Card */
+.package-card {
+  background-color: #fafafa;
+  border: 1px solid #ebebeb;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.package-card h2 {
+  margin-bottom: 0.5rem;
+  font-size: 1.4rem;
+  color: #333;
+}
+.package-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #28a745;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.package-status i {
+  color: #28a745;
+  font-size: 1.2rem;
+}
+
+/* 5) Progress Section */
+.progress-section {
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 1rem;
+  border: 1px solid #ebebeb;
+  margin-bottom: 2rem;
+}
+.progress-section h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+}
+.progress-section p {
+  color: #555;
+}
+
+/* 6) Portal Actions */
+.portal-actions {
+  margin-top: 2rem;
+  font-size: 1rem;
+  color: #555;
+}
+
+/****************************************
+* NEW CLASSES FOR ENHANCED UI
+****************************************/
+/* Success/Error Alerts */
+.portal-alert {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.alert-success {
+  background-color: #dff0d8;
+  color: #3c763d;
+}
+.alert-error {
+  background-color: #f2dede;
+  color: #a94442;
+}
+
+/* Action Cards */
+.portal-action-card {
+  background: #fafafa;
+  border: 1px solid #ebebeb;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.portal-action-card h3 {
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+}
+.portal-action-card .subtext {
+  margin-bottom: 1rem;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.action-state-success {
+  padding: 1rem;
+  background-color: #eefbee;
+  border: 1px solid #ccf6cc;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+/* Package Confirmation */
+.package-confirmation {
+  background: #e8f7e8;
+  border: 1px solid #c7eac7;
+  animation: fade-in 0.4s ease;
+}
+.package-confirmation-content {
+  text-align: center;
+  margin-top: 1rem;
+}
+.package-check-icon {
+  color: #28a745;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/****************************************
+ * Upload Container Enhancements
+****************************************/
+.upload-claim-container {
+  margin-bottom: 1rem;
+}
+.upload-dropzone {
+  border: 2px dashed #ccc;
+  border-radius: 6px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  color: #777;
+  font-size: 0.95rem;
+}
+.upload-dropzone:hover {
+  border: 2px dashed #e28264;
+}
+.upload-dropzone p {
+  margin: 0;
+  color: #555;
+}
+.upload-dropzone.dropzone-hover {
+  border-color: #28a745;
+  background-color: #f4fff4;
+}
+.upload-progress {
+  margin: 1rem 0;
+  width: 100%;
+  background-color: #f7f7f7;
+  border: 1px solid #ebebeb;
+  border-radius: 6px;
+  position: relative;
+  height: 20px;
+  overflow: hidden;
+}
+.progress-bar {
+  background-color: #28a745;
+  height: 100%;
+  width: 0;
+  border-radius: 6px;
+  transition: width 0.3s ease;
+}
+/* Attached files container */
+#attachedFilesContainer {
+  display: none;
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: #f6f6f6;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+}
+#attachedFilesContainer h4 {
+  margin-top: 0;
+}
+#attachedFilesList {
+  margin-bottom: 0.75rem;
+  padding-left: 1.25rem;
+}
+#attachedFilesList li {
+  margin-bottom: 0.5rem;
+  list-style: disc;
+}
+#submitFilesBtn {
+  box-shadow: none;
+  border: none;
+}
+#submitFilesBtn:disabled {
+  background-color: rgba(210, 210, 210, 0.3) !important;
+  color: rgba(16, 16, 16, 0.3) !important;
+}
+#removeFileBtn {
+  background-color: transparent;
+  border: none;
+  color: red;
+}
+#removeFileBtn:hover {
+  color: red !important;
+  background-color: rgba(128, 128, 128, 0.171);
+}
+
+/****************************************
+* Sign Documents Container
+****************************************/
+/* The overall container that lists AOB, ACI, LOI as separate items */
+.doc-list {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Each doc card (AOB, ACI, LOI) */
+.doc-card {
+  background-color: #fff;
+  border: 1px solid #ebebeb;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 1rem;
+  justify-content: space-between;
+  gap: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.doc-card.signed {
+  background-color: #eefbee;
+  border-color: #ccf6cc;
+}
+
+.doc-card-content {
+  flex: 1;
+  min-width: 0;
+}
+.doc-card-content h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+.doc-card-content p {
+  margin: 0;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+/* The actions on the right side (Sign or Signed status) */
+.doc-card-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  min-width: 120px;
+}
+.doc-card-actions .btn {
+  margin: 0; /* override default button margin if any */
+}
+.doc-card-actions i.fa-check-circle {
+  color: #28a745;
+  margin-right: 0.25rem;
+}
+.doc-status-text {
+  color: #28a745;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+hr{
+  border: 1px solid #eeeeee;
+}
+
+  
+  .doc-card-content{
+    display: flex
+    ;
+        flex-direction: column;
+        gap: 14px;
+  }
+
+  .signature-actions .btn-secondary{
+    border: none;
+  }
+
+  .signature-actions .btn-light{
+    margin-left: auto;
+  }
+
+  #submitSignatureBtn:disabled{
+    opacity: 50%;
+
+  }
+
+  .doc-card-actions a{
+    font-size: 14px;
+  }
+
+  #clearSignatureBtn:hover{
+    color: #e18263 !important;
+    background-color: rgb(234, 234, 234);
+
+  }
+
+
+
+/****************************************
+* Shingle Modal
+****************************************/
+.shingle-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.shingle-modal-content {
+  background: #fff;
+  width: 90%;
+  max-width: 600px;
+  padding: 1.5rem;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.shingle-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.shingle-option {
+  text-align: center;
+  border: 1px solid #ebebeb;
+  border-radius: 6px;
+  padding: 1rem;
+  transition: box-shadow 0.3s ease;
+}
+.shingle-option:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.shingle-img {
+  max-width: 100%;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+/****************************************
+* MEDIA QUERIES: Responsiveness
+****************************************/
+@media (max-width: 768px) {
+  .portal-header {
+    padding: 1rem;
+    flex-wrap: nowrap;
+  }
+  .portal-header-right .logout-link {
+    gap: 0.25rem;
+    font-size: 0.9rem;
+  }
+  .portal-section {
+    padding: 0px;
+    padding-top: 16px;
+  }
+  .portal-container {
+    max-width: 95%;
+    padding: 1rem;
+  }
+  .portal-welcome h1 {
+    font-size: 1.5rem;
+  }
+  .progress-section h3 {
+    font-size: 1.2rem;
+  }
+  .shingle-options {
+    grid-template-columns: 1fr;
+  }
+  .doc-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .doc-card-actions {
+    align-items: flex-start;
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .portal-header {
+    padding: 0.75rem;
+  }
+  /* Hide the logout text, show only icon */
+  .portal-header-right .logout-link span {
+    display: none;
+  }
+  .portal-header-right .logout-link i {
+    font-size: 1.3rem;
+  }
+  .portal-container {
+    padding: 1rem;
+  }
+  .package-card {
+    padding: 1rem;
+  }
+  .package-card h2 {
+    font-size: 1.2rem;
+  }
+  .portal-welcome h1 {
+    font-size: 1.4rem;
+  }
+  .progress-section h3 {
+    font-size: 1.1rem;
+  }
+}

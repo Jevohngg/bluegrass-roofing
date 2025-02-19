@@ -1,24 +1,231 @@
-
-extends ../layouts/mainLayout
+extends ../layouts/portalLayout
 
 block pageStyles
-  // Optional: Add a custom CSS file for styling
-  // link(rel="stylesheet", href="/css/portal.css")
+  link(rel="stylesheet" href="/css/portal.css")
 
 block content
   section.portal-section
     .portal-container
-      h1 Hello #{userName}!
+      // ---------- WELCOME -------------
+      .portal-welcome
+        h1 Welcome, #{userName}!
+        p.portal-intro 
+          | This is your personal client portal. Below are actions you can complete now 
+          | to speed up the process while you wait for us to handle the rest.
 
+      // ---------- PACKAGE INFO CARD -------------
       if packageName
-        p You have requested our "#{packageName}" package.
+        // Enhanced container for "Request Received"
+        .portal-action-card.package-confirmation
+          h2 Package: #{packageName}
+          .package-confirmation-content
+            i.fas.fa-check-circle.package-check-icon
+            h3 Request Received!
+            p 
+              | We have received your package request and will reach out shortly with 
+              | more information and next steps.
       else
-        p You haven't selected a package yet.
+        .portal-action-card
+          h2 No Package Selected
+          p 
+            | You haven’t chosen a package yet.
 
-      // Progress indicator
-      .progress-indicator
-        h3 Status: We have received your request
-        p Someone will reach out to you shortly regarding your request.
+      // ============ 1) UPLOAD CLAIM CONTAINER ============
+      .portal-action-card
+        h3 Upload Insurance Claim (Optional)
+        p.subtext 
+          | If you already have a claim document from your insurance company, 
+          | upload it here so we can expedite processing. If not, feel free to skip.
 
-      // Additional info or actions
-      p Need to update your account details or check on your project? More features coming soon!
+        // If user has previously uploaded claims (array) or the old single URL
+        if (user.claimUploadUrls && user.claimUploadUrls.length) || user.claimUploadUrl
+          // Show success box plus all uploaded files
+          .action-state-success
+            p Claim(s) Uploaded Successfully.
+
+          // Show each file from claimUploadUrls array, if it exists
+          if user.claimUploadUrls && user.claimUploadUrls.length
+            .uploaded-files
+              each fileUrl in user.claimUploadUrls
+                .uploaded-file
+                  i.fas.fa-file-alt
+                  a.file-link(href=fileUrl target="_blank")= fileUrl
+          else if user.claimUploadUrl
+            // Fallback for older single-file scenario
+            .uploaded-files
+              .uploaded-file
+                i.fas.fa-file-alt
+                a.file-link(href=user.claimUploadUrl target="_blank")= user.claimUploadUrl
+
+          // Button to upload more files
+          button.btn.btn-primary(type="button" id="uploadMoreBtn") 
+            i.fas.fa-upload
+            | Upload More
+        else
+          // No uploads yet => show the drag-and-drop container
+          .upload-claim-container
+            .upload-dropzone#claimDropzone
+              p Drop or click to select file(s) for upload
+              input(type="file" id="claimFilesInput" name="claimFiles" accept=".pdf,.jpg,.png,.doc,.docx" multiple hidden)
+
+          // Progress area (hidden by default)
+          .upload-progress#uploadProgress(style="display:none;")
+            .progress-bar#progressBar
+
+          // Container to show "Attached" state
+          #attachedFilesContainer
+            h4 Attached File(s):
+            ul#attachedFilesList
+            button.btn.btn-secondary#removeFileBtn(type="button")
+              i.fas.fa-times
+              | Remove File(s)
+
+          // Submit button (disabled until file is attached)
+          button.btn.btn-primary(type="button" id="submitFilesBtn")
+            i.fas.fa-upload
+            | Submit File(s)
+
+        // Fallback form for non-JS or older browsers – hidden by default
+        form#fallbackClaimForm(action="/portal/upload-claim" method="POST" enctype="multipart/form-data" style="display:none;")
+          input#fallbackClaimFile(type="file" name="claimFile" accept=".pdf,.jpg,.png,.doc,.docx")
+          button(type="submit") Upload
+
+      // ============ 2) SIGN CONTRACTS CONTAINER ============
+      .portal-action-card
+        h3 Sign Required Documents (Optional)
+        p.subtext 
+          | Completing these contracts now can speed up our ability to work on your behalf.
+      
+        if user.documents.aob.signed
+          // If AOB is signed, we skip ACI & LOI per original logic
+          .doc-list
+            .doc-card.signed
+              .doc-card-content
+                h4 Assignment of Benefits (AOB)
+                p 
+                  | You've already signed the Assignment of Benefits. 
+                  | This allows us to file & manage your claim directly with your 
+                  | insurance company, with payments sent to us.
+                p 
+                  | Signed at #{user.documents.aob.signedAt}.
+              .doc-card-actions
+                .doc-status-text
+                  i.fas.fa-check-circle
+                  | Signed
+      
+          .action-state-success
+            p 
+              | AOB is signed. No further documents are required.
+      
+        else
+          // If AOB isn't signed yet, show it FIRST
+          .doc-list
+            // --- AOB DOCUMENT FIRST ---
+            .doc-card(class=(user.documents.aob.signed ? 'signed' : ''))
+              .doc-card-content
+                h4 Assignment of Benefits (AOB)
+                p 
+                  | This is the main document that allows us to file 
+                  | and manage your claim directly with your insurance company, 
+                  | with payments sent to us. 
+                p 
+                  strong Note:
+                  |  Signing AOB means you don’t have to sign ACI or LOI below 
+                  | (these become unnecessary once AOB is signed).
+              .doc-card-actions
+                if user.documents.aob.signed
+                  .doc-status-text
+                    i.fas.fa-check-circle
+                    | Signed
+                else
+                  a.btn.btn-primary(href="/portal/sign-doc?docType=aob")
+                    | Sign AOB
+      
+            // Divider line
+            hr
+      
+            // --- ACI DOCUMENT ---
+            .doc-card(class=(user.documents.aci.signed ? 'signed' : ''))
+              .doc-card-content
+                h4 Authorization to Contact Insurer (ACI)
+                if user.documents.aci.signed
+                  p 
+                    | You have signed ACI. This is required for our price guarantee, 
+                    | enabling direct communication with your insurance company.
+                  p 
+                    | Signed at #{user.documents.aci.signedAt}.
+                else
+                  p 
+                    | Required for our price guarantee, enabling direct communication 
+                    | with your insurance company.
+              .doc-card-actions
+                if user.documents.aci.signed
+                  .doc-status-text
+                    i.fas.fa-check-circle
+                    | Signed
+                else
+                  a.btn.btn-primary(href="/portal/sign-doc?docType=aci")
+                    | Sign ACI
+      
+            // --- LOI DOCUMENT ---
+            .doc-card(class=(user.documents.loi.signed ? 'signed' : ''))
+              .doc-card-content
+                h4 Letter of Intent (LOI)
+                if user.documents.loi.signed
+                  p 
+                    | You've signed the LOI, which enables direct insurance 
+                    | company communication about AOB, while you maintain control.
+                  p 
+                    | Signed at #{user.documents.loi.signedAt}.
+                else
+                  p 
+                    | Enables direct insurance company communication about AOB, 
+                    | while you maintain control of the claim process.
+              .doc-card-actions
+                if user.documents.loi.signed
+                  .doc-status-text
+                    i.fas.fa-check-circle
+                    | Signed
+                else
+                  a.btn.btn-primary(href="/portal/sign-doc?docType=loi")
+                    | Sign LOI
+      
+
+
+      // ============ 3) CHOOSE SHINGLE CONTAINER ============
+      .portal-action-card
+        h3 Choose a Shingle (Optional)
+        p.subtext
+          | We offer a variety of shingle options. Please choose one below.
+
+        if user.shingleChoice.name
+          .action-state-success
+            p 
+              | You selected: "#{user.shingleChoice.name}"
+          img.shingle-image(src=user.shingleChoice.imageUrl alt=user.shingleChoice.name)
+          p 
+            | If you change your mind, contact us to update your selection.
+        else
+          button.btn.btn-primary#chooseShingleBtn
+            i.fas.fa-cubes
+            | Select Shingle
+
+      // SHINGLE MODAL
+      .shingle-modal#shingleModal(style="display:none;")
+        .shingle-modal-content
+          h3 Pick Your Shingle
+          p Select from the following options:
+          .shingle-options
+            each item in shingles
+              .shingle-option
+                img.shingle-img(src=item.imageUrl alt=item.name)
+                p= item.name
+                form(action="/portal/select-shingle" method="POST")
+                  input(type="hidden" name="shingleName" value=item.name)
+                  input(type="hidden" name="shingleImageUrl" value=item.imageUrl)
+                  button.btn.btn-primary(type="submit") Select
+        button.btn.btn-secondary#closeShingleModal Cancel
+
+block pageScripts
+  script(src="/js/alert.js")
+  script(src="/js/portal.js")
