@@ -1,6 +1,7 @@
 extends ../layouts/portalLayout
 
 block pageStyles
+  link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css")
   link(rel="stylesheet" href="/css/portal.css")
 
 block content
@@ -31,68 +32,54 @@ block content
             | You haven’t chosen a package yet.
 
       // ============ 1) UPLOAD CLAIM CONTAINER ============
-      .portal-action-card
-        h3 Upload Insurance Claim (Optional)
+      .portal-action-card(data-upload-claim) 
+        h3 Upload Insurance Claim
         p.subtext 
           | If you already have a claim document from your insurance company, 
           | upload it here so we can expedite processing. If not, feel free to skip.
 
-        // If user has previously uploaded claims (array) or the old single URL
-        if (user.claimUploadUrls && user.claimUploadUrls.length) || user.claimUploadUrl
-          // Show success box plus all uploaded files
-          .action-state-success
-            p Claim(s) Uploaded Successfully.
-
-          // Show each file from claimUploadUrls array, if it exists
-          if user.claimUploadUrls && user.claimUploadUrls.length
-            .uploaded-files
-              each fileUrl in user.claimUploadUrls
-                .uploaded-file
-                  i.fas.fa-file-alt
-                  a.file-link(href=fileUrl target="_blank")= fileUrl
-          else if user.claimUploadUrl
-            // Fallback for older single-file scenario
-            .uploaded-files
-              .uploaded-file
-                i.fas.fa-file-alt
-                a.file-link(href=user.claimUploadUrl target="_blank")= user.claimUploadUrl
-
-          // Button to upload more files
-          button.btn.btn-primary(type="button" id="uploadMoreBtn") 
-            i.fas.fa-upload
-            | Upload More
-        else
-          // No uploads yet => show the drag-and-drop container
+        if !user.claimUploadUrls || !user.claimUploadUrls.length
+          // Empty state
           .upload-claim-container
             .upload-dropzone#claimDropzone
               p Drop or click to select file(s) for upload
               input(type="file" id="claimFilesInput" name="claimFiles" accept=".pdf,.jpg,.png,.doc,.docx" multiple hidden)
 
-          // Progress area (hidden by default)
-          .upload-progress#uploadProgress(style="display:none;")
-            .progress-bar#progressBar
+            // Progress area (hidden by default)
+            .upload-progress#uploadProgress(style="display:none;")
+              .progress-bar#progressBar
 
-          // Container to show "Attached" state
-          #attachedFilesContainer
-            h4 Attached File(s):
-            ul#attachedFilesList
-            button.btn.btn-secondary#removeFileBtn(type="button")
-              i.fas.fa-times
-              | Remove File(s)
+            // Container to show "Attached" state (hidden by default, managed by JS)
+            #attachedFilesContainer
+              // Thumbnails will be dynamically added by JS
 
-          // Submit button (disabled until file is attached)
-          button.btn.btn-primary(type="button" id="submitFilesBtn")
+            // Submit button (disabled until file is attached)
+            button.btn.btn-primary.btn-primary-disabled(type="button" id="submitFilesBtn" disabled)
+              i.fas.fa-upload
+              | Submit File(s)
+
+          // Fallback form for non-JS or older browsers – hidden by default
+          form#fallbackClaimForm(action="/portal/upload-claim" method="POST" enctype="multipart/form-data" style="display:none;")
+            input#fallbackClaimFile(type="file" name="claimFile" accept=".pdf,.jpg,.png,.doc,.docx")
+            button(type="submit") Upload
+        else
+          // Uploaded state
+          .action-state-success
+            p Claim(s) Uploaded Successfully.
+
+          .uploaded-files-grid
+            each fileUrl in user.claimUploadUrls
+              .uploaded-file-preview(data-url=fileUrl)
+                img(src=fileUrl alt="Preview of uploaded claim" loading="lazy")
+                button.remove-preview-btn(type="button" aria-label=`Remove file at ${fileUrl}`) ×
+
+          button.btn.btn-primary(type="button" id="uploadMoreBtn") 
             i.fas.fa-upload
-            | Submit File(s)
-
-        // Fallback form for non-JS or older browsers – hidden by default
-        form#fallbackClaimForm(action="/portal/upload-claim" method="POST" enctype="multipart/form-data" style="display:none;")
-          input#fallbackClaimFile(type="file" name="claimFile" accept=".pdf,.jpg,.png,.doc,.docx")
-          button(type="submit") Upload
+            | Upload More
 
       // ============ 2) SIGN CONTRACTS CONTAINER ============
       .portal-action-card
-        h3 Sign Required Documents (Optional)
+        h3 Sign Required Documents
         p.subtext 
           | Completing these contracts now can speed up our ability to work on your behalf.
       
@@ -189,12 +176,10 @@ block content
                 else
                   a.btn.btn-primary(href="/portal/sign-doc?docType=loi")
                     | Sign LOI
-      
-
 
       // ============ 3) CHOOSE SHINGLE CONTAINER ============
       .portal-action-card
-        h3 Choose a Shingle (Optional)
+        h3 Choose a Shingle
         p.subtext
           | We offer a variety of shingle options. Please choose one below.
 
@@ -226,6 +211,22 @@ block content
                   button.btn.btn-primary(type="submit") Select
         button.btn.btn-secondary#closeShingleModal Cancel
 
+  // Bootstrap Delete Confirmation Modal
+  .modal.fade#confirmDeleteModal(tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true")
+    .modal-dialog(role="document")
+      .modal-content
+        .modal-header
+          h5.modal-title#confirmDeleteModalLabel Confirm Deletion
+          button(type="button" class="close" data-dismiss="modal" aria-label="Close")
+            span(aria-hidden="true") ×
+        .modal-body
+          p Are you sure you want to delete this file?
+        .modal-footer
+          button(type="button" class="btn btn-secondary" data-dismiss="modal") No
+          button(type="button" class="btn btn-primary" id="confirmDeleteYes") Yes
+
 block pageScripts
+  script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+  script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js")
   script(src="/js/alert.js")
   script(src="/js/portal.js")

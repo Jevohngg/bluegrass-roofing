@@ -1,8 +1,13 @@
-// routes/portal.js
 const express = require('express');
 const router = express.Router();
 const { uploadClaim } = require('../utils/aws');
 const User = require('../models/User');
+const { S3 } = require('aws-sdk');
+const s3 = new S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION
+});
 
 // Middleware: ensure user is logged in
 function requireLogin(req, res, next) {
@@ -18,17 +23,14 @@ router.get('/portal', requireLogin, async (req, res) => {
     const user = await User.findById(req.session.user.id);
     if (!user) return res.redirect('/login');
 
-    // For success/error flash messages
     const { success, error } = req.query;
 
-    // Define an array of shingle objects
     const shingles = [
       { name: 'GAF Timberline HDZ Charcoal', imageUrl: '/images/shingles/charcoal.jpg' },
       { name: 'CertainTeed Landmark Moire Black', imageUrl: '/images/shingles/moire-black.jpg' },
       { name: 'Owens Corning Duration Estate Gray', imageUrl: '/images/shingles/estate-gray.jpg' }
     ];
 
-    // Render portal.pug, passing user & shingles
     res.render('auth/portal', {
       currentPage: 'portal',
       userName: user.firstName,
@@ -44,27 +46,19 @@ router.get('/portal', requireLogin, async (req, res) => {
   }
 });
 
-// 1) POST /portal/upload-claim
-// Switch to .array() for multiple files; up to 10 for demonstration
+// POST /portal/upload-claim
 router.post('/portal/upload-claim', requireLogin, uploadClaim.array('claimFiles', 10), async (req, res) => {
   try {
     const user = await User.findById(req.session.user.id);
-    if (!user) return res.redirect('/login');
+    if (!user) return res.status(401).json({ success: false, message: 'Unauthorized' });
 
-    // Fallback for old single-file field name
-    // (If no 'claimFiles' array was uploaded, check 'claimFile')
     if ((!req.files || !req.files.length) && req.file) {
       req.files = [req.file];
     }
 
-    // If not an AJAX request, handle old single-file fallback
     if (!req.xhr) {
-      // Original single-file logic:
       if (req.files && req.files.length > 0 && req.files[0].location) {
-        // Store at least the first file in old single slot
         user.claimUploadUrl = req.files[0].location;
-
-        // Also store in array
         user.claimUploadUrls = user.claimUploadUrls || [];
         user.claimUploadUrls.push(req.files[0].location);
         await user.save();
@@ -73,12 +67,10 @@ router.post('/portal/upload-claim', requireLogin, uploadClaim.array('claimFiles'
         return res.redirect('/portal?error=claimNotUploaded');
       }
     } else {
-      // New multi-file AJAX logic
       if (req.files && req.files.length > 0) {
         user.claimUploadUrls = user.claimUploadUrls || [];
         req.files.forEach((file) => {
           user.claimUploadUrls.push(file.location);
-          // Keep single-file URL in sync with the first file
           if (!user.claimUploadUrl) {
             user.claimUploadUrl = file.location;
           }
@@ -91,7 +83,6 @@ router.post('/portal/upload-claim', requireLogin, uploadClaim.array('claimFiles'
     }
   } catch (err) {
     console.error('Error uploading claim:', err);
-    // For AJAX requests:
     if (req.xhr) {
       return res.status(500).json({ success: false, message: 'Upload Error' });
     }
@@ -99,8 +90,60 @@ router.post('/portal/upload-claim', requireLogin, uploadClaim.array('claimFiles'
   }
 });
 
-// 2) POST /portal/sign-document
-// Body: { docType: 'aob'|'aci'|'loi' }
+// POST /portal/delete-claim
+router.post('/portal/delete-claim', requireLogin, async (req, res) => {
+  try {
+    const user = await User.findById(req.session.user.id);
+    if (!user) return res.status(401).json({ success: false, message: 'Unauthorized' });
+
+    const { fileUrl } = req.body;
+    if (!fileUrl) {
+      return res.status(400).json({ success: false, message: 'No file URL provided' });
+    }
+
+    if (!user.claimUploadUrls || !user.claimUploadUrls.includes(fileUrl)) {
+      return res.status(404).json({ success: false, message: 'File not found in user records' });
+    }
+
+    // Log the fileUrl for debugging
+    console.log('Attempting to delete file with URL:', fileUrl);
+
+    // Extract the S3 Key from the fileUrl
+    let key;
+    try {
+      const url = new URL(fileUrl);
+      key = decodeURIComponent(url.pathname.substring(1)); // Remove leading '/' and decode
+      console.log('Extracted S3 Key:', key);
+    } catch (err) {
+      console.error('Error parsing fileUrl:', err);
+      return res.status(400).json({ success: false, message: 'Invalid file URL format' });
+    }
+
+    if (!key) {
+      return res.status(400).json({ success: false, message: 'Unable to extract S3 Key from URL' });
+    }
+
+    // Remove from user's schema
+    user.claimUploadUrls = user.claimUploadUrls.filter(url => url !== fileUrl);
+    if (user.claimUploadUrl === fileUrl) {
+      user.claimUploadUrl = user.claimUploadUrls[0] || '';
+    }
+
+    // Delete from S3
+    await s3.deleteObject({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: key
+    }).promise();
+
+    await user.save();
+    return res.status(200).json({ success: true, message: 'File deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting claim:', err);
+    return res.status(500).json({ success: false, message: 'Delete Error' });
+  }
+});
+
+// POST /portal/sign-document
 router.post('/portal/sign-document', requireLogin, async (req, res) => {
   try {
     const { docType } = req.body;
@@ -108,11 +151,9 @@ router.post('/portal/sign-document', requireLogin, async (req, res) => {
     if (!user) return res.redirect('/login');
 
     if (['aob', 'aci', 'loi'].includes(docType)) {
-      // If we want a simple "click to sign," do it here:
       user.documents[docType].signed = true;
       user.documents[docType].signedAt = new Date();
 
-      // If AOB is signed, no need for ACI/LOI
       if (docType === 'aob') {
         user.documents.aci.signed = false;
         user.documents.aci.signedAt = null;
@@ -131,7 +172,7 @@ router.post('/portal/sign-document', requireLogin, async (req, res) => {
   }
 });
 
-// 3) POST /portal/select-shingle
+// POST /portal/select-shingle
 router.post('/portal/select-shingle', requireLogin, async (req, res) => {
   try {
     const { shingleName, shingleImageUrl } = req.body;
@@ -152,8 +193,8 @@ router.post('/portal/select-shingle', requireLogin, async (req, res) => {
 });
 
 /**
- * 4) GET /portal/sign-doc?docType=aob|aci|loi
- *    Display a modal/page to capture actual signature from user
+ * GET /portal/sign-doc?docType=aob|aci|loi
+ * Display a modal/page to capture actual signature from user
  */
 router.get('/portal/sign-doc', requireLogin, async (req, res) => {
   const { docType } = req.query;
@@ -161,8 +202,6 @@ router.get('/portal/sign-doc', requireLogin, async (req, res) => {
     return res.redirect('/portal?error=invalidDocType');
   }
   try {
-    // For demonstration, let's show a simple doc content
-    // In production, you might load a template from DB or file
     let docTitle = '';
     let docContent = '';
     switch (docType) {
@@ -180,7 +219,6 @@ router.get('/portal/sign-doc', requireLogin, async (req, res) => {
         break;
     }
 
-    // Render a separate doc-sign page (docSign.pug) with signature pad
     res.render('auth/docSign', {
       docType,
       docTitle,
@@ -193,13 +231,12 @@ router.get('/portal/sign-doc', requireLogin, async (req, res) => {
 });
 
 /**
- * 5) POST /portal/sign-doc
- *    Actually save the signature (base64) to user.documents[docType]
- *    This is for a "real" e-sign approach with a signature pad
+ * POST /portal/sign-doc
+ * Actually save the signature (base64) to user.documents[docType]
  */
 router.post('/portal/sign-doc', requireLogin, async (req, res) => {
   try {
-    const { docType, signatureData } = req.body; // signatureData is base64
+    const { docType, signatureData } = req.body;
     const user = await User.findById(req.session.user.id);
     if (!user) return res.redirect('/login');
 
@@ -209,16 +246,15 @@ router.post('/portal/sign-doc', requireLogin, async (req, res) => {
 
     user.documents[docType].signed = true;
     user.documents[docType].signedAt = new Date();
-    user.documents[docType].signatureData = signatureData;
+    user.documents[docType].docUrl = signatureData; // Store signature data as URL or base64
 
-    // If AOB is signed, reset others
     if (docType === 'aob') {
       user.documents.aci.signed = false;
       user.documents.aci.signedAt = null;
-      user.documents.aci.signatureData = undefined;
+      user.documents.aci.docUrl = undefined;
       user.documents.loi.signed = false;
       user.documents.loi.signedAt = null;
-      user.documents.loi.signatureData = undefined;
+      user.documents.loi.docUrl = undefined;
     }
 
     await user.save();

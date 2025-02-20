@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #fff; /* or any color you prefer */
+  background-color: #fff;
   padding: 1rem 2rem;
   border-bottom: 1px solid #ebebeb;
 }
@@ -28,7 +28,7 @@
 }
 
 .portal-header-right .logout-link:hover {
-  color: #e18263; /* your accent color */
+  color: #e18263;
 }
 
 .portal-header-right .logout-link i {
@@ -45,7 +45,7 @@
 .portal-container {
   max-width: 1000px;
   margin: 0 auto;
-  background-color: #fff; 
+  background-color: #fff;
   border-radius: 8px;
   padding: 2rem;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -189,6 +189,34 @@
 .upload-claim-container {
   margin-bottom: 1rem;
 }
+button:active{
+  background-color: #c4634b !important;
+}
+button:focus{
+  background-color: #c4634b !important;
+}
+#uploadMoreBtn{
+  font-size: 14px;
+}
+#submitFilesBtn{
+  font-size: 14px;
+  margin-bottom:16px;
+}
+p{
+  margin-bottom: 0px !important;
+}
+#uploadMoreBtn{
+  margin-bottom: 16px;
+}
+.portal-action-card h2{
+  font-size: 20px !important;
+}
+.uploaded-files-grid{
+  width: 100%;
+}
+.subtext{
+  margin-bottom: 16px !important;
+}
 .upload-dropzone {
   border: 2px dashed #ccc;
   border-radius: 6px;
@@ -199,8 +227,11 @@
   color: #777;
   font-size: 0.95rem;
 }
+#claimDropzone{
+  margin-bottom: 16px;
+}
 .upload-dropzone:hover {
-  border: 2px dashed #e28264;
+  border: 2px dashed #e18263;
 }
 .upload-dropzone p {
   margin: 0;
@@ -227,42 +258,157 @@
   border-radius: 6px;
   transition: width 0.3s ease;
 }
-/* Attached files container */
-#attachedFilesContainer {
-  display: none;
-  margin: 1rem 0;
-  padding: 1rem;
-  background-color: #f6f6f6;
-  border: 1px solid #e0e0e0;
+
+/* Attached/Uploaded Files Preview */
+.uploaded-files-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.uploaded-file-preview {
+  position: relative;
+  border: 2px solid #ccc;
   border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
 }
-#attachedFilesContainer h4 {
-  margin-top: 0;
+.uploaded-file-preview:hover {
+  border-color: #e18263;
 }
-#attachedFilesList {
-  margin-bottom: 0.75rem;
-  padding-left: 1.25rem;
+.uploaded-file-preview img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  display: block;
 }
-#attachedFilesList li {
-  margin-bottom: 0.5rem;
-  list-style: disc;
+.remove-preview-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #ff4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-#submitFilesBtn {
-  box-shadow: none;
+.remove-preview-btn:hover {
+  background: rgba(255, 68, 68, 0.8);
+  color: #fff;
+}
+
+/* Fullscreen Preview Modal */
+.file-preview-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.9);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+.file-preview-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+}
+#modalPreviewImage {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.close-preview {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 5px;
+}
+.close-preview:hover {
+  color: #e18263;
+}
+
+/* Confirmation Delete Modal */
+.confirm-delete-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+.confirm-delete-content {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+}
+.confirm-delete-content h3 {
+  margin-bottom: 1rem;
+  color: #333;
+}
+.confirm-delete-content p {
+  margin-bottom: 1.5rem;
+  color: #555;
+}
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+/* Buttons */
+.btn {
+  padding: 0.75rem 1.25rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
   border: none;
 }
-#submitFilesBtn:disabled {
-  background-color: rgba(210, 210, 210, 0.3) !important;
-  color: rgba(16, 16, 16, 0.3) !important;
+.btn-primary {
+  background-color: #e18263;
+  color: #fff;
 }
-#removeFileBtn {
-  background-color: transparent;
-  border: none;
-  color: red;
+.btn-primary:hover {
+  background-color: #d66b4f;
 }
-#removeFileBtn:hover {
-  color: red !important;
-  background-color: rgba(128, 128, 128, 0.171);
+.btn-primary-disabled {
+  background-color: #f0f0f0;
+  color: #999;
+  border: 1px solid #ccc;
+  cursor: not-allowed;
+}
+.btn-secondary {
+  background-color: #fff;
+  color: #e18263;
+  border: 1px solid #e18263;
+}
+.btn-secondary:hover {
+  background-color: #e18263;
+  color: #fff;
 }
 
 /****************************************
@@ -298,6 +444,9 @@
 .doc-card-content {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 .doc-card-content h4 {
   margin: 0 0 0.25rem 0;
@@ -319,7 +468,7 @@
   min-width: 120px;
 }
 .doc-card-actions .btn {
-  margin: 0; /* override default button margin if any */
+  margin: 0;
 }
 .doc-card-actions i.fa-check-circle {
   color: #28a745;
@@ -333,42 +482,30 @@
   gap: 0.25rem;
 }
 
-hr{
+hr {
   border: 1px solid #eeeeee;
 }
 
-  
-  .doc-card-content{
-    display: flex
-    ;
-        flex-direction: column;
-        gap: 14px;
-  }
+.signature-actions .btn-secondary {
+  border: none;
+}
 
-  .signature-actions .btn-secondary{
-    border: none;
-  }
+.signature-actions .btn-light {
+  margin-left: auto;
+}
 
-  .signature-actions .btn-light{
-    margin-left: auto;
-  }
+#submitSignatureBtn:disabled {
+  opacity: 50%;
+}
 
-  #submitSignatureBtn:disabled{
-    opacity: 50%;
+.doc-card-actions a {
+  font-size: 14px;
+}
 
-  }
-
-  .doc-card-actions a{
-    font-size: 14px;
-  }
-
-  #clearSignatureBtn:hover{
-    color: #e18263 !important;
-    background-color: rgb(234, 234, 234);
-
-  }
-
-
+#clearSignatureBtn:hover {
+  color: #e18263 !important;
+  background-color: rgb(234, 234, 234);
+}
 
 /****************************************
 * Shingle Modal
@@ -393,6 +530,10 @@ hr{
   border-radius: 8px;
   position: relative;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+#chooseShingleBtn{
+  display: flex;
+  font-size: 14px;
 }
 .shingle-options {
   display: grid;
@@ -453,6 +594,12 @@ hr{
     align-items: flex-start;
     margin-top: 0.5rem;
   }
+  .uploaded-files-grid {
+    grid-template-columns: 1fr;
+  }
+  .confirm-delete-modal .confirm-delete-content {
+    max-width: 80%;
+  }
 }
 
 @media (max-width: 480px) {
@@ -481,4 +628,61 @@ hr{
   .progress-section h3 {
     font-size: 1.1rem;
   }
+  .confirm-delete-modal .confirm-delete-content {
+    padding: 1rem;
+  }
+}
+
+
+/* Existing .uploaded-file-preview styles */
+.uploaded-file-preview {
+  position: relative;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.uploaded-file-preview img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  display: block;
+}
+
+/* New styles for document previews */
+.uploaded-file-preview.document-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #f7f7f7;
+  height: 100px; /* Match image preview height */
+}
+
+.uploaded-file-preview.document-preview .file-icon {
+  font-size: 32px;
+  color: #555;
+  margin-right: 10px;
+}
+
+.uploaded-file-preview.document-preview .file-name {
+  flex-grow: 1;
+  font-size: 14px;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.uploaded-file-preview.document-preview .remove-preview-btn {
+  position: static; /* Override absolute positioning for document previews */
+  margin-left: 10px;
+}
+
+.remove-preview-btn{
+  min-width: 20px;
+  min-height: 20px;
+
 }
