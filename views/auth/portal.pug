@@ -65,12 +65,18 @@ block content
         else
           // Uploaded state
           .action-state-success
-            p Claim(s) Uploaded Successfully.
+            p Claim file(s) Uploaded Successfully.
 
           .uploaded-files-grid
             each fileUrl in user.claimUploadUrls
               .uploaded-file-preview(data-url=fileUrl)
-                img(src=fileUrl alt="Preview of uploaded claim" loading="lazy")
+                if /\.(jpg|jpeg|png|gif)$/i.test(fileUrl)
+                  img(src=fileUrl alt="Preview of uploaded claim" loading="lazy")
+                else
+                  // Document preview
+                  .file-icon
+                    i.fas.fa-file
+                  .file-name= fileUrl.split('/').pop()
                 button.remove-preview-btn(type="button" aria-label=`Remove file at ${fileUrl}`) ×
 
           button.btn.btn-primary(type="button" id="uploadMoreBtn") 
@@ -184,32 +190,22 @@ block content
           | We offer a variety of shingle options. Please choose one below.
 
         if user.shingleChoice.name
+          // Show selected state
           .action-state-success
             p 
               | You selected: "#{user.shingleChoice.name}"
-          img.shingle-image(src=user.shingleChoice.imageUrl alt=user.shingleChoice.name)
-          p 
-            | If you change your mind, contact us to update your selection.
+          .container
+            img.shingle-image(src=user.shingleChoice.imageUrl alt=user.shingleChoice.name)
+
+            // Reselection button
+            button.btn.btn-secondary(type="button" id="changeShingleBtn")
+              i.fas.fa-edit
+              | Change Shingle
         else
+          // Prompt to select
           button.btn.btn-primary#chooseShingleBtn
             i.fas.fa-cubes
             | Select Shingle
-
-      // SHINGLE MODAL
-      .shingle-modal#shingleModal(style="display:none;")
-        .shingle-modal-content
-          h3 Pick Your Shingle
-          p Select from the following options:
-          .shingle-options
-            each item in shingles
-              .shingle-option
-                img.shingle-img(src=item.imageUrl alt=item.name)
-                p= item.name
-                form(action="/portal/select-shingle" method="POST")
-                  input(type="hidden" name="shingleName" value=item.name)
-                  input(type="hidden" name="shingleImageUrl" value=item.imageUrl)
-                  button.btn.btn-primary(type="submit") Select
-        button.btn.btn-secondary#closeShingleModal Cancel
 
   // Bootstrap Delete Confirmation Modal
   .modal.fade#confirmDeleteModal(tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true")
@@ -217,13 +213,39 @@ block content
       .modal-content
         .modal-header
           h5.modal-title#confirmDeleteModalLabel Confirm Deletion
-          button(type="button" class="close" data-dismiss="modal" aria-label="Close")
-            span(aria-hidden="true") ×
+          i.fas.fa-times#confirmDeleteModalCloseIcon.close-icon(aria-hidden="true")
         .modal-body
           p Are you sure you want to delete this file?
         .modal-footer
           button(type="button" class="btn btn-secondary" data-dismiss="modal") No
           button(type="button" class="btn btn-primary" id="confirmDeleteYes") Yes
+
+  // ====== UPDATED SHINGLE MODAL WITH CUSTOM CLOSE ICON ======
+  .modal.fade#shingleModal(tabindex="-1" role="dialog" aria-labelledby="shingleModalTitle" aria-hidden="true")
+    .modal-dialog.modal-dialog-scrollable(role="document")
+      .modal-content
+        .modal-header
+          h5.modal-title#shingleModalTitle Pick Your Shingle
+          // REMOVE the default Bootstrap close button...
+          // button(type="button" class="close" data-dismiss="modal" aria-label="Close")
+          //   span(aria-hidden="true") ×
+
+          // ...REPLACE IT WITH A FA TIMES ICON
+          i.fas.fa-times#shingleModalCloseIcon.close-icon(aria-hidden="true")
+        .modal-body
+          p Select from the following options:
+          .shingle-options
+            each item in shingles
+              .shingle-option
+                .shingle-image-container
+                  img.shingle-img(src=item.imageUrl alt=item.name)
+                p= item.name
+                form(action="/portal/select-shingle" method="POST")
+                  input(type="hidden" name="shingleName" value=item.name)
+                  input(type="hidden" name="shingleImageUrl" value=item.imageUrl)
+                  button.btn.btn-primary(type="submit") Select
+        .modal-footer
+          button(type="button" class="btn btn-secondary" data-dismiss="modal") Cancel
 
 block pageScripts
   script(src="https://code.jquery.com/jquery-3.6.0.min.js")

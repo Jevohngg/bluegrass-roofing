@@ -376,6 +376,9 @@
   ---------------------------------------------*/
 
 @media (max-width: 650px){
+  .site-header{
+    padding: 16px !important;
+  }
   .cta {
     display: flex
 ;

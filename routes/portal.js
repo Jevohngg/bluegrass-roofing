@@ -26,9 +26,24 @@ router.get('/portal', requireLogin, async (req, res) => {
     const { success, error } = req.query;
 
     const shingles = [
-      { name: 'GAF Timberline HDZ Charcoal', imageUrl: '/images/shingles/charcoal.jpg' },
-      { name: 'CertainTeed Landmark Moire Black', imageUrl: '/images/shingles/moire-black.jpg' },
-      { name: 'Owens Corning Duration Estate Gray', imageUrl: '/images/shingles/estate-gray.jpg' }
+      { name: 'Asphalt 3-Tab', imageUrl: '/images/shingles/asphalt-3tab.jpg' },
+      { name: 'Architectural Asphalt', imageUrl: '/images/shingles/architectural-asphalt.jpg' },
+      { name: 'Luxury Asphalt', imageUrl: '/images/shingles/luxury-asphalt.jpg' },
+      { name: 'Synthetic Slate', imageUrl: '/images/shingles/synthetic-slate.jpg' },
+      { name: 'Synthetic Cedar Shake', imageUrl: '/images/shingles/synthetic-cedar.jpg' },
+      { name: 'Rubber', imageUrl: '/images/shingles/rubber.jpg' },
+      { name: 'Wood Shingle', imageUrl: '/images/shingles/wood-shingle.jpg' },
+      { name: 'Wood Shake', imageUrl: '/images/shingles/wood-shake.jpg' },
+      { name: 'Aluminum', imageUrl: '/images/shingles/aluminum.jpg' },
+      { name: 'Steel', imageUrl: '/images/shingles/steel.jpg' },
+      { name: 'Copper', imageUrl: '/images/shingles/copper.jpg' },
+      { name: 'Zinc', imageUrl: '/images/shingles/zinc.jpg' },
+      { name: 'Clay Tile', imageUrl: '/images/shingles/clay-tile.jpg' },
+      { name: 'Concrete Tile', imageUrl: '/images/shingles/concrete-tile.jpg' },
+      { name: 'Natural Slate', imageUrl: '/images/shingles/natural-slate.jpg' },
+      { name: 'Solar', imageUrl: '/images/shingles/solar.jpg' },
+      { name: 'Fiberglass', imageUrl: '/images/shingles/fiberglass.jpg' },
+      { name: 'Green Roof', imageUrl: '/images/shingles/green-roof.jpg' }
     ];
 
     res.render('auth/portal', {

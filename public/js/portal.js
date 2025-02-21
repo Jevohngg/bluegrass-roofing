@@ -1,8 +1,29 @@
+/****************************************
+ * portal.js
+ * Handles client-side logic for user portal
+ ****************************************/
+
 document.addEventListener("DOMContentLoaded", () => {
   // 1) Parse success/error from query params & show alerts
   const urlParams = new URLSearchParams(window.location.search);
   const successParam = urlParams.get('success'); // e.g. ?success=claimUploaded
   const errorParam = urlParams.get('error');     // e.g. ?error=docSignError
+
+  const modalCloseIcon = document.getElementById("shingleModalCloseIcon");
+  const modalCloseIcon2 = document.getElementById("confirmDeleteModalCloseIcon");
+
+    // === ADDED: Attach event listener to the FA times icon ===
+    if (modalCloseIcon) {
+      modalCloseIcon.addEventListener("click", () => {
+        $('#shingleModal').modal('hide');
+      });
+    }
+
+    if (modalCloseIcon2) {
+      modalCloseIcon2.addEventListener("click", () => {
+        $('#confirmDeleteModal').modal('hide');
+      });
+    }
 
   if (successParam) {
     showAlert(successParam, 'success', 5000);
@@ -11,17 +32,19 @@ document.addEventListener("DOMContentLoaded", () => {
     showAlert(errorParam, 'error', 5000);
   }
 
-  // 2) Shingle modal logic
+  // 2) Shingle modal logic (Bootstrap-based)
   const chooseBtn = document.getElementById("chooseShingleBtn");
-  const modal = document.getElementById("shingleModal");
-  const closeBtn = document.getElementById("closeShingleModal");
-
-  if (chooseBtn && modal && closeBtn) {
+  const changeBtn = document.getElementById("changeShingleBtn");
+  if (chooseBtn) {
     chooseBtn.addEventListener("click", () => {
-      modal.style.display = "flex";
+      // Show the Bootstrap modal
+      $('#shingleModal').modal('show');
     });
-    closeBtn.addEventListener("click", () => {
-      modal.style.display = "none";
+  }
+  if (changeBtn) {
+    changeBtn.addEventListener("click", () => {
+      // Also show the Bootstrap modal
+      $('#shingleModal').modal('show');
     });
   }
 

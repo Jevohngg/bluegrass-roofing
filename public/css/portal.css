@@ -16,7 +16,41 @@
 .portal-header-left .portal-logo img {
   height: 40px;
 }
+.shingle-image-container{
+  width: 180px !important;
+  height: 180px !important;
+  overflow: hidden;
+  display: flex;
+}
+.shingle-option{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
 
+.shingle-option button{
+  font-size: 14px;
+}
+.shingle-image-container img{
+  width: 100% !important;
+}
+.btn-primary{
+  background-color: #e18263 !important;
+  border: none;
+  display: flex;
+  gap: 8px;
+}
+
+.close-icon{
+  font-size: 24px;
+}
+
+
+.btn-primary:hover{
+  background-color: #c4634b !important;
+}
 .portal-header-right .logout-link {
   display: inline-flex;
   align-items: center;
@@ -162,6 +196,30 @@
   border-radius: 6px;
   margin-bottom: 1rem;
 }
+.container{
+  display: flex
+;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.shingle-image{
+  width: 200px;
+  border-radius: 4px;
+}
+
+#changeShingleBtn{
+  display: flex
+  ;
+      font-size: 14px;
+
+
+}
+
+a:hover{
+  color: black;
+}
 
 /* Package Confirmation */
 .package-confirmation {
@@ -305,124 +363,46 @@ p{
   color: #fff;
 }
 
-/* Fullscreen Preview Modal */
-.file-preview-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.9);
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-}
-.file-preview-content {
-  position: relative;
-  max-width: 90%;
-  max-height: 90%;
-}
-#modalPreviewImage {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-.close-preview {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  color: #fff;
-  font-size: 24px;
-  cursor: pointer;
-  border: none;
-  background: none;
-  padding: 5px;
-}
-.close-preview:hover {
-  color: #e18263;
-}
-
-/* Confirmation Delete Modal */
-.confirm-delete-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  z-index: 9999;
-  align-items: center;
-  justify-content: center;
-}
-.confirm-delete-content {
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  text-align: center;
-  max-width: 400px;
-  width: 90%;
-}
-.confirm-delete-content h3 {
-  margin-bottom: 1rem;
-  color: #333;
-}
-.confirm-delete-content p {
-  margin-bottom: 1.5rem;
-  color: #555;
-}
-.modal-actions {
+/* Document (non-image) previews */
+.uploaded-file-preview.document-preview {
   display: flex;
-  gap: 1rem;
-  justify-content: center;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #f7f7f7;
+  height: 100px; /* Match image preview height */
 }
-
-/* Buttons */
-.btn {
-  padding: 0.75rem 1.25rem;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  border: none;
+.uploaded-file-preview.document-preview .file-icon {
+  font-size: 32px;
+  color: #555;
+  margin-right: 10px;
 }
-.btn-primary {
-  background-color: #e18263;
-  color: #fff;
+.uploaded-file-preview.document-preview .file-name {
+  flex-grow: 1;
+  font-size: 14px;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.btn-primary:hover {
-  background-color: #d66b4f;
+.uploaded-file-preview.document-preview .remove-preview-btn {
+  position: static; /* Override absolute positioning for document previews */
+  margin-left: 10px;
 }
-.btn-primary-disabled {
-  background-color: #f0f0f0;
-  color: #999;
-  border: 1px solid #ccc;
-  cursor: not-allowed;
-}
-.btn-secondary {
-  background-color: #fff;
-  color: #e18263;
-  border: 1px solid #e18263;
-}
-.btn-secondary:hover {
-  background-color: #e18263;
-  color: #fff;
+.remove-preview-btn{
+  min-width: 20px;
+  min-height: 20px;
 }
 
 /****************************************
 * Sign Documents Container
 ****************************************/
-/* The overall container that lists AOB, ACI, LOI as separate items */
 .doc-list {
   margin-top: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
-
-/* Each doc card (AOB, ACI, LOI) */
 .doc-card {
   background-color: #fff;
   border: 1px solid #ebebeb;
@@ -435,12 +415,10 @@ p{
   gap: 1rem;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
-
 .doc-card.signed {
   background-color: #eefbee;
   border-color: #ccf6cc;
 }
-
 .doc-card-content {
   flex: 1;
   min-width: 0;
@@ -458,8 +436,6 @@ p{
   color: #555;
   font-size: 0.9rem;
 }
-
-/* The actions on the right side (Sign or Signed status) */
 .doc-card-actions {
   display: flex;
   flex-direction: column;
@@ -489,52 +465,24 @@ hr {
 .signature-actions .btn-secondary {
   border: none;
 }
-
 .signature-actions .btn-light {
   margin-left: auto;
 }
-
 #submitSignatureBtn:disabled {
   opacity: 50%;
 }
-
 .doc-card-actions a {
   font-size: 14px;
 }
-
 #clearSignatureBtn:hover {
   color: #e18263 !important;
   background-color: rgb(234, 234, 234);
 }
 
 /****************************************
-* Shingle Modal
+* Shingle Modal (Bootstrap-based)
 ****************************************/
-.shingle-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.4);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.shingle-modal-content {
-  background: #fff;
-  width: 90%;
-  max-width: 600px;
-  padding: 1.5rem;
-  border-radius: 8px;
-  position: relative;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-#chooseShingleBtn{
-  display: flex;
-  font-size: 14px;
-}
+/* We rely primarily on Bootstrap classes now. Just styling the content inside .shingle-options. */
 .shingle-options {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -631,58 +579,4 @@ hr {
   .confirm-delete-modal .confirm-delete-content {
     padding: 1rem;
   }
-}
-
-
-/* Existing .uploaded-file-preview styles */
-.uploaded-file-preview {
-  position: relative;
-  border: 2px solid #ccc;
-  border-radius: 6px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: border-color 0.3s ease;
-}
-
-.uploaded-file-preview img {
-  width: 100%;
-  height: 100px;
-  object-fit: cover;
-  display: block;
-}
-
-/* New styles for document previews */
-.uploaded-file-preview.document-preview {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px;
-  background-color: #f7f7f7;
-  height: 100px; /* Match image preview height */
-}
-
-.uploaded-file-preview.document-preview .file-icon {
-  font-size: 32px;
-  color: #555;
-  margin-right: 10px;
-}
-
-.uploaded-file-preview.document-preview .file-name {
-  flex-grow: 1;
-  font-size: 14px;
-  color: #333;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.uploaded-file-preview.document-preview .remove-preview-btn {
-  position: static; /* Override absolute positioning for document previews */
-  margin-left: 10px;
-}
-
-.remove-preview-btn{
-  min-width: 20px;
-  min-height: 20px;
-
 }
