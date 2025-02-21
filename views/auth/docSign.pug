@@ -1,9 +1,7 @@
 extends ../layouts/portalLayout
 
 block pageStyles
-  // If you prefer a separate docSign.css, you can link it here:
   link(rel="stylesheet", href="/css/portal.css")
-  // Otherwise, we embed minimal relevant CSS
   style.
     .doc-sign-container {
       border: 1px solid #ebebeb;
@@ -13,16 +11,21 @@ block pageStyles
       margin-top: 1.5rem;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
+    #signatureCanvas {
+      border: 1px solid #80808042;
+      border-radius: 8px;
+    }
     .doc-sign-container h3 {
       margin-top: 0;
       font-size: 1.3rem;
       margin-bottom: 1rem;
     }
     .doc-text {
-      margin-top: 0.5rem;
+      margin-top: -14px;
       margin-bottom: 1rem;
       color: #555;
       line-height: 1.4;
+      white-space: pre-wrap;
     }
     .signature-box {
       border: 2px dashed #ccc;
@@ -32,11 +35,10 @@ block pageStyles
       background-color: #fff;
       position: relative;
       max-width: 100%;
-      margin: 0 auto; /* center on wide screens */
+      margin: 0 auto;
     }
     .signature-box canvas {
       display: block;
-      /* Let canvas fill container, but limit max width/height */
       width: 100%;
       max-width: 400px;
       max-height: 200px;
@@ -62,8 +64,6 @@ block pageStyles
       gap: 1rem;
       margin-top: 1rem;
     }
-
-    /* MOBILE-FRIENDLY MEDIA QUERY */
     @media (max-width: 600px) {
       .signature-actions {
         flex-direction: column;
@@ -79,109 +79,86 @@ block content
   section.portal-section
     .portal-container
       h2= docTitle
-      p.doc-text= docContent
-
       .doc-sign-container
+        .doc-text !{docContent}
+
         h3 Please Sign Below to Acknowledge & Accept
 
         .signature-box
-          // Canvas with no hard-coded width/height so CSS can handle responsiveness
           canvas#signatureCanvas
 
-        // Fine print / disclaimers
         p.signature-note
           | By signing in the box above, you confirm that you have read and agreed 
           | to the full terms of this document. Your electronic signature is 
           | legally binding, and you understand that you are entering into a 
           | contract regarding insurance claim processing and roofing services.
 
-        // Optional "I agree" checkbox
         .signature-checkbox
           input#agreeCheckbox(type="checkbox")
-          label(for="agreeCheckbox") 
+          label(for="agreeCheckbox")
             | I understand and agree that my electronic signature constitutes a 
             | legally binding signature under applicable law.
 
-        // Hidden form to store the signature as base64
         form#signDocForm(action="/portal/sign-doc" method="POST")
           input(type="hidden" name="docType" value=docType)
           input#signatureData(type="hidden" name="signatureData")
 
-          // Buttons: Clear, Submit, and Cancel
           .signature-actions
             button.btn.btn-secondary(type="button" id="clearSignatureBtn") Clear Signature
             button.btn.btn-primary(type="submit" id="submitSignatureBtn") Submit Signature
             a.btn.btn-light(href="/portal") Cancel
 
 block pageScripts
-  // Load signature pad from CDN for demonstration
   script(src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js")
   script.
     const canvas = document.getElementById("signatureCanvas");
     const signaturePad = new SignaturePad(canvas);
 
-    // Buttons & Elements
     const signDocForm = document.getElementById("signDocForm");
     const clearBtn = document.getElementById("clearSignatureBtn");
     const submitBtn = document.getElementById("submitSignatureBtn");
     const agreeCheckbox = document.getElementById("agreeCheckbox");
     const signatureDataInput = document.getElementById("signatureData");
 
-    let userHasSigned = false; // Track if the user has drawn on the canvas
+    let userHasSigned = false;
 
-    // Helper: enable/disable Submit based on whether user has signed + checked the box
     function toggleSubmitDisabled() {
       submitBtn.disabled = !(agreeCheckbox.checked && userHasSigned);
     }
 
-    // Called after every stroke or clear
     function handleSignatureChange() {
       userHasSigned = !signaturePad.isEmpty();
       toggleSubmitDisabled();
     }
 
-    // Listen for signature strokes finishing
     signaturePad.addEventListener("endStroke", handleSignatureChange);
 
-    // Clear the signature on click
     clearBtn.addEventListener("click", () => {
       signaturePad.clear();
       handleSignatureChange();
     });
 
-    // Check/uncheck the box
     agreeCheckbox.addEventListener("change", toggleSubmitDisabled);
-
-    // Initially disable if user hasn't checked & hasn't signed
     toggleSubmitDisabled();
 
-    // On form submit, place the base64 data into the hidden input
     signDocForm.addEventListener("submit", (e) => {
       if (signaturePad.isEmpty()) {
         e.preventDefault();
         alert("Please provide your signature before submitting.");
         return;
       }
-      // Convert signature to base64 and store it
       signatureDataInput.value = signaturePad.toDataURL("image/png");
     });
 
-    // OPTIONAL: Resize canvas for high-DPI screens & mobile
+    // Handle high-DPI screens
     function resizeCanvas() {
-      // Adjust canvas size to fit its parent .signature-box
-      const ratio =  Math.max(window.devicePixelRatio || 1, 1);
+      const ratio = Math.max(window.devicePixelRatio || 1, 1);
       const boxWidth = canvas.offsetWidth;
       const boxHeight = canvas.offsetHeight;
-
       canvas.width = boxWidth * ratio;
       canvas.height = boxHeight * ratio;
       canvas.getContext("2d").scale(ratio, ratio);
-
-      // Clearing the pad so it's accurate
       signaturePad.clear();
     }
-
-    // Listen for window resize and resize the canvas accordingly
     window.addEventListener("resize", resizeCanvas);
-    // Run it once at start
     resizeCanvas();

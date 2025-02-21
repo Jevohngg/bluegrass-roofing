@@ -40,9 +40,7 @@ block content
         p Ideal for those who want total control over their claim process.
 
     .claims-cta
-      a.btn.btn-primary(href="/contact")
-        p Get Started
-        i.fas.fa-arrow-right
+
       a.btn.btn-secondary(href="/guarantee")
         p Learn About Our Guarantee
         i.fas.fa-arrow-right
@@ -94,7 +92,7 @@ block content
             li We offer basic support as needed 
             li No Price Guarantee 
             li Flexible payment arrangements for deductibles  
-          .btn.btn-primary Get started
+          a.btn.btn-primary(href="/signup?package=Traditional Package") Get Started
         
 
         .coverage-package
@@ -106,7 +104,7 @@ block content
             li Full coverage verification
             li Price guarantee included
             li Flexible payment arrangements for deductibles 
-          .btn.btn-primary Get started
+          a.btn.btn-primary(href="/signup?package=Intermediate Package") Get Started
 
         .coverage-package.recommended
           span.recommended-tag Recommended
@@ -122,12 +120,12 @@ block content
             li Priority service & support
             li Flexible Payment arrangements for deductibles 
           p.note Most homeowners choose this option for maximum peace of mind and a 100% hassle-free experience.
-          .btn.btn-primary Get started 
+          a.btn.btn-primary(href="/signup?package=Hassle-Free Package") Get Started
 
     .claims-cta
 
       a.btn.btn-secondary(href="/services")
-        p Explore Other Services
+        p Explore Services
         i.fas.fa-arrow-right
 
   include home/_quote

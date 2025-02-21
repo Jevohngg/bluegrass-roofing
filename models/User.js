@@ -3,49 +3,48 @@ const bcryptjs = require('bcryptjs');
 
 const SALT_ROUNDS = 10;
 
+const DocumentFieldsSchema = new mongoose.Schema({
+  propertyAddress: { type: String, default: '' },
+  insuranceCompany: { type: String, default: '' },
+  policyNumber: { type: String, default: '' },
+  claimNumber: { type: String, default: '' },
+  expirationCondition: { type: String, default: '' }
+});
+
 const DocumentSchema = new mongoose.Schema({
   signed: { type: Boolean, default: false },
   signedAt: { type: Date },
-  docUrl: { type: String } // Store signature data (e.g., base64 or URL to PDF)
+  docUrl: { type: String, default: '' },
+  fields: { type: DocumentFieldsSchema, default: () => ({}) }
 });
 
-const UserSchema = new mongoose.Schema(
-  {
-    firstName: { type: String, required: true, trim: true },
-    lastName: { type: String, required: true, trim: true },
-    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    password: { type: String, required: true },
+const UserSchema = new mongoose.Schema({
+  firstName: { type: String, required: true, trim: true },
+  lastName: { type: String, required: true, trim: true },
+  email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+  password: { type: String, required: true },
 
-    // Existing
-    selectedPackage: { type: String, default: '' },
+  selectedPackage: { type: String, default: '' },
 
-    // Claim uploads
-    claimUploadUrl: { type: String, default: '' }, // Legacy single file (optional)
-    claimUploadUrls: [{ type: String, default: [] }], // Array of S3 URLs for multiple files
+  claimUploadUrl: { type: String, default: '' },
+  claimUploadUrls: [{ type: String, default: [] }],
 
-    // Documents
-    documents: {
-      aob: { type: DocumentSchema, default: () => ({}) },
-      aci: { type: DocumentSchema, default: () => ({}) },
-      loi: { type: DocumentSchema, default: () => ({}) }
-    },
-
-    // Shingle choice
-    shingleChoice: {
-      name: { type: String, default: '' },
-      imageUrl: { type: String, default: '' }
-    },
-
-    // -----------------------------------------------
-    // NEW FIELDS FOR "FORGOT PASSWORD" FUNCTIONALITY
-    // -----------------------------------------------
-    resetPasswordCode: { type: String, default: '' },
-    resetPasswordExpires: { type: Date }
+  documents: {
+    aob: { type: DocumentSchema, default: () => ({}) },
+    aci: { type: DocumentSchema, default: () => ({}) },
+    loi: { type: DocumentSchema, default: () => ({}) }
   },
-  { timestamps: true }
-);
 
-// Pre-save hook to hash password if new or modified
+  shingleChoice: {
+    name: { type: String, default: '' },
+    imageUrl: { type: String, default: '' }
+  },
+
+  resetPasswordCode: { type: String, default: '' },
+  resetPasswordExpires: { type: Date }
+}, { timestamps: true });
+
+// Hash password on save
 UserSchema.pre('save', async function (next) {
   try {
     if (!this.isModified('password')) {

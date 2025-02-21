@@ -418,6 +418,10 @@ p{
 .doc-card.signed {
   background-color: #eefbee;
   border-color: #ccf6cc;
+  margin-bottom: 8px;
+}
+.doc-card-actions .btn-secondary{
+  margin-top: 16px !important;
 }
 .doc-card-content {
   flex: 1;

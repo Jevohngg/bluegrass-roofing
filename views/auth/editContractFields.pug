@@ -1,0 +1,128 @@
+extends ../layouts/portalLayout
+
+block pageStyles
+  link(rel="stylesheet" href="/css/portal.css")
+
+  style.
+    .edit-fields-container {
+        width: 100%;
+        max-width: 650px;
+        margin: 0 auto;
+        padding: 1rem;
+    text-align: center;
+    }
+    .edit-fields-container form{
+    gap: 24px;
+    display: flex;
+    min-width: 457px;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #fff;
+    border: 1px solid #ebebeb;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    flex-direction: column;
+    align-items: center;
+    text-align: left;
+    }
+    .edit-fields-container h2 {
+      margin-bottom: 1.2rem;
+    }
+    .edit-fields-container .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    }
+    .edit-fields-container label {
+    font-weight: 600;
+    color: var(--color-text);
+    }
+    .edit-fields-container input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--color-input-border);
+    font-size: 1rem;
+    color: var(--color-text);
+    transition: border-color 0.3sease;
+    border-radius: 8px;
+    }
+    .edit-fields-actions {
+    margin-top: 1.5rem;
+    text-align: right;
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 8px;
+    width: 100%;
+    }
+    .edit-fields-actions button,
+    .edit-fields-actions a {
+      margin-left: 0.5rem;
+      font-size: 14px;
+    }
+    .error-message {
+      color: #d9534f;
+      margin-top: 0.5rem;
+    }
+
+block content
+  section.portal-section
+    .portal-container2
+      .edit-fields-container
+        h2 Edit Contract Fields for #{docType.toUpperCase()}
+        
+        if error === 'missingRequiredFields'
+          p.error-message Please fill out all required fields before proceeding.
+
+        form(action="/portal/edit-contract-fields" method="POST")
+          input(type="hidden" name="docType" value=docType)
+
+          .form-group
+            label(for="propertyAddress") Property Address *
+            input(
+              type="text"
+              name="propertyAddress"
+              id="propertyAddress"
+              value=currentFields.propertyAddress
+              placeholder="e.g. 123 Main St, City, State ZIP"
+              required
+            )
+
+          .form-group
+            label(for="insuranceCompany") Insurance Company Name *
+            input(
+              type="text"
+              name="insuranceCompany"
+              id="insuranceCompany"
+              value=currentFields.insuranceCompany
+              placeholder="e.g. ABC Insurance Inc."
+              required
+            )
+
+          .form-group
+            label(for="policyNumber") Policy Number *
+            input(
+              type="text"
+              name="policyNumber"
+              id="policyNumber"
+              value=currentFields.policyNumber
+              placeholder="e.g. XYZ123456"
+              required
+            )
+
+          .form-group
+            label(for="claimNumber") Claim Number
+            input(
+              type="text"
+              name="claimNumber"
+              id="claimNumber"
+              value=currentFields.claimNumber
+              placeholder="(Optional) e.g. CLM987654"
+            )
+
+
+          .edit-fields-actions
+            button.btn.btn-primary(type="submit") Save and Proceed to Sign
+            a.btn.btn-secondary(href="/portal") Cancel

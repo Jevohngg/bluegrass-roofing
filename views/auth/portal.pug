@@ -105,6 +105,10 @@ block content
                 .doc-status-text
                   i.fas.fa-check-circle
                   | Signed
+                if user.documents.aob.docUrl
+                  a.btn.btn-secondary(href=user.documents.aob.docUrl target="_blank")
+                    i.fas.fa-file-download
+                    | View/Download PDF
       
           .action-state-success
             p 
@@ -130,6 +134,10 @@ block content
                   .doc-status-text
                     i.fas.fa-check-circle
                     | Signed
+                  if user.documents.aob.docUrl
+                    a.btn.btn-secondary(href=user.documents.aob.docUrl target="_blank")
+                      i.fas.fa-file-download
+                      | View/Download PDF
                 else
                   a.btn.btn-primary(href="/portal/sign-doc?docType=aob")
                     | Sign AOB
@@ -156,6 +164,10 @@ block content
                   .doc-status-text
                     i.fas.fa-check-circle
                     | Signed
+                  if user.documents.aci.docUrl
+                    a.btn.btn-secondary(href=user.documents.aci.docUrl target="_blank")
+                      i.fas.fa-file-download
+                      | View/Download PDF
                 else
                   a.btn.btn-primary(href="/portal/sign-doc?docType=aci")
                     | Sign ACI
@@ -179,6 +191,10 @@ block content
                   .doc-status-text
                     i.fas.fa-check-circle
                     | Signed
+                  if user.documents.loi.docUrl
+                    a.btn.btn-secondary(href=user.documents.loi.docUrl target="_blank")
+                      i.fas.fa-file-download
+                      | View/Download PDF
                 else
                   a.btn.btn-primary(href="/portal/sign-doc?docType=loi")
                     | Sign LOI
@@ -226,11 +242,6 @@ block content
       .modal-content
         .modal-header
           h5.modal-title#shingleModalTitle Pick Your Shingle
-          // REMOVE the default Bootstrap close button...
-          // button(type="button" class="close" data-dismiss="modal" aria-label="Close")
-          //   span(aria-hidden="true") ×
-
-          // ...REPLACE IT WITH A FA TIMES ICON
           i.fas.fa-times#shingleModalCloseIcon.close-icon(aria-hidden="true")
         .modal-body
           p Select from the following options:

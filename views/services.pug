@@ -36,9 +36,9 @@ block content
               h3 Roof Replacement
               p We fully remove and replace old or damaged roofs, ensuring quality materials and expert craftsmanship. Ideal for both insurance-covered and private pay customers looking to restore or upgrade their existing roofs.
               p This service includes proper disposal of old shingles, a thorough inspection of the underlying structure, and the installation of a brand-new, weather-resistant roofing system.
-              a.btn.btn-primary(href="/contact")
-                p Get Started
-                i.fas.fa-arrow-right
+              //- a.btn.btn-primary(href="/contact")
+              //-   p Get Started
+              //-   i.fas.fa-arrow-right
     
           // 2) NEW CONSTRUCTION
           .service-item.skeleton
@@ -55,9 +55,9 @@ block content
               h3 New Construction Roof Installation
               p Perfect for newly built homes, we work directly with contractors or homeowners to deliver durable, long-lasting roofs. Our approach ensures the roof is installed according to architectural specifications with high-quality materials.
               p We stay on schedule, coordinating with other trades to ensure a seamless construction process.
-              a.btn.btn-primary(href="/contact")
-                p Get Started
-                i.fas.fa-arrow-right
+              //- a.btn.btn-primary(href="/contact")
+              //-   p Get Started
+              //-   i.fas.fa-arrow-right
     
           // 3) ROOF REPAIRS
           .service-item.skeleton
@@ -74,9 +74,9 @@ block content
               h3 Roof Repairs
               p We handle repairs for shingles, gutters, and fascia to keep your roof in prime condition. From minor leaks to storm damage, we act quickly to mitigate further harm and restore your roof’s integrity.
               p Timely repairs extend the overall lifespan of your roof, saving you money in the long run.
-              a.btn.btn-primary(href="/contact")
-                p Get Started
-                i.fas.fa-arrow-right
+              //- a.btn.btn-primary(href="/contact")
+              //-   p Get Started
+              //-   i.fas.fa-arrow-right
     
           // 4) GUTTERS
           .service-item.skeleton
@@ -93,9 +93,9 @@ block content
               h3 Gutters – New Construction & Replacement
               p Keep water flowing where it should. We install and replace gutter systems to protect your home’s foundation, siding, and landscaping from water damage.
               p Whether it’s a new build or an older home in need of updated gutters, we’ll ensure your property stays safe from moisture intrusion.
-              a.btn.btn-primary(href="/contact")
-                p Get Started
-                i.fas.fa-arrow-right
+              //- a.btn.btn-primary(href="/contact")
+              //-   p Get Started
+              //-   i.fas.fa-arrow-right
     
           // 5) ROOF INSPECTIONS
           .service-item.skeleton
@@ -112,9 +112,9 @@ block content
               h3 Roof Inspections
               p A thorough inspection can reveal hidden issues before they become costly problems. If damage is found, we provide a detailed quote and guide you on whether insurance filing is necessary.
               p Many homeowners use our inspection report to decide on repairs or determine if a full replacement is more cost-effective.
-              a.btn.btn-primary(href="/contact")
-                p Get Started
-                i.fas.fa-arrow-right
+              //- a.btn.btn-primary(href="/contact")
+              //-   p Get Started
+              //-   i.fas.fa-arrow-right
     
           // 6) INSURANCE CLAIM FILING
           .service-item.skeleton
@@ -202,6 +202,48 @@ block content
             a.btn.btn-secondary(href="/claims")
               p Claims Assistance
               i.fas.fa-arrow-right
+  section.claims-section
+    h3.coverage-heading Choose Your Support Package
+    p.coverage-subtext Select the level of support that works best for you.
+
+    .coverage-packages
+        .coverage-package
+          h4 Traditional Package
+          p.package-desc You manage the process while we provide basic support where needed.
+          ul
+            li You manage the entire process
+            li We offer basic support as needed 
+            li No Price Guarantee 
+            li Flexible payment arrangements for deductibles  
+          a.btn.btn-primary(href="/signup?package=Traditional Package") Get Started
+        
+
+        .coverage-package
+          h4 Intermediate Package
+          p.package-desc Balanced approach with shared responsibilities.
+          ul
+            li Assistance with claim filing and management 
+            li Expert claim review 
+            li Full coverage verification
+            li Price guarantee included
+            li Flexible payment arrangements for deductibles 
+          a.btn.btn-primary(href="/signup?package=Intermediate Package") Get Started
+
+        .coverage-package.recommended
+          span.recommended-tag Recommended
+          h4 Hassle-Free Package
+          p.package-desc Our most popular option – we handle everything while you relax.
+          ul
+            li Zero hassle guarantee
+            li Complete claim filing and management services
+            li Expert claim review 
+            li Full coverage verification 
+            li Payment management
+            li Price guarantee included
+            li Priority service & support
+            li Flexible Payment arrangements for deductibles 
+          p.note Most homeowners choose this option for maximum peace of mind and a 100% hassle-free experience.
+          a.btn.btn-primary(href="/signup?package=Hassle-Free Package") Get Started
     
   // QUOTE SECTION PARTIAL
   include home/_quote
