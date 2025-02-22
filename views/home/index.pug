@@ -3,6 +3,7 @@ extends ../layouts/mainLayout
 
 block pageStyles
   link(rel="stylesheet", href="/css/home.css")
+  link(rel="stylesheet", href="/css/onboardingWizard.css")
 
 block content
   // Include each partial in the desired order
@@ -11,3 +12,10 @@ block content
   include _claims
   include _guarantee
   include _quote
+
+block pageScripts
+  script(src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js")
+  script(src="/js/alert.js")
+  script(src="/js/onboarding.js")
+
+

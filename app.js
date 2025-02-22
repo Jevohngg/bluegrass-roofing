@@ -62,13 +62,13 @@ app.use('/guarantee', guaranteeRoutes);
 const portalRoutes = require('./routes/portal');
 app.use(portalRoutes);
 
+// === Onboarding Route (New) ===
+const onboardingRoutes = require('./routes/onboarding');
+app.use('/onboarding', onboardingRoutes);
 
 // Admin Route for the internal dashboard (completely separate from the main platform)
 const adminRoutes = require('./routes/admin');
 app.use('/admin', adminRoutes);
-
-
-
 
 // Start server
 const PORT = process.env.PORT || 3000;

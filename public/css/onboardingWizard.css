@@ -1,0 +1,396 @@
+/**********************************************
+ * onboardingWizard.css
+ * 
+ * Styles specifically for the new onboarding 
+ * wizard on the home page, scoped under 
+ * .onboarding-section and .onboarding-wizard-container
+ **********************************************/
+
+/* Root container for the onboarding wizard */
+.onboarding-section {
+    width: 100%;
+  
+
+    position: relative;
+    z-index: 20;
+    max-width: 500px;
+    max-height: 520px;
+    display: flex
+    ;
+        flex-direction: column;
+  }
+
+  .onboarding-step-content{
+    display: flex
+    ;
+        flex-direction: column;
+        max-height: 100%;
+        overflow: hidden;
+        overflow-y: scroll;
+        gap: 16px;
+  }
+  
+
+  .intro{
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .clickable{
+    cursor: pointer;
+  }
+
+  .hyerlink{
+    display: flex
+    ;
+        gap: 6px;
+  }
+
+
+  .hyerlink a{
+    font-weight: 600;
+    color: #e18263;
+    text-decoration: underline;
+  }
+  
+
+  /* The main container that holds the steps */
+  .onboarding-wizard-container {
+    width: 100%;
+    display: flex
+    ;
+        flex-direction: column;
+    /* max-width: 800px; */
+    max-height: 460px;
+    overflow: hidden;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Stepper at the top */
+  .onboarding-wizard-container .onboarding-stepper {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: .5rem;
+    border-bottom: 1px solid #eee;
+    
+  }
+  #nextToStep2Btn{
+    margin-top: 0px !important;
+  }
+  /* Individual step indicators */
+  .onboarding-wizard-container .step-indicator {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #888;
+    position: relative;
+    padding: 0 1rem;
+  }
+  
+  /* "Active" step style */
+  .onboarding-wizard-container .step-indicator.active-step {
+    color: #e18263;
+    border-bottom: 2px solid #e18263;
+  }
+  
+  /* Step content sections */
+  .onboarding-wizard-container .onboarding-step-content {
+    margin-top: 1rem;
+  }
+  
+  /* Buttons inside the wizard */
+  .onboarding-wizard-container .btn {
+    /* Restrict styles to .onboarding-wizard-container .btn so it doesn't affect other .btn usage */
+    font-size: 0.95rem;
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+  }
+  
+  /* Upload Dropzone styles */
+  .onboarding-wizard-container .upload-claim-container {
+    margin-top: 1rem;
+  }
+  
+  .onboarding-wizard-container .upload-dropzone {
+    border: 2px dashed #ccc;
+    border-radius: 6px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    color: #555;
+    font-size: 0.95rem;
+    background-color: #fafafa;
+  }
+  .onboarding-wizard-container .upload-dropzone:hover {
+    background-color: #fef7f5; /* slightly tinted background */
+    border-color: #e18263;
+  }
+  .onboarding-wizard-container .upload-dropzone.dropzone-hover {
+    background-color: #fff1ed;
+    border-color: #e18263;
+  }
+  
+  /* Progress bar wrapper */
+  .onboarding-wizard-container .upload-progress {
+    width: 100%;
+    background-color: #f7f7f7;
+    border: 1px solid #ebebeb;
+    border-radius: 6px;
+    position: relative;
+    height: 20px;
+    margin-top: 1rem;
+    overflow: hidden;
+  }
+  .onboarding-wizard-container .progress-bar {
+    background-color: #28a745;
+    height: 100%;
+    width: 0;
+    border-radius: 6px;
+    transition: width 0.3s ease;
+  }
+  
+  /* Container for attached files */
+  .onboarding-wizard-container #onboardingAttachedFilesContainer {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+  }
+  
+  /* Uploaded file previews */
+  .onboarding-wizard-container .uploaded-file-preview {
+    position: relative;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+    cursor: pointer;
+  }
+  .onboarding-wizard-container .uploaded-file-preview:hover {
+    border-color: #e18263;
+  }
+  .onboarding-wizard-container .uploaded-file-preview img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    display: block;
+  }
+  .onboarding-wizard-container .uploaded-file-preview.document-preview {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #f7f7f7;
+    height: 100px; 
+  }
+  .onboarding-wizard-container .uploaded-file-preview .file-icon {
+    font-size: 32px;
+    color: #555;
+    margin-right: 10px;
+  }
+  .onboarding-wizard-container .uploaded-file-preview .file-name {
+    flex-grow: 1;
+    font-size: 14px;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .onboarding-wizard-container .uploaded-file-preview .remove-preview-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(255,255,255,0.8);
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    color: #ff4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .onboarding-wizard-container .uploaded-file-preview .remove-preview-btn:hover {
+    background: rgba(255,68,68,0.8);
+    color: #fff;
+  }
+  
+  /* Step 2b: Signature Section */
+  .onboarding-wizard-container .aob-sign-box {
+    border: 1px solid #ebebeb;
+    border-radius: 6px;
+    padding: 1rem;
+    background-color: #fafafa;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .onboarding-wizard-container .aob-sign-box canvas {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    max-width: 100%;
+    height: 200px; /* Adjust as needed */
+    background-color: #fff;
+  }
+  
+  .onboarding-wizard-container .signature-note {
+    font-size: 0.8rem;
+    color: #666;
+  }
+  
+  /* Step 3: Shingle Options */
+  .onboarding-wizard-container .shingle-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .onboarding-wizard-container .shingle-option {
+    border: 1px solid #ebebeb;
+    border-radius: 6px;
+    padding: 1rem;
+    text-align: center;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    cursor: pointer;
+  }
+  .onboarding-wizard-container .shingle-option:hover {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-color: #ddd;
+  }
+  .onboarding-wizard-container .shingle-img {
+    width: 100%;
+    height: 70%;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+  }
+
+  .signature-checkbox input{
+    margin-right: 8px;
+  }
+
+  .shingle-option p{
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .onboarding-wizard-container .shingle-option.selected-shingle {
+    border-color: #e18263 !important;
+    box-shadow: 0 2px 8px rgba(225,130,99,0.2);
+  }
+  
+  /* Step 3 & final Step Buttons can share style */
+  
+  /* Step Signup form styles */
+  .onboarding-wizard-container #onboardingSignupForm .form-group {
+    margin-bottom: 1rem;
+  }
+  .onboarding-wizard-container #onboardingSignupForm label {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    display: inline-block;
+  }
+  .onboarding-wizard-container #onboardingSignupForm input {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.9rem;
+  }
+  
+  /* Utility classes */
+  .onboarding-wizard-container .btn-secondary {
+    background-color: #e2e2e2;
+    color: #333;
+    border: none;
+  }
+  .onboarding-wizard-container .btn-secondary:hover {
+    background-color: #d2d2d2;
+  }
+  .onboarding-wizard-container .btn-primary {
+    background-color: #e18263;
+    border: none;
+    color: #fff;
+  }
+  .onboarding-wizard-container .btn-primary:hover {
+    background-color: #c45e42;
+  }
+
+
+
+.step-indicator{
+    padding-bottom: 8px !important;
+}
+
+  .onboarding-wizard-container form{
+    gap: 24px;
+    display: flex
+;
+    
+    z-index: 1;
+    width: 100%;
+    margin: 0 auto;
+   
+    background-color: #fff;
+
+    border-radius: 8px;
+   
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Keep consistent spacing and styling for form fields */
+  .onboarding-wizard-container .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  
+  .onboarding-wizard-container .form-group label {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+  
+  .onboarding-wizard-container .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--color-input-border);
+    font-size: 1rem;
+    color: var(--color-text);
+    transition: border-color 0.3s ease;
+    border-radius: 8px;
+  }
+  
+  /* Focus states with accent color outline */
+  .onboarding-wizard-container .form-group input:focus,
+  .form-group textarea:focus {
+    border-color: var(--color-accent);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-accent-outline);
+  }
+  
+  /* Button at full width, consistent with your other forms */
+  .onboarding-wizard-container .btn-primary {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+
+  @media (max-width: 768px) {
+  .onboarding-wizard-container{
+    width: 100%;
+  }
+}

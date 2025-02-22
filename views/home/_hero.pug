@@ -1,53 +1,168 @@
-// views/home/_hero.pug
 section.hero
   .hero-content
     img.hero-image(src="/images/house.png" alt="Roof Replacement")
 
     .hero-components
-        span.badge.badge-experts
-          i.fas.fa-shield-alt
-          |  Local Roofing Experts ★ 5.0
+      span.badge.badge-experts
+        i.fas.fa-shield-alt
+        |  Local Roofing Experts ★ 5.0
 
-        h1.hero-title Quality Roofing Made Simple
-        p.hero-subtitle Expert roofing solutions with instant quotes and hassle-free service.
+      h1.hero-title Quality Roofing Made Simple
+      p.hero-subtitle Expert roofing solutions with instant quotes and hassle-free service.
 
-        // Benefits row
-        .hero-benefits
-            span.hero-benefit
-              i.fas.fa-check-circle
-              |  Free Instant Quotes
-            span.hero-benefit
-              i.fas.fa-check-circle
-              |  Insurance Claim Support
-            span.hero-benefit
-              i.fas.fa-check-circle
-              |  5-Star Rated Service
+      // Benefits row
+      .hero-benefits
+        span.hero-benefit
+          i.fas.fa-check-circle
+          |  Free Instant Quotes
+        span.hero-benefit
+          i.fas.fa-check-circle
+          |  Insurance Claim Support
+        span.hero-benefit
+          i.fas.fa-check-circle
+          |  5-Star Rated Service
 
-        // Hero CTA buttons
-        .hero-ctas
-            a.btn.btn-primary(href="#quote-section") 
-                p Get Your Free Quote Now 
-                i.fas.fa-arrow-right 
-            a.btn.btn-secondary(href="/services") Explore Services
+      // Hero CTA buttons
+      .hero-ctas
+        a.btn.btn-primary(href="#quote-section")
+          p Get Your Free Quote Now
+          i.fas.fa-arrow-right
+        a.btn.btn-secondary(href="/services") Explore Services
 
-    form.quote-form(action="/contact" method="POST")
-        h4.quote-form-header Got a quick question?
-        .form-group
-            label(for="fullName") Full Name
-            input(type="text" id="fullName" name="fullName" required)
+    // -------------------------------------------------------------
+    // REPLACED QUOTE FORM WITH OUR NEW ONBOARDING WIZARD
+    // -------------------------------------------------------------
+    section.onboarding-section
+      .onboarding-wizard-container#onboardingWizardContainer
+        // Stepper display (visual cues for steps 1, 2, 3)
+        // Make them clickable by adding a .clickable class (optional styling)
+        .onboarding-stepper
+          .step-indicator.clickable(data-step="1") Step 1
+          .step-indicator.clickable(data-step="2") Step 2
+          .step-indicator.clickable(data-step="3") Step 3
 
-        .form-group
-            label(for="emailAddress") Email Address
-            input(type="email" id="emailAddress" name="emailAddress" required)
+        // Step 0: Intro
+        .onboarding-step-content#stepIntro
+          h2 Already have a claim? Get a new roof in 3 easy steps!
+          p
+            | Upload claim documents,
+            | Sign an Assignment of Benefits Contract (AOB),
+            | Choose a Shingle. We take care of the rest.
+          button.btn.btn-primary#startOnboardingBtn Let’s Go!
 
-        .form-group
-            label(for="phoneNumber") Phone Number
-            input(type="tel" id="phoneNumber" name="phoneNumber")
+        // Step 1: Upload Claim Documents
+        .onboarding-step-content#step1(style="display:none;")
+          h3 Step 1: Upload Your Claim Documents
+          p
+            | If you already have a claim document, upload it here so we can expedite
+            | processing.
 
-        .form-group
-            label(for="message") Your Message
-            textarea(id="message" name="message" rows="4")
+          .upload-claim-container
+            .upload-dropzone#onboardingDropzone
+              p Drop or click to select file(s) for upload
+              input(type="file" id="onboardingFilesInput" name="claimFiles" accept=".pdf,.jpg,.png,.doc,.docx" multiple style="display:none;")
 
-        button.btn.btn-primary(type="submit")
-            | Send Message
-            i.fas.fa-arrow-right 
+            .upload-progress#onboardingUploadProgress(style="display:none;")
+              .progress-bar#onboardingProgressBar
+
+            // Container that will show attached files once uploaded
+            #onboardingAttachedFilesContainer
+
+          button.btn.btn-primary#nextToStep2Btn(style="display:none; margin-top:1rem;") Next
+
+        // Step 2a: Contract Fields (including first & last name)
+        .onboarding-step-content#step2fields(style="display:none;")
+          h3 Step 2: Provide Contract Details
+          p Fill out these fields so we can populate the Assignment of Benefits (AOB) contract.
+          .hyerlink
+            a(href='/claims' target='_blank' rel='noopener noreferrer') Click here
+            p to learn about AOB's and our claims process.
+
+          form#onboardingFieldsForm
+            .form-group
+              label(for="firstName") First Name *
+              input(type="text" name="firstName" id="firstNameInput" required)
+
+            .form-group
+              label(for="lastName") Last Name *
+              input(type="text" name="lastName" id="lastNameInput" required)
+
+            .form-group
+              label(for="propertyAddress") Property Address *
+              input(type="text" name="propertyAddress" id="propertyAddress" required)
+
+            .form-group
+              label(for="insuranceCompany") Insurance Company *
+              input(type="text" name="insuranceCompany" id="insuranceCompany" required)
+
+            .form-group
+              label(for="policyNumber") Policy Number *
+              input(type="text" name="policyNumber" id="policyNumber" required)
+
+            .form-group
+              label(for="claimNumber") Claim Number (Optional)
+              input(type="text" name="claimNumber" id="claimNumber")
+
+            button.btn.btn-primary#saveFieldsBtn(type="button") Next
+
+        // Step 2b: Sign AOB
+        .onboarding-step-content#step2sign(style="display:none;")
+          h3 Step 2 (continued): Sign Your AOB
+          p 
+            | Please review the contract below. It has been populated 
+            | with your details from the previous step. Once reviewed, 
+            | sign in the box at the bottom and check the box to confirm 
+            | your agreement.
+
+          .doc-content#docContent(style="margin-bottom: 1rem;")
+
+          .aob-sign-box
+            canvas#onboardingSignatureCanvas
+            p.signature-note
+              | By signing, you confirm you have read and agreed
+              | to the AOB terms. Your electronic signature is legally binding.
+
+            .signature-checkbox
+              input#onboardingAgreeCheckbox(type="checkbox")
+              label(for="onboardingAgreeCheckbox") I understand and agree that my electronic signature constitutes a legally binding signature under applicable law.
+
+          button.btn.btn-secondary#clearSignatureBtn(type="button") Clear Signature
+          button.btn.btn-primary#submitAobSignatureBtn(type="button" disabled) Next
+
+        // Step 3: Choose Shingle
+        .onboarding-step-content#step3(style="display:none;")
+          h3 Step 3: Choose Your Shingle
+          p
+            | Select from the following options.
+
+          // Initially empty, we'll dynamically populate via JS
+          .shingle-options#onboardingShingleOptions
+
+          button.btn.btn-primary#finalizeOnboardingBtn(type="button" disabled) Next
+
+        // Final: Sign-Up Form
+        .onboarding-step-content#stepSignup(style="display:none;")
+          h3 Last thing!: Create Your Account
+          p.intro
+            | We are excited to earn your business. Please set up an account 
+            | so we can personalize your experience and better serve you through 
+            | our client portal. Your information will never be shared with a third-party, 
+            | and you will not receive unsolicited calls, emails, or text messages.
+          form#onboardingSignupForm
+            .form-group
+              label(for="firstName") First Name
+              input(type="text" name="firstName" id="firstName" required)
+            .form-group
+              label(for="lastName") Last Name
+              input(type="text" name="lastName" id="lastName" required)
+            .form-group
+              label(for="email") Email
+              input(type="email" name="email" id="email" required)
+            .form-group
+              label(for="password") Password
+              input(type="password" name="password" id="password" required)
+            .form-group
+              label(for="confirmPassword") Confirm Password
+              input(type="password" name="confirmPassword" id="confirmPassword" required)
+
+            button.btn.btn-primary#completeSignupBtn(type="button") Create Account
