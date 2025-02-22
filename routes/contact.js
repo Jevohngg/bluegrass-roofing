@@ -8,7 +8,7 @@ const leadController = require('../controllers/leadController');
 
 router.get('/', (req, res) => {
   // Pass the current page name for the nav
-  res.render('contact', { currentPage: 'contact' });
+  res.render('contact', { currentPage: 'contact', pageTitle: 'Contact | BlueGrass Roofing' });
 });
 
 // POST endpoint to handle form submissions from any form posting to /contact

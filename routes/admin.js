@@ -29,7 +29,7 @@ router.get('/leads', checkAuth, (req, res) => {
         }
         groupedLeads[status].push(lead);
       });
-      res.render('admin/dashboard', { groupedLeads, activeTab: 'leads' });
+      res.render('admin/dashboard', { groupedLeads, activeTab: 'leads', pageTitle: 'BlueGrass Roofing | Admin Dashboard'});
     })
     .catch(err => {
       console.error('Error fetching leads:', err);

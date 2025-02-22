@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/', (req, res) => {
   // Pass the current page name for the nav
-  res.render('claims', { currentPage: 'claims' });
+  res.render('claims', { currentPage: 'claims', pageTitle: 'Claims | BlueGrass Roofing' });
 });
 
 module.exports = router;

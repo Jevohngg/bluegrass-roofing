@@ -135,7 +135,8 @@ router.get('/portal', requireLogin, async (req, res) => {
       user,
       shingles,
       success,
-      error
+      error,
+      pageTitle: 'Client Portal | BlueGrass Roofing'
     });
   } catch (err) {
     console.error('Error loading portal:', err);

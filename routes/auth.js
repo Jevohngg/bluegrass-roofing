@@ -16,7 +16,7 @@ router.get('/signup', (req, res) => {
   if (selectedPackage) {
     req.session.selectedPackage = selectedPackage;
   }
-  return res.render('auth/signup', { currentPage: 'signup' });
+  return res.render('auth/signup', { currentPage: 'signup', pageTitle: 'Signup | BlueGrass Roofing' });
 });
 
 // POST /signup
@@ -117,7 +117,8 @@ router.get('/login', (req, res) => {
     currentPage: 'login',
     error: null,
     success: successMessage,
-    formData: {}
+    formData: {},
+    pageTitle: 'Login | BlueGrass Roofing'
   });
 });
 
