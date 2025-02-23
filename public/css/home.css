@@ -845,6 +845,9 @@
   
   /* RESPONSIVENESS */
   @media (max-width: 640px) {
+    .hyerlink{
+      font-size: 11px;
+    }
     .quote-header h2 {
       font-size: 2.2rem;
     }

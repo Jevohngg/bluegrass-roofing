@@ -52,10 +52,10 @@ html(lang="en")
             a(href="/admin/customers", class=(activeTab=='customers' ? 'active' : ''))
               i.fa.fa-user
               |  Customers
-          li
-            a(href="/admin/documents", class=(activeTab=='documents' ? 'active' : ''))
-              i.fa.fa-file
-              |  Documents
+          //- li
+          //-   a(href="/admin/documents", class=(activeTab=='documents' ? 'active' : ''))
+          //-     i.fa.fa-file
+          //-     |  Documents
         // Logout button for mobile only (hidden on desktop via CSS)
         a.btn-logout-mobile(href="/admin/logout") Logout
       // Main Content Area
@@ -66,3 +66,4 @@ html(lang="en")
     block scripts
       script(src="/js/alert.js")
       script(src="/js/admin.js")
+      script(src="/js/adminCustomers.js")

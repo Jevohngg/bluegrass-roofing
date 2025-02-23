@@ -508,6 +508,10 @@ hr {
   border-radius: 4px;
   margin-bottom: 0.5rem;
 }
+.doc-card .btn-secondary{
+  display: flex;
+  gap: 8px;
+}
 
 /****************************************
 * MEDIA QUERIES: Responsiveness

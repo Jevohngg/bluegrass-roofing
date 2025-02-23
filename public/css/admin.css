@@ -430,6 +430,117 @@ ul {
     background-color: #c77357;
 }
 
+/* Add this at the bottom of public/css/admin.css if you want a distinct "customer-card" style */
+.customer-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .customer-card {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 15px;
+    min-width: 430px;
+    width: calc(33.333% - 20px);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin-bottom: 20px; /* if needed */
+  }
+  
+  .customer-header {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .customer-name {
+    margin: 0;
+    font-size: 1.2em;
+    color: #222;
+  }
+  
+  .customer-email {
+    margin: 0;
+    color: #555;
+    font-size: 0.9em;
+  }
+  
+  .customer-section h4 {
+    margin: 10px 0 5px;
+    font-size: 1em;
+    color: #333;
+  }
+  
+  .customer-section p,
+  .customer-section li {
+    font-size: 0.9em;
+    color: #333;
+  }
+  
+  .shingle-image {
+    max-width: 120px;
+    display: block;
+    margin: 10px 0;
+  }
+  
+  .customer-actions {
+    margin-top: auto;
+    display: flex;
+    gap: 8px;
+  }
+  
+  .customer-actions button {
+    background-color: #ffc107; /* or use .btn-archived style if you prefer */
+    color: #333;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: background 0.2s ease;
+  }
+  
+  .customer-actions button:hover {
+    background-color: #e0a800;
+  }
+
+  .customer-cards a{
+    text-decoration: underline;
+    color: #c77357;
+    font-weight: 600;
+  }
+
+  .customers-content{
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+  }
+  
+  /* Responsive adjustments, similar to .lead-card */
+  @media (max-width: 992px) {
+    .customer-card {
+      width: calc(50% - 20px);
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .customer-card {
+      width: 100%;
+      min-width: 0px;
+    }
+    .customer-actions {
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+  }
+  
+
 /* Responsive Styles */
 @media (max-width: 992px) {
     .lead-card {
@@ -441,6 +552,13 @@ ul {
 }
 
 @media (max-width: 600px) {
+    .customers-content .tabs{
+        font-size: 12px;
+    }
+
+    .dashboard-content .tabs{
+        font-size: 12px;
+    }
 
     .admin-content {
         flex: 1;

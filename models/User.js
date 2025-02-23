@@ -1,3 +1,5 @@
+// models/User.js
+
 const mongoose = require('mongoose');
 const bcryptjs = require('bcryptjs');
 
@@ -41,7 +43,14 @@ const UserSchema = new mongoose.Schema({
   },
 
   resetPasswordCode: { type: String, default: '' },
-  resetPasswordExpires: { type: Date }
+  resetPasswordExpires: { type: Date },
+
+  // New field to allow archiving users without deleting them
+  status: { 
+    type: String, 
+    enum: ['active', 'archived'], 
+    default: 'active' 
+  }
 }, { timestamps: true });
 
 // Hash password on save

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Lead = require('../models/Lead');
+const User = require('../models/User');
 
 // Middleware to check if admin is authenticated
 function checkAuth(req, res, next) {
@@ -37,10 +38,7 @@ router.get('/leads', checkAuth, (req, res) => {
     });
 });
 
-// GET /admin/customers - display customers dashboard (placeholder)
-router.get('/customers', checkAuth, (req, res) => {
-  res.render('admin/customers', { activeTab: 'customers' });
-});
+
 
 // GET /admin/documents - display documents page (placeholder)
 router.get('/documents', checkAuth, (req, res) => {
@@ -104,6 +102,54 @@ router.delete('/lead/:id', checkAuth, (req, res) => {
       console.error('Error deleting lead:', err);
       res.status(500).json({ success: false, message: 'Server error.' });
     });
+});
+
+// ADD/UPDATE: GET /admin/customers - display customers dashboard
+router.get('/customers', checkAuth, async (req, res) => {
+  try {
+    // Retrieve all users
+    const allUsers = await User.find({}).sort({ createdAt: -1 });
+    // Separate into active vs. archived
+    const activeUsers = allUsers.filter(user => user.status !== 'archived');
+    const archivedUsers = allUsers.filter(user => user.status === 'archived');
+
+    return res.render('admin/customers', {
+      activeUsers,
+      archivedUsers,
+      activeTab: 'customers',
+      pageTitle: 'BlueGrass Roofing | Admin Dashboard'
+    });
+  } catch (err) {
+    console.error('Error fetching customers:', err);
+    return res.status(500).send('Server Error');
+  }
+});
+
+// ADD/UPDATE: POST /admin/customer/:id/status - archive/unarchive a user
+router.post('/customer/:id/status', checkAuth, async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { status } = req.body; // expected 'archived' or 'active'
+
+    if (!['archived', 'active'].includes(status)) {
+      return res.status(400).json({ success: false, message: 'Invalid status.' });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { status },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+
+    return res.json({ success: true });
+  } catch (err) {
+    console.error('Error updating user status:', err);
+    return res.status(500).json({ success: false, message: 'Server error.' });
+  }
 });
 
 module.exports = router;

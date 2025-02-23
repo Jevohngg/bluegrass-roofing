@@ -262,7 +262,7 @@ router.post('/sign-aob', async (req, res) => {
     let filledText = fillContractPlaceholders(AOB_TEMPLATE, replacements);
 
     const pdfOptions = {
-      fileName: `AOB-${Date.now()}.pdf`,
+      fileName: `aob-${Date.now()}.pdf`,
       docTitle: 'Assignment of Benefits (AOB)',
       userName: fullName || 'New Roofing Customer',
       signedAt: new Date()

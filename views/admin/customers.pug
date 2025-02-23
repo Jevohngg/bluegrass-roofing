@@ -1,6 +1,159 @@
+
+
 extends ../layouts/adminLayout
 
 block content
   .customers-content
     h2 Customers
-    p Customer functionality coming soon.
+
+    // Tabs for switching between active/archived
+    .tabs
+      button.tab-button.active(data-tab="active") Active Customers
+      button.tab-button(data-tab="archived") Archived Customers
+
+    // Tab Contents
+    .tab-contents
+      // Active Customers
+      #tab-active.tab-content(style="display:block;")
+        if activeUsers && activeUsers.length
+          .customer-cards
+            each user in activeUsers
+              .customer-card(data-id=user._id)
+                .customer-header
+                  h3.customer-name #{user.firstName} #{user.lastName}
+                  p.customer-email #{user.email}
+
+                // Package
+                if user.selectedPackage
+                  p Package: #{user.selectedPackage}
+                else
+                  p Package: Not Selected
+
+                // Documents
+                .customer-section
+                  h4 Documents
+                  // AOB
+                  if user.documents.aob.docUrl
+                    p AOB: 
+                      a(href=user.documents.aob.docUrl, target="_blank") View PDF
+                      |  (#{user.documents.aob.signed ? 'Signed' : 'Not Signed'})
+                  else
+                    p AOB: No Document
+
+                  // ACI
+                  if user.documents.aci.docUrl
+                    p ACI: 
+                      a(href=user.documents.aci.docUrl, target="_blank") View PDF
+                      |  (#{user.documents.aci.signed ? 'Signed' : 'Not Signed'})
+                  else
+                    p ACI: No Document
+
+                  // LOI
+                  if user.documents.loi.docUrl
+                    p LOI: 
+                      a(href=user.documents.loi.docUrl, target="_blank") View PDF
+                      |  (#{user.documents.loi.signed ? 'Signed' : 'Not Signed'})
+                  else
+                    p LOI: No Document
+
+                // Claim Files
+                .customer-section
+                  h4 Claim Files
+                  if user.claimUploadUrls && user.claimUploadUrls.length
+                    ul
+                      each fileUrl in user.claimUploadUrls
+                        li 
+                          a(href=fileUrl, target="_blank") View/Download
+                  else if user.claimUploadUrl
+                    p 
+                      a(href=user.claimUploadUrl, target="_blank") View/Download
+                  else
+                    p No claim files uploaded
+
+                // Shingle Choice
+                .customer-section
+                  h4 Shingle Choice
+                  if user.shingleChoice && user.shingleChoice.name
+                    p #{user.shingleChoice.name}
+                    if user.shingleChoice.imageUrl
+                      img.shingle-image(src=user.shingleChoice.imageUrl, alt="Shingle Image")
+                  else
+                    p Not Selected
+
+                // Archive button
+                .customer-actions
+                  button.btn-archive(data-id=user._id data-status="archived") Archive User
+
+      // Archived Customers
+      #tab-archived.tab-content(style="display:none;")
+        if archivedUsers && archivedUsers.length
+          .customer-cards
+            each user in archivedUsers
+              .customer-card(data-id=user._id)
+                .customer-header
+                  h3.customer-name #{user.firstName} #{user.lastName}
+                  p.customer-email #{user.email}
+
+                // Package
+                if user.selectedPackage
+                  p Package: #{user.selectedPackage}
+                else
+                  p Package: Not Selected
+
+                // Documents
+                .customer-section
+                  h4 Documents
+                  // AOB
+                  if user.documents.aob.docUrl
+                    p AOB: 
+                      a(href=user.documents.aob.docUrl, target="_blank") View PDF
+                      |  (#{user.documents.aob.signed ? 'Signed' : 'Not Signed'})
+                  else
+                    p AOB: No Document
+
+                  // ACI
+                  if user.documents.aci.docUrl
+                    p ACI: 
+                      a(href=user.documents.aci.docUrl, target="_blank") View PDF
+                      |  (#{user.documents.aci.signed ? 'Signed' : 'Not Signed'})
+                  else
+                    p ACI: No Document
+
+                  // LOI
+                  if user.documents.loi.docUrl
+                    p LOI: 
+                      a(href=user.documents.loi.docUrl, target="_blank") View PDF
+                      |  (#{user.documents.loi.signed ? 'Signed' : 'Not Signed'})
+                  else
+                    p LOI: No Document
+
+                // Claim Files
+                .customer-section
+                  h4 Claim Files
+                  if user.claimUploadUrls && user.claimUploadUrls.length
+                    ul
+                      each fileUrl in user.claimUploadUrls
+                        li 
+                          a(href=fileUrl, target="_blank") View/Download
+                  else if user.claimUploadUrl
+                    p 
+                      a(href=user.claimUploadUrl, target="_blank") View/Download
+                  else
+                    p No claim files uploaded
+
+                // Shingle Choice
+                .customer-section
+                  h4 Shingle Choice
+                  if user.shingleChoice && user.shingleChoice.name
+                    p #{user.shingleChoice.name}
+                    if user.shingleChoice.imageUrl
+                      img.shingle-image(src=user.shingleChoice.imageUrl, alt="Shingle Image")
+                  else
+                    p Not Selected
+
+                // Unarchive button
+                .customer-actions
+                  button.btn-archive(data-id=user._id data-status="active") Unarchive User
+
+        else
+          p No archived customers.
