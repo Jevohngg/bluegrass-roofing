@@ -29,7 +29,7 @@ ASSIGNMENT OF BENEFITS (AOB)
 
 **Parties:**  
 • **Homeowner**: **[Homeowner’s Full Name]**, residing at **[Property Address]**  
-• **Contractor**: BlueGrass Roofing, 123 Mock Lane, Louisville, KY 40202  
+• **Contractor**: BlueGrass Roofing, 3217 Summit Square Place, Suite 100, Lexington, KY 40509    
 
 **Insurance Policy Information:**  
 • **Insurance Company**: **[Insurance Company Name]**  
@@ -55,7 +55,7 @@ AUTHORIZATION TO CONTACT INSURER (ACI)
 
 **Parties:**  
 • **Homeowner**: **[Homeowner’s Full Name]**, residing at **[Property Address]**  
-• **Contractor**: BlueGrass Roofing, 123 Mock Lane, Louisville, KY 40202  
+• **Contractor**: BlueGrass Roofing, 3217 Summit Square Place, Suite 100, Lexington, KY 40509    
 
 **Insurance Policy Information:**  
 • **Insurance Company**: **[Insurance Company Name]**  
@@ -83,7 +83,7 @@ LETTER OF INTENT (LOI)
 
 **Contractor:**  
 BlueGrass Roofing  
-123 Mock Lane, Louisville, KY 40202
+3217 Summit Square Place, Suite 100, Lexington, KY 40509  
 
 **Homeowner:**  
 **[Homeowner’s Full Name]**, residing at **[Property Address]**

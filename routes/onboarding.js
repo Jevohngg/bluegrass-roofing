@@ -51,7 +51,7 @@ ASSIGNMENT OF BENEFITS (AOB)
 **Parties:**  
 
 • **Homeowner**: **[Homeowner’s Full Name]**, residing at **[Property Address]**  
-• **Contractor**: BlueGrass Roofing, 123 Mock Lane, Louisville, KY 40202  
+• **Contractor**: BlueGrass Roofing, 3217 Summit Square Place, Suite 100, Lexington, KY 40509  
 
 
 **Insurance Policy Information:**  
