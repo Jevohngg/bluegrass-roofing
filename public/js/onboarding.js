@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const step2fields = document.getElementById('step2fields');
     const step2sign = document.getElementById('step2sign');
     const step3 = document.getElementById('step3');
-    const stepSignup = document.getElementById('stepSignup');
+    // const stepSignup = document.getElementById('stepSignup');
   
     // Step indicators (clickable now)
     const stepIndicators = document.querySelectorAll('.step-indicator.clickable');
@@ -351,7 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Mark step2 sign as done
             wizardState.step2SignDone = true;
             transitionStep(step2sign, step3, 3);
-            loadShingles(); // Start loading shingles for Step 3
+            // loadShingles(); // Start loading shingles for Step 3
           } else {
             showAlert(data.message, 'error', 5000);
           }
@@ -363,80 +363,80 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   
     // ============ STEP 3: Choose Shingle ============
-    const shingleOptionsContainer = document.getElementById('onboardingShingleOptions');
+    // const shingleOptionsContainer = document.getElementById('onboardingShingleOptions');
   
-    function loadShingles() {
-      fetch('/onboarding/shingles')
-        .then(res => res.json())
-        .then(data => {
-          if (data.success && data.shingles && Array.isArray(data.shingles)) {
-            renderShingleOptions(data.shingles);
-          } else {
-            showAlert('Could not load shingle list.', 'error', 5000);
-          }
-        })
-        .catch(err => {
-          console.error('Error fetching shingle list:', err);
-          showAlert('Server error fetching shingle list.', 'error', 5000);
-        });
-    }
+    // function loadShingles() {
+    //   fetch('/onboarding/shingles')
+    //     .then(res => res.json())
+    //     .then(data => {
+    //       if (data.success && data.shingles && Array.isArray(data.shingles)) {
+    //         renderShingleOptions(data.shingles);
+    //       } else {
+    //         showAlert('Could not load shingle list.', 'error', 5000);
+    //       }
+    //     })
+    //     .catch(err => {
+    //       console.error('Error fetching shingle list:', err);
+    //       showAlert('Server error fetching shingle list.', 'error', 5000);
+    //     });
+    // }
   
-    function renderShingleOptions(shingles) {
-      if (!shingleOptionsContainer) return;
-      shingleOptionsContainer.innerHTML = '';
+    // function renderShingleOptions(shingles) {
+    //   if (!shingleOptionsContainer) return;
+    //   shingleOptionsContainer.innerHTML = '';
   
-      shingles.forEach(shingle => {
-        const optionDiv = document.createElement('div');
-        optionDiv.className = 'shingle-option';
-        optionDiv.dataset.name = shingle.name;
-        optionDiv.dataset.url = shingle.imageUrl;
+    //   shingles.forEach(shingle => {
+    //     const optionDiv = document.createElement('div');
+    //     optionDiv.className = 'shingle-option';
+    //     optionDiv.dataset.name = shingle.name;
+    //     optionDiv.dataset.url = shingle.imageUrl;
   
-        optionDiv.innerHTML = `
-          <img class="shingle-img" src="${shingle.imageUrl}" alt="${shingle.name}" />
-          <p>${shingle.name}</p>
-        `;
-        shingleOptionsContainer.appendChild(optionDiv);
-      });
-    }
+    //     optionDiv.innerHTML = `
+    //       <img class="shingle-img" src="${shingle.imageUrl}" alt="${shingle.name}" />
+    //       <p>${shingle.name}</p>
+    //     `;
+    //     shingleOptionsContainer.appendChild(optionDiv);
+    //   });
+    // }
   
-    shingleOptionsContainer.addEventListener('click', (e) => {
-      const option = e.target.closest('.shingle-option');
-      if (!option) return;
-      const name = option.dataset.name;
-      const url = option.dataset.url;
-      selectShingle(name, url, option);
-    });
+    // shingleOptionsContainer.addEventListener('click', (e) => {
+    //   const option = e.target.closest('.shingle-option');
+    //   if (!option) return;
+    //   const name = option.dataset.name;
+    //   const url = option.dataset.url;
+    //   selectShingle(name, url, option);
+    // });
   
-    function selectShingle(shingleName, shingleImageUrl, clickedOption) {
-      fetch('/onboarding/select-shingle', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ shingleName, shingleImageUrl })
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data.success) {
-            Array.from(shingleOptionsContainer.querySelectorAll('.shingle-option'))
-              .forEach(opt => opt.classList.remove('selected-shingle'));
-            clickedOption.classList.add('selected-shingle');
-            finalizeOnboardingBtn.disabled = false;
-          } else {
-            showAlert(data.message, 'error', 5000);
-          }
-        })
-        .catch(err => {
-          console.error('Error selecting shingle:', err);
-          showAlert('Server error selecting shingle.', 'error', 5000);
-        });
-    }
+    // function selectShingle(shingleName, shingleImageUrl, clickedOption) {
+    //   fetch('/onboarding/select-shingle', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({ shingleName, shingleImageUrl })
+    //   })
+    //     .then(res => res.json())
+    //     .then(data => {
+    //       if (data.success) {
+    //         Array.from(shingleOptionsContainer.querySelectorAll('.shingle-option'))
+    //           .forEach(opt => opt.classList.remove('selected-shingle'));
+    //         clickedOption.classList.add('selected-shingle');
+    //         finalizeOnboardingBtn.disabled = false;
+    //       } else {
+    //         showAlert(data.message, 'error', 5000);
+    //       }
+    //     })
+    //     .catch(err => {
+    //       console.error('Error selecting shingle:', err);
+    //       showAlert('Server error selecting shingle.', 'error', 5000);
+    //     });
+    // }
   
-    finalizeOnboardingBtn.addEventListener('click', () => {
-      // Mark step3 as done
-      wizardState.step3Done = true;
-      finalFirstName.value = firstNameInput.value.trim();
-      finalLastName.value = lastNameInput.value.trim();
-      transitionStep(step3, stepSignup, 3);
-    });
+    // finalizeOnboardingBtn.addEventListener('click', () => {
+    //   // Mark step3 as done
+    //   wizardState.step3Done = true;
+    //   finalFirstName.value = firstNameInput.value.trim();
+    //   finalLastName.value = lastNameInput.value.trim();
+    //   transitionStep(step3, stepSignup, 3);
+    // });
   
     // ============ STEP 4: Final Signup ============
     completeSignupBtn.addEventListener('click', () => {
@@ -532,7 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
       step2fields.style.display = 'none';
       step2sign.style.display = 'none';
       step3.style.display = 'none';
-      stepSignup.style.display = 'none';
+      // stepSignup.style.display = 'none';
     }
   
     // ============ Step Transition Helper ============

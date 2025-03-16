@@ -28,10 +28,10 @@
   
   .hero-image {
     position: absolute;
-    width: 791px;
+    width: 1010px;
     right: 0;
-    bottom: -51px;
-  }
+    bottom: -198px;
+}
   
   .badge-experts {
     gap: 8px;
@@ -181,6 +181,12 @@
     for easy vertical scrolling.
   */
   @media (max-width: 600px) {
+    .hero-image {
+      position: absolute;
+      width: 590px;
+      right: 0;
+      bottom: -108px;
+  }
 
     .services-grid {
       grid-template-columns: 1fr;

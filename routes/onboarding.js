@@ -105,9 +105,9 @@ function ensureOnboardingSession(req) {
 /****************************************************
  * GET /onboarding/shingles
  ****************************************************/
-router.get('/shingles', (req, res) => {
-  return res.json({ success: true, shingles: SHINGLE_LIST });
-});
+// router.get('/shingles', (req, res) => {
+//   return res.json({ success: true, shingles: SHINGLE_LIST });
+// });
 
 /****************************************************
  * STEP 1: UPLOAD CLAIM FILES
@@ -289,20 +289,20 @@ router.post('/sign-aob', async (req, res) => {
 /****************************************************
  * STEP 3: SELECT SHINGLE
  ****************************************************/
-router.post('/select-shingle', (req, res) => {
-  try {
-    ensureOnboardingSession(req);
-    const { shingleName, shingleImageUrl } = req.body;
-    if (!shingleName || !shingleImageUrl) {
-      return res.status(400).json({ success: false, message: 'Shingle name and image URL are required.' });
-    }
-    req.session.onboarding.shingleChoice = { name: shingleName, imageUrl: shingleImageUrl };
-    return res.json({ success: true });
-  } catch (err) {
-    console.error('Error selecting shingle:', err);
-    return res.status(500).json({ success: false, message: 'Server error selecting shingle.' });
-  }
-});
+// router.post('/select-shingle', (req, res) => {
+//   try {
+//     ensureOnboardingSession(req);
+//     const { shingleName, shingleImageUrl } = req.body;
+//     if (!shingleName || !shingleImageUrl) {
+//       return res.status(400).json({ success: false, message: 'Shingle name and image URL are required.' });
+//     }
+//     req.session.onboarding.shingleChoice = { name: shingleName, imageUrl: shingleImageUrl };
+//     return res.json({ success: true });
+//   } catch (err) {
+//     console.error('Error selecting shingle:', err);
+//     return res.status(500).json({ success: false, message: 'Server error selecting shingle.' });
+//   }
+// });
 
 /****************************************************
  * FINAL SIGNUP

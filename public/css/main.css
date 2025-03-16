@@ -171,7 +171,7 @@
   }
   
   .logo {
-    height: 40px;
+    height: 60px;
     margin-right: 0.5rem;
   }
   
@@ -376,6 +376,10 @@
   ---------------------------------------------*/
 
 @media (max-width: 650px){
+  .logo {
+    height: 40px;
+    margin-right: 0.5rem;
+  }
   .site-header{
     padding: 16px !important;
   }

@@ -45,9 +45,9 @@ section.hero
         .onboarding-step-content#stepIntro
           h2 Already have a claim? Get a new roof in 3 easy steps!
           p
-            | Upload claim documents,
-            | Sign an Assignment of Benefits Contract (AOB),
-            | Choose a Shingle. We take care of the rest.
+            | Upload claim documents, create an account. 
+            | sign an assignment of benefits contract (AOB),
+            | We take care of the rest!
           button.btn.btn-primary#startOnboardingBtn Let’s Go!
 
         // Step 1: Upload Claim Documents
@@ -129,19 +129,19 @@ section.hero
           button.btn.btn-secondary#clearSignatureBtn(type="button") Clear Signature
           button.btn.btn-primary#submitAobSignatureBtn(type="button" disabled) Next
 
-        // Step 3: Choose Shingle
-        .onboarding-step-content#step3(style="display:none;")
-          h3 Step 3: Choose Your Shingle
-          p
-            | Select from the following options.
+        //- // Step 3: Choose Shingle
+        //- .onboarding-step-content#step3(style="display:none;")
+        //-   h3 Step 3: Choose Your Shingle
+        //-   p
+        //-     | Select from the following options.
 
-          // Initially empty, we'll dynamically populate via JS
-          .shingle-options#onboardingShingleOptions
+        //-   // Initially empty, we'll dynamically populate via JS
+        //-   .shingle-options#onboardingShingleOptions
 
-          button.btn.btn-primary#finalizeOnboardingBtn(type="button" disabled) Next
+        //-   button.btn.btn-primary#finalizeOnboardingBtn(type="button" disabled) Next
 
         // Final: Sign-Up Form
-        .onboarding-step-content#stepSignup(style="display:none;")
+        .onboarding-step-content#step3(style="display:none;")
           h3 Last thing!: Create Your Account
           p.intro
             | We are excited to earn your business. Please set up an account 
