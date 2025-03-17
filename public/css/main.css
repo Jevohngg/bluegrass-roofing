@@ -102,6 +102,16 @@
     color: var(--color-text);
     transition: background-color 0.3s ease;
   }
+
+  .coverage-package ul li .error::before {
+    content: "\f00d" !important;
+    font-family: "Font Awesome 6 Free"; /* or 5 Free, depending on your version */
+    font-weight: 900;
+    color: red !important;
+    position: absolute;
+    left: 0;
+    top: 0.1rem;
+  }
   
   .navbar {
     display: flex;
@@ -368,6 +378,16 @@
 .alert-error {
   background-color: #f2dede;
   color: #a94442;
+}
+
+.error{
+  font-weight: 600;
+  color: red;
+}
+
+.success{
+  font-weight: 600;
+  
 }
 
   

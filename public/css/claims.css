@@ -322,6 +322,16 @@
     left: 0;
     top: 0.1rem;
   }
+
+  .coverage-package ul .error::before {
+    content: "\f00d" !important;
+    font-family: "Font Awesome 6 Free"; /* or 5 Free, depending on your version */
+    font-weight: 900;
+    color: black !important;
+    position: absolute;
+    left: 0;
+    top: 0.1rem;
+  }
   
   /* Price note or final line */
   .price-note {
