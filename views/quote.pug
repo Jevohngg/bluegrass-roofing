@@ -1,14 +1,11 @@
-
 extends layouts/mainLayout
 
 block pageStyles
-  link(rel="stylesheet", href="/css/guarantee.css")
+  // Link to the NEW claims-specific stylesheet
+  link(rel="stylesheet", href="/css/main.css")
 
 block content
-
-    include home/_guarantee
-
-
+ 
     script.
         //- var targetURL = 'bluegrass-roofing'
         var targetURL = window.location.hostname;
@@ -27,3 +24,4 @@ block content
         var qqButtonImage = 'https://irp.cdn-website.com/f6c14370/dms3rep/multi/BlueGrass-logo-black.png'
     script(src='https://storage.googleapis.com/quickquote-integration/QuickQuote%20Javascript%20-%20Final%201.0.js')
 
+block pageScripts

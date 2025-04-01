@@ -82,6 +82,12 @@
     list-style: none;
   }
 
+  .mainContent{
+    height: 100vh;
+    padding: 80px;
+  }
+
+
   /* For all other pages, set the header to white */
 .site-header.white-header {
     background-color: #fff;
@@ -103,15 +109,7 @@
     transition: background-color 0.3s ease;
   }
 
-  .coverage-package ul li .error::before {
-    content: "\f00d" !important;
-    font-family: "Font Awesome 6 Free"; /* or 5 Free, depending on your version */
-    font-weight: 900;
-    color: red !important;
-    position: absolute;
-    left: 0;
-    top: 0.1rem;
-  }
+
   
   .navbar {
     display: flex;

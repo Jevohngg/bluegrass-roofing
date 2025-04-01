@@ -62,6 +62,10 @@ app.use('/guarantee', guaranteeRoutes);
 const portalRoutes = require('./routes/portal');
 app.use(portalRoutes);
 
+const quoteRoutes = require('./routes/quote');
+app.use('/quote', quoteRoutes);
+
+
 // === Onboarding Route (New) ===
 const onboardingRoutes = require('./routes/onboarding');
 app.use('/onboarding', onboardingRoutes);
