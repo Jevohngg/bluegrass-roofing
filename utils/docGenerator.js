@@ -90,6 +90,7 @@ async function generateHtmlPdf(html, options = {}) {
   }
 
   // 4) Launch Puppeteer with Heroku-friendly flags
+  //    and pick up the Chrome that the buildpack installed
   const browser = await puppeteer.launch({
     args: [
       '--no-sandbox',
@@ -97,11 +98,15 @@ async function generateHtmlPdf(html, options = {}) {
       '--disable-dev-shm-usage',
       '--single-process'
     ],
-    executablePath: process.env.CHROME_PATH || puppeteer.executablePath()
+    executablePath: 
+      process.env.CHROME_PATH       // chrome-for-testing buildpack
+      || process.env.GOOGLE_CHROME_BIN // older buildpacks sometimes set this
+      || puppeteer.executablePath() // fallback to bundled Chromium
   });
 
-  // 5) Create a new page and render the HTML
   const page = await browser.newPage();
+
+  // 5) Render the HTML
   await page.setContent(html, { waitUntil: 'networkidle0' });
 
   // 6) Build the footer template
@@ -110,7 +115,7 @@ async function generateHtmlPdf(html, options = {}) {
       ${
         base64Logo
           ? `<img src="data:image/png;base64,${base64Logo}" style="width:80px;" />`
-          : 'BlueGrass Roofing'
+          : 'My Company Logo'
       }
     </div>
   `;
