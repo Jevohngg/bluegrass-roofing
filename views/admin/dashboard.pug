@@ -33,7 +33,7 @@ block content
                 .lead-actions
                   button.btn.btn-contacted(type="button", data-id=lead._id) Mark as Contacted
                   button.btn.btn-archived(type="button", data-id=lead._id) Archive
-                  button.btn.btn-delete(type="button", data-id=lead._id) Delete Lead
+                  button.btn.btn-delete-lead(type="button", data-id=lead._id) Delete Lead
         else
           p No new leads.
       
@@ -57,7 +57,7 @@ block content
                   p #{lead.message || 'N/A'}
                 .lead-actions
                   button.btn.btn-archived(type="button", data-id=lead._id) Archive
-                  button.btn.btn-delete(type="button", data-id=lead._id) Delete Lead
+                  button.btn.btn-delete-lead(type="button", data-id=lead._id) Delete Lead
         else
           p No contacted leads.
       
@@ -80,6 +80,6 @@ block content
                   h4 Message
                   p #{lead.message || 'N/A'}
                 .lead-actions
-                  button.btn.btn-delete(type="button", data-id=lead._id) Delete Lead
+                  button.btn.btn-delete-lead(type="button", data-id=lead._id) Delete Lead
         else
           p No archived leads.

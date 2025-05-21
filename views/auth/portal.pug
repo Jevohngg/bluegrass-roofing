@@ -14,9 +14,80 @@ block content
           | This is your personal client portal. Below are actions you can complete now 
           | to speed up the process while you wait for us to handle the rest.
 
+      // ============ 2) SIGN CONTRACTS CONTAINER ============
+      .portal-action-card
+        h3 Sign Documents
+        p.subtext 
+          | Below are any documents that your contractor has sent you to sign.
+
+        //– detect if the user self-signed an AOB without an admin send
+        //– detect if the user self-signed an AOB without an admin send
+        -
+          const hasAutoAob = user.documents &&
+            user.documents.aob &&
+            user.documents.aob.signed &&
+            !(docSends || []).some(ds => ds.docType === 'aob');
+        
+
+        //– render if any admin-sent docs or that self-signed AOB
+        if (docSends && docSends.length) || hasAutoAob
+          .doc-container-parent
+
+            //–– loop admin-sent documents
+            if docSends
+              each ds in docSends
+                - const docKey    = ds.docType
+                - const docMeta   = user.documents && user.documents[docKey]
+                - const isSigned  = docMeta && docMeta.signed
+                - const signedUrl = docMeta && docMeta.docUrl
+                - const signedAt  = docMeta && docMeta.signedAt
+
+                .doc-card(class=(isSigned ? 'signed' : ''))
+                  .doc-card-content
+                    h4= docKey.toUpperCase()
+                    if isSigned
+                      - const formattedDate = new Date(signedAt).toLocaleString('en-US',{ dateStyle:'long', timeStyle:'short' })
+                      p This document was signed on #{formattedDate}.
+                    else
+                      p This document is awaiting your signature.
+                  .doc-card-actions
+                    if isSigned
+                      .doc-status-text
+                        i.fas.fa-check-circle
+                        | Signed
+                      if signedUrl
+                        a.btn.btn-secondary(href=signedUrl target="_blank")
+                          i.fas.fa-file-download
+                          | View/Download PDF
+                    else
+                      a.btn.btn-primary(href=`/portal/doc/${ds._id}`)
+                        | Sign Now
+
+            //–– append the auto AOB if needed
+            if hasAutoAob
+              - const docMeta   = user.documents.aob
+              - const signedUrl = docMeta.docUrl
+              - const signedAt  = docMeta.signedAt
+              .doc-card.signed
+                .doc-card-content
+                  h4 AOB
+                  - const formattedDate = new Date(signedAt).toLocaleString('en-US',{ dateStyle:'long', timeStyle:'short' })
+                  p This document was signed on #{formattedDate}.
+                .doc-card-actions
+                  .doc-status-text
+                    i.fas.fa-check-circle
+                    | Signed
+                  if signedUrl
+                    a.btn.btn-secondary(href=signedUrl target="_blank")
+                      i.fas.fa-file-download
+                      | View/Download PDF
+
+        else
+          .action-state-success
+            p No contracts to sign at this time.
+
       // ---------- PACKAGE INFO CARD -------------
       if packageName
-        // Enhanced container for "Request Received"
         .portal-action-card.package-confirmation
           h2 Package: #{packageName}
           .package-confirmation-content
@@ -39,31 +110,24 @@ block content
           | upload it here so we can expedite processing. If not, feel free to skip.
 
         if !user.claimUploadUrls || !user.claimUploadUrls.length
-          // Empty state
           .upload-claim-container
             .upload-dropzone#claimDropzone
               p Drop or click to select file(s) for upload
               input(type="file" id="claimFilesInput" name="claimFiles" accept=".pdf,.jpg,.png,.doc,.docx" multiple hidden)
 
-            // Progress area (hidden by default)
             .upload-progress#uploadProgress(style="display:none;")
               .progress-bar#progressBar
 
-            // Container to show "Attached" state (hidden by default, managed by JS)
             #attachedFilesContainer
-              // Thumbnails will be dynamically added by JS
 
-            // Submit button (disabled until file is attached)
             button.btn.btn-primary.btn-primary-disabled(type="button" id="submitFilesBtn" disabled)
               i.fas.fa-upload
               | Submit File(s)
 
-          // Fallback form for non-JS or older browsers – hidden by default
           form#fallbackClaimForm(action="/portal/upload-claim" method="POST" enctype="multipart/form-data" style="display:none;")
             input#fallbackClaimFile(type="file" name="claimFile" accept=".pdf,.jpg,.png,.doc,.docx")
             button(type="submit") Upload
         else
-          // Uploaded state
           .action-state-success
             p Claim file(s) Uploaded Successfully.
 
@@ -73,7 +137,6 @@ block content
                 if /\.(jpg|jpeg|png|gif)$/i.test(fileUrl)
                   img(src=fileUrl alt="Preview of uploaded claim" loading="lazy")
                 else
-                  // Document preview
                   .file-icon
                     i.fas.fa-file
                   .file-name= fileUrl.split('/').pop()
@@ -83,122 +146,6 @@ block content
             i.fas.fa-upload
             | Upload More
 
-      // ============ 2) SIGN CONTRACTS CONTAINER ============
-      .portal-action-card
-        h3 Sign Required Documents
-        p.subtext 
-          | Completing these contracts now can speed up our ability to work on your behalf.
-      
-        if user.documents.aob.signed
-          // If AOB is signed, we skip ACI & LOI per original logic
-          .doc-list
-            .doc-card.signed
-              .doc-card-content
-                h4 Assignment of Benefits (AOB)
-                p 
-                  | You've already signed the Assignment of Benefits. 
-                  | This allows us to file & manage your claim directly with your 
-                  | insurance company, with payments sent to us.
-                p 
-                  | Signed at #{user.documents.aob.signedAt}.
-              .doc-card-actions
-                .doc-status-text
-                  i.fas.fa-check-circle
-                  | Signed
-                if user.documents.aob.docUrl
-                  a.btn.btn-secondary(href=user.documents.aob.docUrl target="_blank")
-                    i.fas.fa-file-download
-                    | View/Download PDF
-      
-          .action-state-success
-            p 
-              | AOB is signed. No further documents are required.
-      
-        else
-          // If AOB isn't signed yet, show it FIRST
-          .doc-list
-            // --- AOB DOCUMENT FIRST ---
-            .doc-card(class=(user.documents.aob.signed ? 'signed' : ''))
-              .doc-card-content
-                h4 Assignment of Benefits (AOB)
-                p 
-                  | This is the main document that allows us to file 
-                  | and manage your claim directly with your insurance company, 
-                  | with payments sent to us. 
-                p 
-                  strong Note:
-                  |  Signing AOB means you don’t have to sign ACI or LOI below 
-                  | (these become unnecessary once AOB is signed).
-              .doc-card-actions
-                if user.documents.aob.signed
-                  .doc-status-text
-                    i.fas.fa-check-circle
-                    | Signed
-                  if user.documents.aob.docUrl
-                    a.btn.btn-secondary(href=user.documents.aob.docUrl target="_blank")
-                      i.fas.fa-file-download
-                      | View/Download PDF
-                else
-                  a.btn.btn-primary(href="/portal/sign-doc?docType=aob")
-                    | Sign AOB
-      
-            // Divider line
-            hr
-      
-            // --- ACI DOCUMENT ---
-            .doc-card(class=(user.documents.aci.signed ? 'signed' : ''))
-              .doc-card-content
-                h4 Authorization to Contact Insurer (ACI)
-                if user.documents.aci.signed
-                  p 
-                    | You have signed ACI. This is required for our price guarantee, 
-                    | enabling direct communication with your insurance company.
-                  p 
-                    | Signed at #{user.documents.aci.signedAt}.
-                else
-                  p 
-                    | Required for our price guarantee, enabling direct communication 
-                    | with your insurance company.
-              .doc-card-actions
-                if user.documents.aci.signed
-                  .doc-status-text
-                    i.fas.fa-check-circle
-                    | Signed
-                  if user.documents.aci.docUrl
-                    a.btn.btn-secondary(href=user.documents.aci.docUrl target="_blank")
-                      i.fas.fa-file-download
-                      | View/Download PDF
-                else
-                  a.btn.btn-primary(href="/portal/sign-doc?docType=aci")
-                    | Sign ACI
-      
-            // --- LOI DOCUMENT ---
-            .doc-card(class=(user.documents.loi.signed ? 'signed' : ''))
-              .doc-card-content
-                h4 Letter of Intent (LOI)
-                if user.documents.loi.signed
-                  p 
-                    | You've signed the LOI, which enables direct insurance 
-                    | company communication about AOB, while you maintain control.
-                  p 
-                    | Signed at #{user.documents.loi.signedAt}.
-                else
-                  p 
-                    | Enables direct insurance company communication about AOB, 
-                    | while you maintain control of the claim process.
-              .doc-card-actions
-                if user.documents.loi.signed
-                  .doc-status-text
-                    i.fas.fa-check-circle
-                    | Signed
-                  if user.documents.loi.docUrl
-                    a.btn.btn-secondary(href=user.documents.loi.docUrl target="_blank")
-                      i.fas.fa-file-download
-                      | View/Download PDF
-                else
-                  a.btn.btn-primary(href="/portal/sign-doc?docType=loi")
-                    | Sign LOI
-
       // ============ 3) CHOOSE SHINGLE CONTAINER ============
       .portal-action-card
         h3 Choose a Shingle
@@ -206,19 +153,15 @@ block content
           | We offer a variety of shingle options. Please choose one below.
 
         if user.shingleChoice.name
-          // Show selected state
           .action-state-success
             p 
               | You selected: "#{user.shingleChoice.name}"
           .container
             img.shingle-image(src=user.shingleChoice.imageUrl alt=user.shingleChoice.name)
-
-            // Reselection button
             button.btn.btn-secondary(type="button" id="changeShingleBtn")
               i.fas.fa-edit
               | Change Shingle
         else
-          // Prompt to select
           button.btn.btn-primary#chooseShingleBtn
             i.fas.fa-cubes
             | Select Shingle
@@ -263,3 +206,22 @@ block pageScripts
   script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js")
   script(src="/js/alert.js")
   script(src="/js/portal.js")
+
+  // this one does the title swap
+  script.
+    (function(){
+      const fullTitles = {
+        'AOB': 'Assignment of Benefits (AOB)',
+        'ACI': 'Authorization to Contact Insurer (ACI)',
+        'LOI': 'Letter of Intent (LOI)',
+        'GSA': 'General Service Agreement (GSA)',
+        'COC': 'Certificate of Completion (COC)'
+      };
+
+      document.querySelectorAll('.doc-card-content h4').forEach(h4 => {
+        const code = h4.textContent.trim();
+        if (fullTitles[code]) {
+          h4.textContent = fullTitles[code];
+        }
+      });
+    })();

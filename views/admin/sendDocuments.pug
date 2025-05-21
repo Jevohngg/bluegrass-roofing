@@ -1,0 +1,252 @@
+extends ../layouts/adminLayout
+
+block content
+  .container.mt-4.send-docs-container
+    .row
+      .col-lg-8.offset-lg-2
+        //— Send Documents Form Card —
+        .card.mb-4
+          .card-header.bg-white
+            h2.head-text.mb-0 Send Documents
+          .card-body
+            if error
+              .alert.alert-danger(role="alert")= error
+            if success
+              .alert.alert-success(role="alert")= success
+
+            form(method="POST", action="/admin/send-documents")
+              .mb-3
+                label.form-label(for="recipientEmail") Recipient Email
+                input#recipientEmail.form-control(type="email" name="recipientEmail" required placeholder="user@example.com")
+              .mb-3
+                label.form-label(for="docType") Document Type
+                select#docType.form-control(name="docType" required)
+                  option(value="") Select a contract…
+                  option(value="aob") Assignment of Benefits (AOB)
+                  option(value="aci") Authorization to Contact Insurer (ACI)
+                  option(value="loi") Letter of Intent (LOI)
+                  option(value="gsa") General Service Agreement (GSA)
+                  option(value="coc") Certificate of Completion (COC)
+
+              // where we’ll dump the “Save” values as hidden inputs:
+              #prefillFormFields
+
+              .mb-3
+                button#showPrefillBtn.btn.btn-outline-secondary(type="button" hidden) Pre-fill Some Client Fields
+              .mb-3
+                label.form-label(for="customMessage") Custom Email Message
+                textarea#customMessage.form-control(name="customMessage" rows="4" placeholder="Enter your optional message here…")
+              button.btn.btn-primary(type="submit") Send Document
+
+  //— Drawer for prefill fields —
+  #prefillDrawer
+    .d-flex.justify-content-between.align-items-center.mb-3
+      h4#drawerTitle.mb-0 Drawer Title
+      button#closePrefillBtn.btn-close(type="button" aria-label="Close")
+        span.material-symbols-outlined.close-icon close
+    .drawer-body
+    .drawer-footer.d-flex.justify-content-end.gap-2.mt-3
+      button#cancelPrefillBtn.btn.btn-secondary(type="button") Cancel
+      button#savePrefillBtn.btn.btn-primary(type="button") Save
+
+  //— Pre-fill Script —
+  script.
+    (function(){
+      const contracts        = !{JSON.stringify(contracts)};
+      const docTypeSelect    = document.getElementById('docType');
+      const showBtn          = document.getElementById('showPrefillBtn');
+      const drawer           = document.getElementById('prefillDrawer');
+      const drawerBody       = drawer.querySelector('.drawer-body');
+      const drawerTitle      = document.getElementById('drawerTitle');
+      const closeBtn         = document.getElementById('closePrefillBtn');
+      const saveBtn          = document.getElementById('savePrefillBtn');
+      const cancelBtn        = document.getElementById('cancelPrefillBtn');
+      const hiddenFieldsCont = document.getElementById('prefillFormFields');
+
+      function renderFields(type, container) {
+        container.innerHTML = '';
+        const fields = contracts[type] || [];
+        fields.forEach(field => {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'mb-3';
+
+          const label = document.createElement('label');
+          label.className = 'form-label';
+          label.htmlFor = field.name;
+          label.textContent = field.label;
+          wrapper.appendChild(label);
+
+          let input, canvas, clearBtn;
+          if (field.type === 'signature') {
+            // hidden input to store the Base64
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.id   = field.name;
+            input.name = field.name;
+
+            // the canvas
+            canvas = document.createElement('canvas');
+            canvas.id = field.name + 'Canvas';
+            canvas.width = 300;
+            canvas.height = 100;
+            canvas.style.border = '1px solid #ccc';
+            canvas.style.display = 'block';
+            wrapper.appendChild(canvas);
+
+            // clear button
+            clearBtn = document.createElement('button');
+            clearBtn.type = 'button';
+            clearBtn.className = 'btn btn-sm btn-outline-secondary mt-1';
+            clearBtn.textContent = 'Clear';
+            wrapper.appendChild(clearBtn);
+
+            wrapper.appendChild(input);
+
+            // after appending, wire up SignaturePad
+            setTimeout(() => {
+              const pad = new SignaturePad(canvas);
+              const existing = hiddenFieldsCont.querySelector(`input[name="${field.name}"]`);
+              if (existing && existing.value) pad.fromDataURL(existing.value);
+              pad.addEventListener('endStroke', () => {
+                input.value = pad.toDataURL();
+              });
+              clearBtn.onclick = () => { pad.clear(); input.value = ''; };
+            }, 0);
+          } else {
+            // text / date / etc.
+            input = document.createElement('input');
+            input.type = field.type === 'date' ? 'date' : field.type;
+            input.className = 'form-control';
+            input.id   = field.name;
+            input.name = field.name;
+            wrapper.appendChild(input);
+          }
+
+          container.appendChild(wrapper);
+        });
+      }
+
+      docTypeSelect.addEventListener('change', function(){
+        if (this.value) {
+          showBtn.hidden = false;
+        } else {
+          showBtn.hidden = true;
+          drawer.classList.remove('open');
+        }
+      });
+
+      showBtn.addEventListener('click', function(){
+        const type = docTypeSelect.value;
+        drawerTitle.textContent = docTypeSelect.selectedOptions[0].textContent;
+        renderFields(type, drawerBody);
+
+        hiddenFieldsCont.querySelectorAll('input').forEach(h => {
+          const fld = drawerBody.querySelector(`[name="${h.name}"]`);
+          if (!fld) return;
+          fld.value = h.value;
+        });
+
+        drawer.classList.add('open');
+      });
+
+      closeBtn.addEventListener('click', () => drawer.classList.remove('open'));
+
+      cancelBtn.addEventListener('click', () => {
+        drawerBody.innerHTML = '';
+        hiddenFieldsCont.innerHTML = '';
+        drawer.classList.remove('open');
+      });
+
+      saveBtn.addEventListener('click', () => {
+        hiddenFieldsCont.innerHTML = '';
+        drawerBody.querySelectorAll('input').forEach(inp => {
+          const h = document.createElement('input');
+          h.type  = 'hidden';
+          h.name  = inp.name;
+          h.value = inp.value;
+          hiddenFieldsCont.appendChild(h);
+        });
+        drawer.classList.remove('open');
+      });
+    })();
+
+  .row
+    .col-lg-8.offset-lg-2
+      //–– Sent Documents Table Card ––
+      .card.mb-4.sent-docs
+        .card-header.bg-white
+          h2.head-text.mb-0.head-text Sent History
+        .card-body
+          .table-responsive(style="overflow-x:auto; -webkit-overflow-scrolling: touch;")
+            table.table.table-striped.table-sm
+              thead
+                tr
+                  th Recipient
+                  th Document
+                  th Signed At
+                  th Actions
+              tbody
+                each send in docSends
+                  tr(data-id=send._id)
+                    td= send.recipientEmail
+                    td= send.docTitle
+                    td= send.formattedSignedAt
+                    td
+                      button.btn.btn-sm.btn-danger.undo-btn(type="button" data-id=send._id) Undo
+  
+  
+
+  //–– Confirm Undo Modal ––
+  .modal.fade#confirmUndoModal(tabindex="-1" role="dialog" aria-labelledby="confirmUndoModalLabel" aria-hidden="true")
+    .modal-dialog(role="document")
+      .modal-content
+        .modal-header
+          h5.modal-title#confirmUndoModalLabel Confirm Undo
+          button.close(type="button" data-bs-dismiss="modal" aria-label="Close")
+            span(aria-hidden="true") &times;
+        .modal-body
+          p Are you sure you want to delete this sent contract? The user will no longer see it in their client portal.
+        .modal-footer
+          button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Cancel
+          button.btn.btn-danger(type="button" id="confirmUndo") Confirm
+
+  //- Bootstrap JS bundle (for Modal functionality)
+  script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js")
+
+  //–– Client‐side JS for Undo (vanilla JS) ––
+  script.
+    (function(){
+      let selectedId;
+      const undoButtons = document.querySelectorAll('.undo-btn');
+      const modalEl     = document.getElementById('confirmUndoModal');
+      const confirmBtn  = document.getElementById('confirmUndo');
+      const confirmModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+      undoButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          selectedId = btn.dataset.id;
+          confirmModal.show();
+        });
+      });
+
+      confirmBtn.addEventListener('click', () => {
+        fetch(`/admin/send-documents/${selectedId}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            confirmModal.hide();
+            const row = document.querySelector(`tr[data-id="${selectedId}"]`);
+            if (row) row.remove();
+          } else {
+            alert(data.message || 'Error deleting document.');
+          }
+        })
+        .catch(err => {
+          console.error('Error deleting document:', err);
+          alert('Server error. Please try again.');
+        });
+      });
+    })();

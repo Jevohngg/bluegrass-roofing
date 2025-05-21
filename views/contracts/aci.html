@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BlueGrass Roofing Authorization to Contact Insurer (ACI)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Include SignaturePad from a CDN (mirroring the AOB approach) -->
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+
+  <style>
+    /* Preserve existing overall style, but add new interactive field styling */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      color: #000;
+      line-height: 1.5;
+    }
+    input:disabled,
+    input[readonly] {
+      background-color: #e9ecef;
+      opacity: 1;
+      cursor: not-allowed;
+    }
+
+
+    input:focus {
+      border: 1px solid #E18263 !important;
+      outline: none;
+      box-shadow: 0 0 0 2px #E18263;
+    }
+
+    /* Make signature canvases responsive */
+    canvas {
+      width: 100%;
+      height: auto;
+    }
+
+    .clear-button {
+      display: inline-block;
+      margin-top: 0.5rem;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.9rem;
+      color: #fff;
+      background-color: #999;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      outline: none;
+    }
+    .clear-button:hover {
+      background-color: #777;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PAGE 1 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+    <h2 style="font-size:18px; text-align:center; margin-top:0; font-weight:bold;">
+      BLUEGRASS ROOFING AUTHORIZATION TO CONTACT INSURER
+    </h2>
+
+    <p style="margin-bottom:10px;">
+      This Authorization to Contact Insurer (<strong>"ACI"</strong>) is intended to grant Bluegrass Roofing 
+      (Premier Construction Group, LLC) permission from the undersigned Client/Homeowner to communicate 
+      directly with the Client’s insurance provider.
+    </p>
+    <p style="margin-bottom:10px;">
+      This authorization allows Bluegrass Roofing to efficiently obtain relevant insurance claim information, 
+      including policy details, claim status updates, adjuster reports, and other pertinent documents necessary 
+      for the timely and accurate completion of roofing services. This authorization enables direct negotiation 
+      between Bluegrass Roofing and the insurance company regarding the scope of repairs, pricing, and insurance 
+      settlements, subject to the limitations outlined in this agreement.
+    </p>
+
+    <h3 style="margin-bottom:6px; font-size:16px; font-weight:bold;">Identification of Parties</h3>
+    <ul style="margin-bottom:10px; padding-left:20px;">
+      <li>
+        <strong>Contractor:</strong> 
+        Bluegrass Roofing, a DBA of Premier Construction Group, LLC 
+        (<em>hereinafter "Contractor"</em>)
+      </li>
+      <li>
+        <strong>Client/Homeowner:</strong> 
+        (<em>Name and Address to be provided below</em>) (<em>hereinafter "Client" or "Homeowner"</em>)
+      </li>
+    </ul>
+
+    <!-- Contact Fields (Block Layout, mirroring AOB style) -->
+    <div style="border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem;">
+
+      <!-- Client Name(s) -->
+      <div style="display: flex; flex-wrap: wrap; align-items: center; margin-bottom: 1rem;">
+        <label
+          for="clientName"
+          style="min-width: 130px; margin-right: 8px; font-weight: bold;"
+        >
+          Client Name(s)*:
+        </label>
+        <input
+          type="text"
+          id="clientName"
+          name="clientName"
+          required
+          style="
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+            max-width: 100%;
+          "
+        />
+      </div>
+
+      <!-- Property Address -->
+      <div style="display: flex; flex-wrap: wrap; align-items: center; margin-bottom: 1rem;">
+        <label
+          for="propertyAddress"
+          style="min-width: 130px; margin-right: 8px; font-weight: bold;"
+        >
+          Property Address*:
+        </label>
+        <input
+          type="text"
+          id="propertyAddress"
+          name="propertyAddress"
+          required
+          style="
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+            max-width: 100%;
+          "
+        />
+      </div>
+
+      <!-- Insurance Company Name -->
+      <div style="display: flex; flex-wrap: wrap; align-items: center; margin-bottom: 1rem;">
+        <label
+          for="insuranceCompany"
+          style="min-width: 130px; margin-right: 8px; font-weight: bold;"
+        >
+          Insurance Company Name*:
+        </label>
+        <input
+          type="text"
+          id="insuranceCompany"
+          required
+          name="insuranceCompany"
+          style="
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+            max-width: 100%;
+          "
+          placeholder="Enter Insurance Co. Name"
+        />
+      </div>
+
+      <!-- Claim Number -->
+      <div style="display: flex; flex-wrap: wrap; align-items: center; margin-bottom: 0;">
+        <label
+          for="claimNumber"
+          style="min-width: 130px; margin-right: 8px; font-weight: bold;"
+        >
+          Claim Number*:
+        </label>
+        <input
+          type="text"
+          id="claimNumber"
+          name="claimNumber"
+          required
+          style="
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+            max-width: 100%;
+          "
+          placeholder="Enter Claim Number"
+        />
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PAGE 2 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+
+    <h3 style="margin-top:0; font-size:16px; font-weight:bold;">1. SCOPE OF AUTHORIZATION</h3>
+    <p style="margin-bottom:10px;">
+      By executing this Authorization, the Client explicitly grants Bluegrass Roofing (Premier Construction Group, LLC) 
+      the right to access and obtain insurance-related documentation and information directly from the Client’s insurance company. 
+      The authorized scope includes, but is not limited to, the following:
+    </p>
+    <ul style="margin-bottom:10px; padding-left:20px;">
+      <li>Full access to insurance policy documents relevant to the roofing claim.</li>
+      <li>Access to detailed information regarding coverage limits, deductibles, exclusions, and any special endorsements or riders associated with the claim.</li>
+      <li>Authorization to obtain copies of all adjuster inspection reports, findings, assessments, and communications related to the roofing claim.</li>
+      <li>Permission to receive ongoing claim status updates directly from the insurer or its representatives.</li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      The Client authorizes Bluegrass Roofing to use this information solely to evaluate, plan, and perform roofing services 
+      and negotiate fair and timely settlements with the insurer, subject to the limitations outlined herein.
+    </p>
+
+  </div>
+
+  <!-- PAGE 3 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+
+    <h3 style="margin-top:0; font-size:16px; font-weight:bold;">2. COMMUNICATION AND NEGOTIATION AUTHORITY</h3>
+    <p style="margin-bottom:10px;">
+      By signing this Authorization, the Client explicitly empowers Bluegrass Roofing (Premier Construction Group, LLC) 
+      to act as the authorized representative concerning communications and negotiations with the Client's insurance company, 
+      specifically related to the roofing claim identified herein. The authority includes the following permissions:
+    </p>
+    <ul style="margin-bottom:10px; padding-left:20px;">
+      <li>
+        The Client expressly authorizes Bluegrass Roofing to contact, communicate, and correspond with insurance adjusters, 
+        representatives, or other relevant personnel involved with the claim.
+      </li>
+      <li>
+        The Client authorizes Bluegrass Roofing to negotiate the insurance company's terms regarding the scope of repair work, 
+        pricing, material selections, and other claim-related terms.
+      </li>
+      <li>
+        Any negotiated settlement amounts are subject to the client's final approval unless the Client has executed an 
+        Assignment of Benefits (AOB) that transfers final approval authority to Bluegrass Roofing.
+      </li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      This authority is granted exclusively for purposes directly related to resolving and facilitating the completion of 
+      the roofing services covered by the insurance claim.
+    </p>
+
+    <h3 style="margin-bottom:6px; font-size:16px; font-weight:bold;">3. LIMITATIONS ON AUTHORITY</h3>
+    <p style="margin-bottom:10px;">
+      The Client expressly acknowledges and agrees that the authority granted to Bluegrass Roofing (Premier Construction Group, LLC) 
+      to communicate and negotiate with the Client’s insurance company is subject to the following conditions and limitations:
+    </p>
+    <ul style="margin-bottom:10px; padding-left:20px;">
+      <li>
+        Unless the Client has executed a separate Assignment of Benefits (AOB), Bluegrass Roofing’s authority to negotiate claim terms is limited.
+      </li>
+      <li>
+        Bluegrass Roofing may negotiate and present settlement offers from the insurance company, but final acceptance, approval, 
+        or rejection of any settlement amount or claim terms remains solely with the Client.
+      </li>
+      <li>
+        If the Client executes an Assignment of Benefits (AOB), Bluegrass Roofing’s negotiation authority expands to include:
+        <ul style="margin:10px 0 10px 20px;">
+          <li>
+            Bluegrass Roofing will be authorized to independently accept, finalize, and execute claim settlements with the insurance company 
+            without further Client approval, as detailed explicitly in the AOB.
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      The Client acknowledges understanding of these conditions and affirms that they have read and comprehended these limitations 
+      regarding Bluegrass Roofing’s authority.
+    </p>
+
+  </div>
+
+  <!-- PAGE 4 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+
+    <h3 style="margin-top:0; font-size:16px; font-weight:bold;">4. CONFIDENTIALITY AND PRIVACY</h3>
+    <p style="margin-bottom:10px;">
+      Bluegrass Roofing (Premier Construction Group, LLC) is committed to protecting the confidentiality and privacy 
+      of the Client’s personal information. By executing this Authorization, the Client explicitly consents to the following:
+    </p>
+    <ul style="margin-bottom:10px; padding-left:20px;">
+      <li>
+        The Client authorizes Bluegrass Roofing to exchange and disclose specific personal and claim-related information with the Client’s insurance company 
+        solely for the insurance claim and roofing project purposes.
+      </li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      The information explicitly authorized to be shared includes, but is not limited to:
+    </p>
+    <ul style="margin-bottom:10px; padding-left:20px;">
+      <li>Client’s Name and Address</li>
+      <li>Insurance Company Name and Claim Number</li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      Bluegrass Roofing agrees to handle all personal and claim-related information in compliance with applicable state and federal privacy laws 
+      and regulations. The personal information shared will be strictly limited to what is necessary to facilitate communications, negotiations, 
+      and the resolution of the insurance claim related to the roofing project.
+      <br><br>
+      The Client acknowledges understanding of the types of information shared and consents to such sharing, as outlined in this Authorization.
+    </p>
+
+    <h3 style="margin-bottom:6px; font-size:16px; font-weight:bold;">5. DURATION AND EXPIRATION OF AUTHORIZATION</h3>
+    <p style="margin-bottom:10px;">
+      The authorization granted to Bluegrass Roofing (Premier Construction Group, LLC) by the Client under this agreement 
+      is subject to the following duration and termination conditions:
+    </p>
+    <ul style="margin-bottom:10px; padding-left:20px;">
+      <li>
+        This authorization shall become effective immediately upon the date it is signed by the Client (the 
+        <em>"Effective Date"</em>), as indicated below.
+      </li>
+      <li>
+        The authorization provided herein shall expire and terminate automatically under the following conditions:
+        <ul style="margin:10px 0 10px 20px;">
+          <li>
+            This authorization will remain valid until the roofing project specified in this document is completed and 
+            Bluegrass Roofing has received final payment in full from the Client or insurance provider.
+          </li>
+          <li>
+            The Client reserves the right to revoke this authorization at any time by providing written notice to Bluegrass Roofing.
+          </li>
+          <li>
+            Upon receiving such notice, Bluegrass Roofing will cease communications with the insurer immediately, except for any actions 
+            necessary to conclude work already initiated or to finalize any ongoing claim-related negotiations unless otherwise agreed.
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      The Client acknowledges having read, understood and agreed to these terms regarding the duration and expiration of this authorization.
+    </p>
+
+  </div>
+
+  <!-- PAGE 5 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+
+    <h3 style="margin-top:0; font-size:16px; font-weight:bold;">6. PRICE GUARANTEE (CONDITIONAL UPON AUTHORIZATION)</h3>
+    <p style="margin-bottom:10px;">
+      Provided the Client executes this Authorization to Contact Insurer (ACI), Bluegrass Roofing 
+      (Premier Construction Group, LLC) guarantees that the roofing services will be completed for the final scope of work 
+      and pricing approved by the Client’s insurance provider. Under this guarantee, the Client shall be solely responsible 
+      for payment of their insurance deductible and any unrecoverable depreciation as outlined in their insurance policy. 
+      No additional fees or costs will be charged unless explicitly agreed upon in writing between the Client and Bluegrass Roofing.
+    </p>
+    <p style="margin-bottom:10px;">
+      This Price Guarantee is valid only upon the Client’s full cooperation with Bluegrass Roofing’s efforts to communicate 
+      and negotiate directly with the insurer, as authorized by this agreement.
+    </p>
+
+  </div>
+
+
+  <!-- PAGE 5 (continued) | Final text + new signature block layout -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+
+    <p style="margin-bottom:10px;">
+      By signing below, the Client acknowledges having read, understood and agreed to all terms outlined 
+      in this Authorization to Contact Insurer (ACI). The Client explicitly consents to grant Bluegrass Roofing 
+      (Premier Construction Group, LLC) the authority detailed herein, including access to insurance-related information, 
+      direct communication with the insurer, and negotiation authority, subject to the stated limitations.
+    </p>
+
+    <!-- HOMEOWNER 1 SIGNATURE BLOCK -->
+    <div style="margin-bottom: 1.5rem;">
+      <h4 style="margin-bottom: 0.5rem;">Client/Homeowner 1</h4>
+
+      <label for="homeowner1PrintedName" style="display:inline-block; margin-bottom:0.25rem; font-weight:600;">
+        Printed Name*:
+      </label>
+      <input
+        type="text"
+        id="homeowner1PrintedName"
+        name="homeowner1PrintedName"
+        required
+        style="width:95%; padding:0.5rem; max-width: 300px; margin-bottom:1rem; border:1px solid #ddd; border-radius:4px; outline:none;"
+      /><br>
+
+      <label for="homeowner1Date" style="display:inline-block; margin-top:16px; margin-bottom:0.25rem; font-weight:600;">
+        Date*:
+      </label>
+      <input
+        type="date"
+        id="homeowner1Date"
+        name="homeowner1Date"
+        required
+        style="width:95%; padding:0.5rem; max-width: 300px; border:1px solid #ddd; border-radius:4px; outline:none;"
+      />
+    </div>
+
+      <label for="signatureCanvasHomeowner1" style="display:inline-block; margin-bottom:0.25rem; font-weight:600;">
+        Signature*:
+      </label>
+      <div style="position:relative; width:300px; max-width:100%; height:100px; border:1px solid #ccc; border-radius:4px; margin-bottom:0.5rem;">
+        <canvas
+          id="signatureCanvasHomeowner1"
+          width="300"
+          height="100"
+          style="max-width:100%; height:auto;"
+        ></canvas>
+        <button type="button" id="clearSignatureHomeowner1" class="clear-button">Clear Signature</button>
+      </div>
+      <input type="hidden" required name="signatureHomeowner1" id="signatureHomeowner1" />
+
+
+
+    <!-- HOMEOWNER 2 SIGNATURE BLOCK (OPTIONAL) -->
+    <div style="margin-bottom: 1.5rem; margin-top: 60px;">
+      <h4 style="margin-bottom: 0.5rem;">Client/Homeowner 2 <em>(if applicable)</em></h4>
+
+      <label for="homeowner2PrintedName" style="display:inline-block; margin-bottom:0.25rem; font-weight:600;">
+        Printed Name:
+      </label>
+      <input
+        type="text"
+        id="homeowner2PrintedName"
+        name="homeowner2PrintedName"
+        style="width:95%; padding:0.5rem; max-width: 300px; margin-bottom:1rem; border:1px solid #ddd; border-radius:4px; outline:none;"
+      /><br>
+
+      <label for="homeowner2Date" style="display:inline-block; margin-top:16px; margin-bottom:0.25rem; font-weight:600;">
+        Date:
+      </label>
+      <input
+        type="date"
+        id="homeowner2Date"
+        name="homeowner2Date"
+        style="width:95%; padding:0.5rem; max-width: 300px; border:1px solid #ddd; border-radius:4px; outline:none;"
+      />
+    </div>
+
+      <label for="signatureCanvasHomeowner2" style="display:inline-block; margin-bottom:0.25rem; font-weight:600;">
+        Signature:
+      </label>
+      <div style="position:relative; width:300px; max-width:100%; height:100px; border:1px solid #ccc; border-radius:4px; margin-bottom:0.5rem;">
+        <canvas
+          id="signatureCanvasHomeowner2"
+          width="300"
+          height="100"
+          style="max-width:100%; height:auto;"
+        ></canvas>
+        <button type="button" id="clearSignatureHomeowner2" class="clear-button">Clear Signature</button>
+      </div>
+      <input type="hidden" name="signatureHomeowner2" id="signatureHomeowner2" />
+
+
+
+    <!-- CONTRACTOR REPRESENTATIVE SIGNATURE BLOCK -->
+    <div style="margin-bottom: 1.5rem; margin-top: 60px;">
+      <h4 style="margin-bottom: 0.5rem;">Contractor Representative</h4>
+
+      <label for="contractorRepPrintedName" style="display:inline-block; margin-bottom:0.25rem; font-weight:600;">
+        Printed Name:
+      </label>
+      <input
+        type="text"
+        id="contractorRepPrintedName"
+        name="contractorRepPrintedName"
+        style="width:95%; padding:0.5rem; max-width: 300px; margin-bottom:1rem; border:1px solid #ddd; border-radius:4px; outline:none;"
+      /><br>
+      <label for="contractorRepDate" style="display:inline-block; margin-top:16px; margin-bottom:0.25rem; font-weight:600;">
+        Date:
+      </label>
+      <input
+        type="date"
+        id="contractorRepDate"
+        name="contractorRepDate"
+        style="width:95%; padding:0.5rem; max-width: 300px; border:1px solid #ddd; border-radius:4px; outline:none;"
+      />
+    </div>
+
+      <label for="signatureCanvasContractorRep" style="display:inline-block; margin-bottom:0.25rem; font-weight:600;">
+        Signature:
+      </label>
+      <div style="position:relative; width:300px; max-width:100%; height:100px; border:1px solid #ccc; border-radius:4px; margin-bottom:0.5rem;">
+        <canvas
+          id="signatureCanvasContractorRep"
+          width="300"
+          height="100"
+          style="max-width:100%; height:auto;"
+        ></canvas>
+        <button type="button" id="clearSignatureContractorRep" class="clear-button">Clear Signature</button>
+      </div>
+      <input type="hidden" name="signatureContractorRep" id="signatureContractorRep" />
+
+
+
+    <!-- TITLE SIGNATURE BLOCK -->
+    <div style="margin-bottom: 1.5rem; margin-top: 60px;">
+      <h4 style="margin-bottom: 0.5rem;">Title</h4>
+
+      <label for="contractorRepTitle" style="display:inline-block; margin-bottom:0.25rem; font-weight:600;">
+        Contractor Rep Title:
+      </label>
+      <input
+        type="text"
+        id="contractorRepTitle"
+        name="contractorRepTitle"
+        style="width:95%; padding:0.5rem; max-width: 300px; margin-bottom:1rem; border:1px solid #ddd; border-radius:4px; outline:none;"
+      />
+
+      
+    </div>
+
+  </div>
+
+  <!-- SCRIPT: initialize signature pads + gather data + postMessage for parent window -->
+  <script>
+    // Keep SignaturePad instances in outer scope so we can both capture new strokes and replay prefilled signatures
+    let signaturePad1, signaturePad2, signaturePadRep;
+  
+    document.addEventListener('DOMContentLoaded', function() {
+      // --- Homeowner 1 ---
+      const canvas1    = document.getElementById('signatureCanvasHomeowner1');
+      const clearBtn1  = document.getElementById('clearSignatureHomeowner1');
+      if (canvas1) {
+        signaturePad1 = new SignaturePad(canvas1);
+        signaturePad1.addEventListener('endStroke', function() {
+          document.getElementById('signatureHomeowner1').value = signaturePad1.toDataURL('image/png');
+        });
+        if (clearBtn1) {
+          clearBtn1.addEventListener('click', function() {
+            signaturePad1.clear();
+            document.getElementById('signatureHomeowner1').value = '';
+          });
+        }
+      }
+  
+      // --- Homeowner 2 (optional) ---
+      const canvas2   = document.getElementById('signatureCanvasHomeowner2');
+      const clearBtn2 = document.getElementById('clearSignatureHomeowner2');
+      if (canvas2) {
+        signaturePad2 = new SignaturePad(canvas2);
+        signaturePad2.addEventListener('endStroke', function() {
+          document.getElementById('signatureHomeowner2').value = signaturePad2.toDataURL('image/png');
+        });
+        if (clearBtn2) {
+          clearBtn2.addEventListener('click', function() {
+            signaturePad2.clear();
+            document.getElementById('signatureHomeowner2').value = '';
+          });
+        }
+      }
+  
+      // --- Contractor Representative ---
+      const canvasRep   = document.getElementById('signatureCanvasContractorRep');
+      const clearBtnRep = document.getElementById('clearSignatureContractorRep');
+      if (canvasRep) {
+        signaturePadRep = new SignaturePad(canvasRep);
+        signaturePadRep.addEventListener('endStroke', function() {
+          document.getElementById('signatureContractorRep').value = signaturePadRep.toDataURL('image/png');
+        });
+        if (clearBtnRep) {
+          clearBtnRep.addEventListener('click', function() {
+            signaturePadRep.clear();
+            document.getElementById('signatureContractorRep').value = '';
+          });
+        }
+      }
+    });
+  
+    // Collect all ACI form fields into a payload object
+    function gatherAciFields() {
+      return {
+        // Required contact fields
+        clientName:              document.getElementById('clientName')?.value || '',
+        propertyAddress:         document.getElementById('propertyAddress')?.value || '',
+        insuranceCompany:        document.getElementById('insuranceCompany')?.value || '',
+        claimNumber:             document.getElementById('claimNumber')?.value || '',
+  
+        // Homeowner 1 signature block
+        homeowner1PrintedName:   document.getElementById('homeowner1PrintedName')?.value || '',
+        signatureHomeowner1:     document.getElementById('signatureHomeowner1')?.value || '',
+        homeowner1Date:          document.getElementById('homeowner1Date')?.value || '',
+  
+        // Homeowner 2 signature block (optional)
+        homeowner2PrintedName:   document.getElementById('homeowner2PrintedName')?.value || '',
+        signatureHomeowner2:     document.getElementById('signatureHomeowner2')?.value || '',
+        homeowner2Date:          document.getElementById('homeowner2Date')?.value || '',
+  
+        // Contractor rep signature block
+        contractorRepPrintedName:document.getElementById('contractorRepPrintedName')?.value || '',
+        signatureContractorRep:  document.getElementById('signatureContractorRep')?.value || '',
+        contractorRepDate:       document.getElementById('contractorRepDate')?.value || '',
+  
+        // Title block
+        contractorRepTitle:      document.getElementById('contractorRepTitle')?.value || '',
+  
+      };
+    }
+  
+    // Listen for messages from parent frame: prefill or data request
+    window.addEventListener('message', function(event) {
+      const data = event.data;
+      if (!data || !data.type) return;
+  
+      // --- A) Initialize with admin-prefilled fields ---
+      if (data.type === 'INITIALIZE_ACI_DATA') {
+        const fields = data.payload || {};
+  
+        Object.entries(fields).forEach(([key, value]) => {
+          if (!value) return;
+  
+          // 1) Standard text/date inputs
+          const el = document.getElementById(key);
+          if (el && el.tagName === 'INPUT' && el.type !== 'hidden') {
+            el.value = value;
+            el.setAttribute('readonly', 'true');
+          }
+  
+          // 2) Signature fields: replay into canvas, set hidden input, hide clear button
+          if (key === 'signatureHomeowner1' && signaturePad1) {
+            signaturePad1.fromDataURL(value);
+            document.getElementById('signatureHomeowner1').value = value;
+            document.getElementById('clearSignatureHomeowner1').style.display = 'none';
+          }
+          if (key === 'signatureHomeowner2' && signaturePad2) {
+            signaturePad2.fromDataURL(value);
+            document.getElementById('signatureHomeowner2').value = value;
+            document.getElementById('clearSignatureHomeowner2').style.display = 'none';
+          }
+          if (key === 'signatureContractorRep' && signaturePadRep) {
+            signaturePadRep.fromDataURL(value);
+            document.getElementById('signatureContractorRep').value = value;
+            document.getElementById('clearSignatureContractorRep').style.display = 'none';
+          }
+        });
+      }
+  
+      // --- B) Parent requests our filled data ---
+      else if (data.type === 'REQUEST_ACI_DATA') {
+        const payload = gatherAciFields();
+        window.parent.postMessage({ type: 'ACI_FORM_DATA', payload }, '*');
+      }
+    });
+  </script>
+  
+</body>
+</html>

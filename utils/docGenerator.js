@@ -1,7 +1,12 @@
-// utils/docGenerator.js
-const PDFDocument = require('pdfkit');
+/****************************************
+ * utils/docGenerator.js
+ * Generates AOB PDFs using Puppeteer,
+ * includes a repeating footer on each page
+ * for a logo.
+ ****************************************/
 const fs = require('fs');
 const path = require('path');
+const puppeteer = require('puppeteer');
 
 /**
  * Replaces placeholders in the contract text with actual user data.
@@ -13,7 +18,7 @@ function fillContractPlaceholders(template, data) {
   let filled = template;
   
   Object.entries(data).forEach(([placeholder, value]) => {
-    const regex = new RegExp(`\\[${placeholder}\\]`, 'g'); 
+    const regex = new RegExp(`\\[${placeholder}\\]`, 'g');
     filled = filled.replace(regex, value);
   });
 
@@ -21,10 +26,10 @@ function fillContractPlaceholders(template, data) {
 }
 
 /**
- * Converts Markdown bold syntax (**text**) to HTML, 
- * and also converts blank lines/newlines into <p> and <br> 
+ * Converts Markdown bold syntax (**text**) to HTML,
+ * and also converts blank lines/newlines into <p> and <br>
  * so the text is spaced out properly in the front-end.
- * 
+ *
  * - Double newlines => new paragraph <p>
  * - Single newline => <br>
  * - **bold** => <strong>bold</strong>
@@ -49,137 +54,88 @@ function parseMarkdownToHtml(text) {
 }
 
 /**
- * Converts Markdown bold syntax (**text**) to plain text for PDF 
- * (removing ** and applying bold in PDF).
+ * Converts Markdown bold syntax (**text**) to plain text for PDF
+ * (if you still need it in some other part of your code).
  * @param {string} text - The text with Markdown bold syntax
  * @returns {string} The text with ** removed (bold applied in PDF generation)
  */
 function parseMarkdownForPdf(text) {
-  return text.replace(/\*\*(.*?)\*\*/g, '$1'); // Remove ** for PDF, handle bold later
+  // If you no longer need PDFKit, you can leave this or remove it.
+  return text.replace(/\*\*(.*?)\*\*/g, '$1');
 }
 
 /**
- * Generates a PDF file from the given contract text and signature data.
- * @param {string} contractText - The fully replaced text
- * @param {string} signatureBase64 - Base64 data for the user's signature image
- * @param {Object} options - Additional options like output path, title, userName, signedAt
- * @returns {Promise<string>} - Resolves to the absolute path of the saved PDF
+ * Generates a PDF by rendering full HTML with Puppeteer,
+ * and adds a repeating footer logo on each page.
+ * @param {string} html - The full HTML content (with placeholders replaced, if needed).
+ * @param {Object} options - Additional options (fileName, outputDir, etc.).
+ * @returns {Promise<string>} The absolute path of the saved PDF file.
  */
-function generateContractPDF(contractText, signatureBase64, options = {}) {
-  return new Promise((resolve, reject) => {
-    try {
-      const doc = new PDFDocument({ margin: 50, size: 'LETTER' }); // Use letter-sized paper for standard contracts
-      const fileName = options.fileName || `contract-${Date.now()}.pdf`;
-      const outputDir = options.outputDir || path.join(__dirname, '..', 'public', 'uploads', 'docs');
-      const outputPath = path.join(outputDir, fileName);
-      const docTitle = options.docTitle || 'Contract'; // Dynamic title from options
-      const userName = options.userName || 'Claim Holder'; // Full name for signature
-      const signedAt = options.signedAt ? new Date(options.signedAt).toLocaleDateString() : ''; // Signing date
+async function generateHtmlPdf(html, options = {}) {
+  // 1) Determine file output path
+  const fileName = options.fileName || `contract-${Date.now()}.pdf`;
+  const outputDir = options.outputDir || path.join(__dirname, '..', 'public', 'uploads', 'docs');
+  const outputPath = path.join(outputDir, fileName);
 
-      // Ensure output directory exists
-      fs.mkdirSync(outputDir, { recursive: true });
+  // 2) Ensure output directory exists
+  fs.mkdirSync(outputDir, { recursive: true });
 
-      // Pipe PDFKit output to file
-      const writeStream = fs.createWriteStream(outputPath);
-      doc.pipe(writeStream);
+  // 3) Read/encode your logo as base64 (adjust file name/path as needed)
+  const logoPath = path.join(__dirname, '..', 'public', 'images', 'bg-logo.png');
+  let base64Logo = '';
+  try {
+    const fileBuffer = fs.readFileSync(logoPath);
+    base64Logo = fileBuffer.toString('base64');
+  } catch (err) {
+    console.warn("Could not load logo file:", err);
+    // If you prefer, you can throw an error here instead:
+    // throw new Error("Logo file not found, cannot generate PDF footer");
+  }
 
-      // Add dynamic contract title (centered, bold, matching your example)
-      doc
-        .font('Helvetica-Bold')
-        .fontSize(16) 
-        .text(docTitle, { align: 'center' })
-        .moveDown(1.5);
+  // 4) Launch Puppeteer & create a new page
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
 
-      // Remove unnecessary signature line from PDF
-      let cleanText = contractText.replace(/\*\(All signatures will be captured through the DocSign interface.\)\*/, '');
+  // 5) Set the page content to our HTML (supporting CSS, images, etc.)
+  await page.setContent(html, { waitUntil: 'networkidle0' });
 
-      // Parse out markdown bold for PDF
-      cleanText = parseMarkdownForPdf(cleanText);
-
-      // Break text into lines
-      const lines = cleanText.split('\n').filter(line => line.trim());
-      doc.fontSize(12).font('Helvetica'); 
-
-      lines.forEach((line, index) => {
-        if (line.trim().startsWith('•')) {
-          // Handle bullet points with indentation and bolding
-          const bulletMatch = line.match(/• (.*)/);
-          if (bulletMatch) {
-            const content = bulletMatch[1];
-            const boldParts = content.split(/(\*\*.*?\*\*)/);
-            doc.text('  • ', { continued: true }); 
-            boldParts.forEach(part => {
-              if (part.startsWith('**') && part.endsWith('**')) {
-                const boldText = part.slice(2, -2);
-                doc.font('Helvetica-Bold').text(boldText, { continued: true, lineBreak: true });
-              } else {
-                doc.font('Helvetica').text(part, { continued: true, lineBreak: true });
-              }
-            });
-            doc.text(''); 
-          }
-        } else if (line.trim()) {
-          // Handle normal lines, including sections & numbered lists
-          const boldParts = line.split(/(\*\*.*?\*\*)/);
-          boldParts.forEach(part => {
-            if (part.startsWith('**') && part.endsWith('**')) {
-              const boldText = part.slice(2, -2);
-              doc.font('Helvetica-Bold').text(boldText, { continued: true, lineBreak: true });
-            } else {
-              doc.font('Helvetica').text(part, { continued: true, lineBreak: true });
-            }
-          });
-          doc.text('');
-        }
-        if (index < lines.length - 1) {
-          doc.moveDown(2); // Extra space between lines for readability
-        }
-      });
-
-      doc.moveDown(4);
-
-      // If there's a signature
-      if (signatureBase64) {
-        try {
-          const signatureData = signatureBase64.replace(/^data:image\/\w+;base64,/, '');
-          const signatureBuffer = Buffer.from(signatureData, 'base64');
-          doc
-            .font('Helvetica')
-            .fontSize(12)
-            .text('Claim Holder:', { align: 'left' })
-            .text(userName, { align: 'left', bold: true })
-            .moveDown(4)
-            .text('Signature:', { align: 'left' })
-            .image(signatureBuffer, {
-              fit: [150, 50],
-              align: 'left'
-            })
-            .moveDown(4)
-            .text(`Date: ${signedAt}`, { align: 'left' });
-        } catch (sigErr) {
-          console.error('Error embedding signature:', sigErr);
-        }
+  // 6) Prepare a custom footer HTML template
+  //    If the logo fails to load, it will show fallback text.
+  const footerTemplate = `
+    <div style="width: 100%; text-align: center; font-size:10px; padding: 5px 0;">
+      ${
+        base64Logo
+          ? `<img src="data:image/png;base64,${base64Logo}" style="width:80px;" />`
+          : 'My Company Logo'
       }
+    </div>
+  `;
 
-      doc.end();
-
-      writeStream.on('finish', () => {
-        resolve(outputPath);
-      });
-
-      writeStream.on('error', err => {
-        reject(err);
-      });
-
-    } catch (error) {
-      reject(error);
+  // 7) Generate PDF with Letter size, background printing, custom footer
+  await page.pdf({
+    path: outputPath,
+    format: 'Letter',
+    printBackground: true,
+    displayHeaderFooter: true,     // enables footer usage
+    headerTemplate: '<span></span>', // minimal or empty header
+    footerTemplate,                 // our custom footer
+    margin: {
+      top: '50px',
+      right: '50px',
+      bottom: '80px', // extra space for the footer
+      left: '50px'
     }
   });
+
+  // 8) Clean up
+  await browser.close();
+
+  return outputPath;
 }
 
 module.exports = {
   fillContractPlaceholders,
   parseMarkdownToHtml,
   parseMarkdownForPdf,
-  generateContractPDF
+  generateHtmlPdf // Puppeteer-based HTML to PDF with repeated footer
 };

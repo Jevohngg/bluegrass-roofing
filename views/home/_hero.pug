@@ -35,7 +35,6 @@ section.hero
     section.onboarding-section
       .onboarding-wizard-container#onboardingWizardContainer
         // Stepper display (visual cues for steps 1, 2, 3)
-        // Make them clickable by adding a .clickable class (optional styling)
         .onboarding-stepper
           .step-indicator.clickable(data-step="1") Step 1
           .step-indicator.clickable(data-step="2") Step 2
@@ -45,9 +44,9 @@ section.hero
         .onboarding-step-content#stepIntro
           h2 Already have a claim? Get a new roof in 3 easy steps!
           p
-            | Upload claim documents, create an account. 
+            | Upload claim documents, create an account,
             | sign an assignment of benefits contract (AOB),
-            | We take care of the rest!
+            | and we take care of the rest!
           button.btn.btn-primary#startOnboardingBtn Let’s Go!
 
         // Step 1: Upload Claim Documents
@@ -70,48 +69,42 @@ section.hero
 
           button.btn.btn-primary#nextToStep2Btn(style="display:none; margin-top:1rem;") Next
 
-        // Step 2a: Contract Fields (including first & last name)
+        // Step 2a: Contract Fields
         .onboarding-step-content#step2fields(style="display:none;")
           h3 Step 2: Provide Contract Details
-          p Fill out these fields so we can populate the Assignment of Benefits (AOB) contract.
-          .hyerlink
-            a(href='/claims' target='_blank' rel='noopener noreferrer') Click here
-            p to learn about AOB's and our claims process.
+          p
+            | Fill out these fields so we can populate the Assignment of Benefits (AOB) contract.
 
           form#onboardingFieldsForm
             .form-group
-              label(for="firstName") First Name *
-              input(type="text" name="firstName" id="firstNameInput" required)
+              label(for="wizardFirstName") First Name *
+              input(type="text" name="wizardFirstName" id="wizardFirstName" required)
 
             .form-group
-              label(for="lastName") Last Name *
-              input(type="text" name="lastName" id="lastNameInput" required)
+              label(for="wizardLastName") Last Name *
+              input(type="text" name="wizardLastName" id="wizardLastName" required)
 
             .form-group
-              label(for="propertyAddress") Property Address *
-              input(type="text" name="propertyAddress" id="propertyAddress" required)
+              label(for="wizardPhoneNumber") Phone Number *
+              input(type="text" name="wizardPhoneNumber" id="wizardPhoneNumber" required)
 
             .form-group
-              label(for="insuranceCompany") Insurance Company *
-              input(type="text" name="insuranceCompany" id="insuranceCompany" required)
+              label(for="wizardEmail") Email Address *
+              input(type="email" name="wizardEmail" id="wizardEmail" required)
 
             .form-group
-              label(for="policyNumber") Policy Number *
-              input(type="text" name="policyNumber" id="policyNumber" required)
-
-            .form-group
-              label(for="claimNumber") Claim Number (Optional)
-              input(type="text" name="claimNumber" id="claimNumber")
+              label(for="wizardPropertyAddress") Property Address *
+              input(type="text" name="wizardPropertyAddress" id="wizardPropertyAddress" required)
 
             button.btn.btn-primary#saveFieldsBtn(type="button") Next
 
         // Step 2b: Sign AOB
         .onboarding-step-content#step2sign(style="display:none;")
           h3 Step 2 (continued): Sign Your AOB
-          p 
-            | Please review the contract below. It has been populated 
-            | with your details from the previous step. Once reviewed, 
-            | sign in the box at the bottom and check the box to confirm 
+          p
+            | Please review the contract below, which is populated
+            | with your details from the previous step. Once reviewed,
+            | sign in the box at the bottom and check the box to confirm
             | your agreement.
 
           .doc-content#docContent(style="margin-bottom: 1rem;")
@@ -124,43 +117,38 @@ section.hero
 
             .signature-checkbox
               input#onboardingAgreeCheckbox(type="checkbox")
-              label(for="onboardingAgreeCheckbox") I understand and agree that my electronic signature constitutes a legally binding signature under applicable law.
+              label(for="onboardingAgreeCheckbox")
+                | I understand and agree that my electronic signature
+                | constitutes a legally binding signature under applicable law.
 
           button.btn.btn-secondary#clearSignatureBtn(type="button") Clear Signature
           button.btn.btn-primary#submitAobSignatureBtn(type="button" disabled) Next
 
-        //- // Step 3: Choose Shingle
-        //- .onboarding-step-content#step3(style="display:none;")
-        //-   h3 Step 3: Choose Your Shingle
-        //-   p
-        //-     | Select from the following options.
-
-        //-   // Initially empty, we'll dynamically populate via JS
-        //-   .shingle-options#onboardingShingleOptions
-
-        //-   button.btn.btn-primary#finalizeOnboardingBtn(type="button" disabled) Next
-
-        // Final: Sign-Up Form
+        // Step 3: Final Sign-Up Form
         .onboarding-step-content#step3(style="display:none;")
           h3 Last thing!: Create Your Account
           p.intro
-            | We are excited to earn your business. Please set up an account 
-            | so we can personalize your experience and better serve you through 
-            | our client portal. Your information will never be shared with a third-party, 
+            | We are excited to earn your business. Please set up an account
+            | so we can personalize your experience and better serve you through
+            | our client portal. Your information will never be shared with a third-party,
             | and you will not receive unsolicited calls, emails, or text messages.
           form#onboardingSignupForm
             .form-group
               label(for="firstName") First Name
               input(type="text" name="firstName" id="firstName" required)
+
             .form-group
               label(for="lastName") Last Name
               input(type="text" name="lastName" id="lastName" required)
+
             .form-group
               label(for="email") Email
               input(type="email" name="email" id="email" required)
+
             .form-group
               label(for="password") Password
               input(type="password" name="password" id="password" required)
+
             .form-group
               label(for="confirmPassword") Confirm Password
               input(type="password" name="confirmPassword" id="confirmPassword" required)

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Certificate of Completion</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SignaturePad library from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+  <style>
+        input:disabled,
+    input[readonly] {
+      background-color: #e9ecef;
+      opacity: 1;
+      cursor: not-allowed;
+    }
+
+input:focus, textarea:focus {
+      border: 1px solid #E18263 !important;
+      outline: none;
+      box-shadow: 0 0 0 2px #E18263;
+    }
+  </style>
+</head>
+<body style="margin:0; padding:0; font-family:Arial, sans-serif; font-size:14px; color:#000; line-height:1.5;">
+
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+
+    <!-- 
+      Existing container with flex layout for claim & client info 
+      Converted placeholders ([CLAIM_NUMBER], [CLIENT_NAME], etc.) into interactive inputs 
+    -->
+    <div style="display:flex; justify-content:space-between; align-items:start;">
+      <div style="margin-right:10px;">
+        <p style="margin:0; font-weight:bold;">
+          Claim #: 
+          <input 
+            type="text" 
+            id="claimNumber" 
+            name="claimNumber" 
+            placeholder="Enter Claim #"
+            style="border:1px solid #ccc; border-radius:4px; padding:3px; margin-left:4px;"
+          />
+        </p>
+        <p style="margin:0;">
+          <input 
+            type="text" 
+            id="clientName" 
+            name="clientName" 
+            placeholder="Client Name" 
+            style="border:1px solid #ccc; border-radius:4px; padding:3px; width:95%;"
+          />
+        </p>
+        <p style="margin:0;">
+          <input 
+            type="text" 
+            id="propertyAddressLine1" 
+            name="propertyAddressLine1" 
+            placeholder="Property Address (Line 1)"
+            style="border:1px solid #ccc; border-radius:4px; padding:3px; width:95%; margin-top:3px;"
+          />
+        </p>
+        <p style="margin:0;">
+          <input 
+            type="text" 
+            id="propertyAddressLine2" 
+            name="propertyAddressLine2" 
+            placeholder="Property Address (Line 2)"
+            style="border:1px solid #ccc; border-radius:4px; padding:3px; width:95%; margin-top:3px;"
+          />
+        </p>
+      </div>
+      <div>
+        <!-- Empty block preserved; you had an empty <div> here originally -->
+      </div>
+    </div>
+
+    <!-- Title -->
+    <h2 style="text-align:center; margin-top:40px; font-size:18px; font-weight:bold;">
+      CERTIFICATE OF COMPLETION
+    </h2>
+
+    <!-- Body text -->
+    <p style="margin-bottom:30px; margin-top:20px;">
+      I have reviewed all of the work performed and completed by Premier Construction Group, an independent contractor,
+      and certify that all work performed, and materials supplied by Premier Construction Group in accordance with
+      the signed Work Authorization have been completed to my satisfaction.
+    </p>
+
+    <!-- Signatures Section -->
+    <h3 style="margin-bottom:10px; font-size:16px; font-weight:bold;">Signatures</h3>
+
+    <!-- 
+      CLIENT Signature Block 
+      Converted placeholders ([CLIENT_NAME]) into an <input> for name 
+      plus a signature pad and a date <input>. 
+      We preserve your original lines but annotate them for clarity.
+    -->
+    <div style="margin-bottom:40px;">
+      <!-- Name label -->
+      <p style="margin:0; font-weight:bold;">
+        Client Name: 
+        <input 
+          type="text" 
+          id="clientSignatureName" 
+          name="clientSignatureName" 
+          placeholder="Client Name" 
+          style="border:1px solid #ccc; border-radius:4px; padding:3px; margin-left:4px;"
+        />
+      </p>
+      
+      <!-- Signature pad (replaces the line) -->
+      <div style="margin:5px 0; width:300px; border:1px solid #ccc; border-radius:4px; position:relative;">
+        <canvas 
+          id="clientSignatureCanvas" 
+          width="300" 
+          height="100" 
+          style="display:block;"
+        ></canvas>
+        <button 
+          type="button" 
+          id="clearClientSignature" 
+          style="position:absolute; right:5px; bottom:5px; background-color:#999; color:#fff; border:none; padding:4px 6px; border-radius:4px; cursor:pointer;"
+        >
+          Clear
+        </button>
+      </div>
+      <p style="margin-top:0; font-size:12px;">(Signature)</p>
+      
+      <!-- Hidden input to store base64 signature data -->
+      <input 
+        type="hidden" 
+        id="clientSignature" 
+        name="clientSignature"
+      />
+
+      <!-- Date input (replaces the line) -->
+      <div style="margin:5px 0;">
+        <label for="clientSignatureDate" style="font-size:12px; margin-right:6px;">Date:</label>
+        <input 
+          type="date" 
+          id="clientSignatureDate" 
+          name="clientSignatureDate"
+          style="border:1px solid #ccc; border-radius:4px; padding:3px;"
+        />
+      </div>
+
+    </div>
+
+    <!-- 
+      CONTRACTOR Signature Block 
+      Converted [CONTRACTOR_NAME] to an input, plus a signature pad for the contractor.
+    -->
+    <div style="margin-bottom:40px;">
+      <!-- Name label -->
+      <p style="margin:0; font-weight:bold;">
+        Premier Construction Group: 
+        <input 
+          type="text" 
+          id="contractorName" 
+          name="contractorName" 
+          placeholder="Contractor Name" 
+          style="border:1px solid #ccc; border-radius:4px; padding:3px; margin-left:4px;"
+        />
+      </p>
+      
+      <!-- Signature pad (replaces the line) -->
+      <div style="margin:5px 0; width:300px; border:1px solid #ccc; border-radius:4px; position:relative;">
+        <canvas 
+          id="contractorSignatureCanvas" 
+          width="300" 
+          height="100" 
+          style="display:block;"
+        ></canvas>
+        <button 
+          type="button" 
+          id="clearContractorSignature" 
+          style="position:absolute; right:5px; bottom:5px; background-color:#999; color:#fff; border:none; padding:4px 6px; border-radius:4px; cursor:pointer;"
+        >
+          Clear
+        </button>
+      </div>
+      <p style="margin-top:0; font-size:12px;">(Signature)</p>
+
+      <!-- Hidden input to store base64 signature data -->
+      <input 
+        type="hidden" 
+        id="contractorSignature" 
+        name="contractorSignature"
+      />
+
+      <!-- Date line (replaces the line) -->
+      <div style="margin:5px 0;">
+        <label for="contractorSignatureDate" style="font-size:12px; margin-right:6px;">Date:</label>
+        <input 
+          type="date" 
+          id="contractorSignatureDate" 
+          name="contractorSignatureDate" 
+          style="border:1px solid #ccc; border-radius:4px; padding:3px;"
+        />
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    // Keep SignaturePad instances in outer scope
+    let clientSigPad, contractorSigPad;
+  
+    document.addEventListener('DOMContentLoaded', () => {
+      // Client pad
+      const clientCanvas      = document.getElementById('clientSignatureCanvas');
+      const clearClientBtn    = document.getElementById('clearClientSignature');
+      const clientSignatureIn = document.getElementById('clientSignature');
+      if (clientCanvas) {
+        clientSigPad = new SignaturePad(clientCanvas);
+        ['pointerup','mouseup','touchend'].forEach(evt =>
+          clientCanvas.addEventListener(evt, () => {
+            if (!clientSigPad.isEmpty())
+              clientSignatureIn.value = clientSigPad.toDataURL('image/png');
+          })
+        );
+        clearClientBtn?.addEventListener('click', () => {
+          clientSigPad.clear();
+          clientSignatureIn.value = '';
+        });
+      }
+  
+      // Contractor pad
+      const contractorCanvas      = document.getElementById('contractorSignatureCanvas');
+      const clearContractorBtn    = document.getElementById('clearContractorSignature');
+      const contractorSignatureIn = document.getElementById('contractorSignature');
+      if (contractorCanvas) {
+        contractorSigPad = new SignaturePad(contractorCanvas);
+        ['pointerup','mouseup','touchend'].forEach(evt =>
+          contractorCanvas.addEventListener(evt, () => {
+            if (!contractorSigPad.isEmpty())
+              contractorSignatureIn.value = contractorSigPad.toDataURL('image/png');
+          })
+        );
+        clearContractorBtn?.addEventListener('click', () => {
+          contractorSigPad.clear();
+          contractorSignatureIn.value = '';
+        });
+      }
+    });
+  
+    function gatherCocFields() {
+      return {
+        claimNumber:             document.getElementById('claimNumber').value             || '',
+        clientName:              document.getElementById('clientName').value              || '',
+        propertyAddressLine1:    document.getElementById('propertyAddressLine1').value    || '',
+        propertyAddressLine2:    document.getElementById('propertyAddressLine2').value    || '',
+        clientSignatureName:     document.getElementById('clientSignatureName').value     || '',
+        clientSignature:         document.getElementById('clientSignature').value         || '',
+        clientSignatureDate:     document.getElementById('clientSignatureDate').value     || '',
+        contractorName:          document.getElementById('contractorName').value          || '',
+        contractorSignature:     document.getElementById('contractorSignature').value     || '',
+        contractorSignatureDate: document.getElementById('contractorSignatureDate').value || ''
+      };
+    }
+  
+    window.addEventListener('message', event => {
+      const msg = event.data;
+      if (!msg || !msg.type) return;
+  
+      if (msg.type === 'INITIALIZE_COC_DATA') {
+        const fields = msg.payload || {};
+        Object.entries(fields).forEach(([name, value]) => {
+          if (!value) return;
+          const el = document.getElementById(name);
+          if (!el) return;
+          el.value = value;
+          el.setAttribute('readonly', 'true');
+  
+          if (name === 'clientSignature' && clientSigPad) {
+            clientSigPad.fromDataURL(value);
+            document.getElementById('clientSignature').value = value;
+            document.getElementById('clearClientSignature').style.display = 'none';
+            document.getElementById('clientSignatureCanvas').style.pointerEvents = 'none';
+          }
+  
+          if (name === 'contractorSignature' && contractorSigPad) {
+            contractorSigPad.fromDataURL(value);
+            document.getElementById('contractorSignature').value = value;
+            document.getElementById('clearContractorSignature').style.display = 'none';
+            document.getElementById('contractorSignatureCanvas').style.pointerEvents = 'none';
+          }
+        });
+      }
+      else if (msg.type === 'REQUEST_COC_DATA') {
+        const payload = gatherCocFields();
+        window.parent.postMessage({ type: 'COC_FORM_DATA', payload }, '*');
+      }
+    });
+  </script>
+  
+  
+  
+
+</body>
+</html>

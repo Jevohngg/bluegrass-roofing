@@ -13,7 +13,10 @@ const TEAM_DOC_SIGNED_TEMPLATE_ID = process.env.SENDGRID_TEAM_DOC_SIGNED_TEMPLAT
 async function sendUserConfirmationEmail(lead) {
   const msg = {
     to: lead.emailAddress,
-    from: 'devbluegrassroofing@gmail.com',
+    from: {
+      email: 'noreply@bluegrass-roofing.com',
+      name:  'BlueGrass Roofing'
+    },
     templateId: USER_CONFIRM_TEMPLATE_ID,
     dynamic_template_data: {
       fullName: lead.fullName
@@ -33,7 +36,10 @@ Form Type: ${lead.formType}
 
   const msg = {
     to: process.env.INTERNAL_TEAM_EMAIL,
-    from: 'devbluegrassroofing@gmail.com',
+    from: {
+      email: 'noreply@bluegrass-roofing.com',
+      name:  'BlueGrass Roofing'
+    },
     templateId: TEAM_NOTIFY_TEMPLATE_ID,
     dynamic_template_data: {
       userEmail: lead.emailAddress,
@@ -51,7 +57,10 @@ async function sendUserSignupEmail(user) {
 
   const msg = {
     to: user.email,
-    from: 'devbluegrassroofing@gmail.com',
+    from: {
+      email: 'noreply@bluegrass-roofing.com',
+      name:  'BlueGrass Roofing'
+    },
     templateId: templateId,
     dynamic_template_data: {
       firstName: user.firstName || 'User',
@@ -63,62 +72,72 @@ async function sendUserSignupEmail(user) {
 }
 
 async function sendPasswordResetCodeEmail(user, code) {
-  const resetTemplateId = process.env.SENDGRID_RESET_TEMPLATE_ID;
-  if (!resetTemplateId) {
+  const templateId = process.env.SENDGRID_RESET_TEMPLATE_ID;
+  if (!templateId) {
     throw new Error('SENDGRID_RESET_TEMPLATE_ID not set');
   }
+  if (!user || !user.email) {
+    throw new Error('Cannot send reset email: Invalid user object or missing email');
+  }
 
   const msg = {
     to: user.email,
-    from: 'devbluegrassroofing@gmail.com',
-    templateId: resetTemplateId,
+    from: {
+      email: 'noreply@bluegrass-roofing.com',
+      name:  'BlueGrass Roofing'
+    },
+    templateId: templateId,
     dynamic_template_data: {
-      firstName: user.firstName || 'User',
-      code
+      code: code,
+      firstName: user.firstName || 'there'
     }
   };
-  await sgMail.send(msg);
+
+  return sgMail.send(msg);
 }
 
-// Updated: Send email to user after signing document
+
+
 async function sendUserDocSignedEmail(user, docType, pdfPath) {
-  if (!process.env.SENDGRID_USER_DOC_SIGNED_TEMPLATE_ID) {
+  const templateId = process.env.SENDGRID_USER_DOC_SIGNED_TEMPLATE_ID;
+  if (!templateId) {
     throw new Error('SENDGRID_USER_DOC_SIGNED_TEMPLATE_ID not set');
   }
-
-  // Log the user object to debug
-  console.log('sendUserDocSignedEmail - User object:', user);
-
   if (!user || !user.email) {
-    console.error('User object is invalid or missing email:', user);
-    throw new Error('Cannot send email: Invalid user object');
+    throw new Error('Cannot send signed-doc email: Invalid user object or missing email');
   }
 
+  // read & base64-encode the PDF
   const pdfBuffer = fs.readFileSync(pdfPath);
   const pdfBase64 = pdfBuffer.toString('base64');
+  const filename = `${docType.toUpperCase()}-${user.firstName || 'Customer'}-${Date.now()}.pdf`;
 
-  const firstName = user.firstName || 'Customer'; // Fallback if firstName is missing
   const msg = {
     to: user.email,
-    from: 'devbluegrassroofing@gmail.com',
-    templateId: process.env.SENDGRID_USER_DOC_SIGNED_TEMPLATE_ID,
+    from: {
+      email: 'noreply@bluegrass-roofing.com',
+      name:  'BlueGrass Roofing'
+    },
+    templateId: templateId,
     dynamic_template_data: {
-      firstName: firstName,
+      firstName: user.firstName || 'Customer',
       docType: docType.toUpperCase()
     },
     attachments: [
       {
         content: pdfBase64,
-        filename: `${docType.toUpperCase()}-${firstName}-${Date.now()}.pdf`,
+        filename: filename,
         type: 'application/pdf',
         disposition: 'attachment'
       }
     ]
   };
 
-  console.log('User email payload:', msg); // Log the full email payload
-  await sgMail.send(msg);
+  return sgMail.send(msg);
 }
+
+
+
 
 // Updated: Send email to internal team after signing document
 async function sendTeamDocSignedEmail(user, docType, pdfPath) {
@@ -144,7 +163,10 @@ async function sendTeamDocSignedEmail(user, docType, pdfPath) {
   const lastName = user.lastName || ''; // Fallback
   const msg = {
     to: process.env.INTERNAL_TEAM_EMAIL,
-    from: 'devbluegrassroofing@gmail.com',
+    from: {
+      email: 'noreply@bluegrass-roofing.com',
+      name:  'BlueGrass Roofing'
+    },
     templateId: process.env.SENDGRID_TEAM_DOC_SIGNED_TEMPLATE_ID,
     dynamic_template_data: {
       fullName: `${firstName} ${lastName}`.trim(),
@@ -164,11 +186,47 @@ async function sendTeamDocSignedEmail(user, docType, pdfPath) {
   await sgMail.send(msg);
 }
 
+async function sendDocumentLinkEmail(recipientEmail, docType, signLink, customMessage) {
+  const templateId = process.env.SENDGRID_CONTRACT_LINK_TEMPLATE_ID;
+  if (!templateId) {
+    throw new Error('SENDGRID_CONTRACT_LINK_TEMPLATE_ID not set');
+  }
+  if (!recipientEmail) {
+    throw new Error('sendDocumentLinkEmail: recipientEmail is required');
+  }
+
+  const msg = {
+    to: recipientEmail,
+    from: {
+      email: 'noreply@bluegrass-roofing.com',
+      name:  'BlueGrass Roofing'
+    },
+    templateId: templateId,
+    dynamic_template_data: {
+      docType: docType.toUpperCase(),
+      signLink,
+      customMessage: customMessage || ''
+    },
+    mail_settings: {
+      bypass_list_management: { enable: false }
+    },
+    headers: {
+      'List-Unsubscribe': '<mailto:unsubscribe@bluegrass-roofing.com>, <https://bluegrass-roofing.com/unsubscribe>'
+    }
+  };
+
+  return sgMail.send(msg);
+}
+
+
+
+
 module.exports = {
   sendUserConfirmationEmail,
   sendInternalNotificationEmail,
   sendUserSignupEmail,
   sendPasswordResetCodeEmail,
   sendUserDocSignedEmail,
-  sendTeamDocSignedEmail
+  sendTeamDocSignedEmail,
+  sendDocumentLinkEmail
 };

@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BlueGrass Roofing General Service Agreement</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Load SignaturePad from a CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+
+  <style>
+    /* Basic styling, similar to your other contract docs. */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      color: #000;
+      line-height: 1.5;
+    }
+    input:disabled,
+    input[readonly] {
+      background-color: #e9ecef;
+      opacity: 1;
+      cursor: not-allowed;
+    }
+    .clear-button {
+      display: inline-block;
+      margin-top: 0.5rem;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.9rem;
+      color: #fff;
+      background-color: #999;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      outline: none;
+    }
+    .clear-button:hover {
+      background-color: #777;
+    }
+    input:focus, textarea:focus {
+      border: 1px solid #E18263 !important;
+      outline: none;
+      box-shadow: 0 0 0 2px #E18263;
+    }
+    /* Make canvases responsive */
+    canvas {
+      width: 100%;
+      height: auto; /* Scales with container on smaller screens */
+    }
+    .checkbox-group {
+      margin: 0.5rem 0;
+    }
+    .checkbox-group label {
+      margin-right: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PAGE 1 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+    <h2 style="text-align:center; margin-top:0; font-size:18px; font-weight:bold;">
+      BLUEGRASS ROOFING GENERAL SERVICE AGREEMENT
+    </h2>
+
+    <p style="margin-bottom:10px;">
+      This Agreement is made by and between 
+      <strong>
+        <input 
+          type="text" 
+          name="clientNames" 
+          placeholder="Enter your full name"
+          required 
+          style="border:1px solid #ccc; border-radius:4px; padding:2px; width:200px;"
+        />
+      </strong>, an individual (the “Client”),
+      and <strong>BLUEGRASS ROOFING</strong>, a DBA of Premier Construction Group, LLC, 
+      a Kentucky limited liability company (the “Contractor”).
+    </p>
+
+    <p style="margin-bottom:10px;">
+      <strong>Property Location:</strong> 
+      <input 
+        type="text"
+        name="fullPropertyAddress"
+        placeholder="Enter your address"
+        required
+        style="border:1px solid #ccc; border-radius:4px; padding:2px; width:250px;"
+      /><br>
+      <strong>Effective Date:</strong>
+      <input 
+        type="text"
+        name="effectiveDate"
+        placeholder="Enter effective date"
+        required
+        style="border:1px solid #ccc; border-radius:4px; padding:2px; width:150px;"
+      />
+    </p>
+
+    <p style="margin-bottom:10px;">
+      <strong>Prepared By</strong><br>
+      Bluegrass Roofing<br>
+      DBA of Premier Construction Group, LLC<br>
+      3217 Summit Square Place, Suite 100. Lexington, KY 40509.<br>
+      Phone: (859) 433-8120<br>
+      Email:
+      <a href="mailto:info@bluegrass-roofing.com" style="color:#0000EE;">Info@bluegrass-roofing.com</a>
+    </p>
+
+    <p style="margin-bottom:10px;">
+      <strong>Prepared For:</strong><br>
+      <input 
+        type="text"
+        name="clientNameAgain"
+        placeholder="Full name"
+        required
+        style="border:1px solid #ccc; border-radius:4px; padding:2px; width:250px;"
+      ><br>
+      <input 
+        type="text"
+        name="clientAddress"
+        required
+        placeholder="Address"
+        style="border:1px solid #ccc; border-radius:4px; padding:2px; width:300px; margin-top:5px;"
+      ><br>
+      Phone: 
+      <input
+        type="text"
+        placeholder="Phone Number"
+        name="clientPhone"
+        required
+        style="border:1px solid #ccc; border-radius:4px; padding:2px; width:150px;"
+      ><br>
+      Email: 
+      <input
+        type="email"
+        placeholder="Email"
+        name="clientEmail"
+        required
+        style="border:1px solid #ccc; border-radius:4px; padding:2px; width:200px;"
+      >
+    </p>
+
+    <p style="margin-bottom:10px;">
+      This General Service Agreement (<strong>“Agreement”</strong>) is made and entered into 
+      as of this 
+      <input 
+        type="number"
+        name="agreementDay"
+        placeholder="Day"
+        required
+        style="border:1px solid #ccc; border-radius:4px; padding:2px; width:60px;"
+      >
+      day of 
+      <input 
+        type="text"
+        name="agreementMonth"
+        placeholder="Month"
+        required
+        style="border:1px solid #ccc; border-radius:4px; padding:2px; width:100px;"
+      >, 2025 (<strong>“Effective Date”</strong>), 
+      by and between the following parties:
+    </p>
+
+    <!-- NEW: Additional client fields -->
+    <p style="margin-bottom:10px;">
+      <strong>Client:</strong> 
+      <input 
+        type="text" 
+        name="clientFullName" 
+        placeholder="Client's Full Name"
+        required
+        style="border:1px solid #ccc; border-radius:4px; padding:2px; width:220px;"
+      />, an individual residing at 
+      <input 
+        type="text" 
+        name="clientResidingAddress"
+        placeholder="Residing Address"
+        required
+        style="border:1px solid #ccc; border-radius:4px; padding:2px; width:220px;"
+      />,
+      the owner or authorized agent of the property located at: <br>
+      <strong>Service Address:</strong> 
+      <input 
+        type="text"
+        name="serviceAddress"
+        placeholder="Enter Service Address"
+        required
+        style="border:1px solid #ccc; border-radius:4px; padding:2px; width:250px;"
+      />, (hereinafter referred to as the "Client").
+    </p>
+
+    <p style="margin-bottom:10px;">
+      <strong>Contractor:</strong> Bluegrass Roofing, a registered doing business as (DBA) of Premier Construction Group, LLC,
+      a limited liability company duly organized and existing under the laws of the State of Kentucky, with its principal place
+      of business located at 3217 Summit Square Place, Suite 100, Lexington, KY 40509 (hereinafter referred to as the "Contractor").
+    </p>
+
+    <h3 style="margin-bottom:10px; font-size:16px; font-weight:bold;">RECITALS</h3>
+    <p style="margin-bottom:10px;">
+      WHEREAS, the Contractor is engaged in the business of providing professional roofing services, including roof replacement, repair,
+      new construction, inspection, maintenance, gutter installation, and related work;
+      <br><br>
+      WHEREAS, the Client is the owner or authorized representative of the subject property and desires to engage the Contractor
+      to perform certain roofing and associated services;
+      <br><br>
+      WHEREAS, the Contractor represents that it has the expertise, personnel, licenses, insurance, and equipment necessary to perform such
+      services in accordance with industry standards and applicable local regulations;
+      <br><br>
+      WHEREAS, the Client agrees to engage the Contractor to provide roofing services at the Service Address listed above, and the Contractor
+      agrees to perform such services under the terms and conditions set forth in this Agreement;
+      <br><br>
+      NOW, THEREFORE, in consideration of the mutual covenants and promises set forth herein, and for other good and valuable consideration,
+      the receipt and sufficiency of which are hereby acknowledged, the parties hereto agree as follows:
+    </p>
+  </div>
+
+  <!-- PAGE 2 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+    <h3 style="margin-top:0; font-size:16px; font-weight:bold;">1. PROPERTY INFORMATION AND PROJECT TYPE</h3>
+    <p style="margin-bottom:10px;">
+      This Agreement applies to the roofing services to be performed at the following property:
+      <br><br>
+      <strong>Property Address:</strong> 
+      <input
+        type="text"
+        name="propertyAddress2"
+        placeholder="Property Address"
+        required
+        style="border:1px solid #ccc; border-radius:4px; padding:2px; width:250px;"
+      /><br>
+      <strong>Type of Project:</strong>
+    </p>
+
+    <!-- NEW: Actual checkboxes for project type -->
+    <div class="checkbox-group">
+      <label>
+        <input type="checkbox" name="projectType[]" value="Roof Replacement" />
+        Roof Replacement
+      </label>
+      <label>
+        <input type="checkbox" name="projectType[]" value="Roof Repair" />
+        Roof Repair
+      </label>
+      <label>
+        <input type="checkbox" name="projectType[]" value="New Construction" />
+        New Construction
+      </label>
+      <label>
+        <input type="checkbox" name="projectType[]" value="Roof Inspection" />
+        Roof Inspection
+      </label>
+      <label>
+        <input type="checkbox" name="projectType[]" value="Roof Maintenance" />
+        Roof Maintenance
+      </label>
+      <label>
+        <input type="checkbox" name="projectType[]" value="Gutter Installation" />
+        Gutter Installation
+      </label>
+      <br>
+      <label>Other: 
+        <input
+          type="text"
+          name="projectTypeOther"
+          placeholder="Specify if other"
+          style="border:1px solid #ccc; border-radius:4px; padding:2px; width:200px;"
+        />
+      </label>
+    </div>
+
+    <p style="margin-bottom:10px;">
+      The project may include removing existing roofing material, installing new materials, replacing or installing gutters, providing
+      cleanup and haul-away services, and performing any related tasks as further described in the Scope of Work.
+    </p>
+
+    <h3 style="margin-bottom:10px; font-size:16px; font-weight:bold;">2. SCOPE OF WORK</h3>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">2.1 Roofing Services Provided</h4>
+    <p style="margin:0 0 10px 0;">
+      The Contractor agrees to perform the following roofing services at the Client’s property as specified in this Agreement:
+    </p>
+    <ul style="margin-top:0; margin-bottom:10px; padding-left:20px;">
+      <li><strong>Roof Replacement</strong> – Complete removal and replacement of the existing roof system, including underlayment and applicable flashing.</li>
+      <li><strong>Roof Repairs</strong> – Repair of damaged or compromised sections of the roofing system.</li>
+      <li><strong>New Construction</strong> – Installation of a new roof system on a newly constructed structure.</li>
+      <li><strong>Roof Inspection</strong> – Assessment and documentation of current roof condition, with professional recommendations.</li>
+      <li><strong>Roof Maintenance</strong> – Routine maintenance to extend the roof's life, including sealing, caulking, debris removal, and minor repairs.</li>
+    </ul>
+  </div>
+
+  <!-- PAGE 3 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+    <p style="margin-bottom:10px;">
+      All work shall be performed using quality materials and in accordance with industry best practices, applicable building codes, and the
+      manufacturer’s specifications.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">2.2 Additional Services</h4>
+    <p style="margin:0 0 10px 0;">
+      In addition to the roofing services listed above, the Contractor will also provide the following:
+    </p>
+    <ul style="margin-top:0; margin-bottom:10px; padding-left:20px;">
+      <li><strong>Gutter Installation or Replacement</strong> – Remove old gutters and install new gutters as requested and included in the scope.</li>
+      <li><strong>Haul-Away and Cleanup</strong> – Complete removal and proper disposal of all roofing debris generated during the project.</li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      Unless otherwise stated in a change order or amendment to this Agreement, these services are included in the total cost.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">2.3 Excluded Services</h4>
+    <p style="margin-bottom:10px;">
+      At this time, no specific services are explicitly excluded from this Agreement. Any additional work or services requested by the Client
+      that falls outside the original agreed-upon scope must be documented in a written change order, signed by both parties, and may result in
+      additional charges.
+    </p>
+
+    <h3 style="margin-bottom:10px; font-size:16px; font-weight:bold;">3. MATERIALS AND PRODUCTS</h3>
+  </div>
+
+  <!-- PAGE 4 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">3.1 Material Selection and Approvals</h4>
+    <p style="margin-bottom:10px;">
+      The Contractor shall provide the Client with a selection of roofing materials, including shingle styles, colors, and manufacturers,
+      to choose from prior to the commencement of work. The Client is responsible for selecting the desired materials from the available options.
+      No material will be ordered or installed without the Client’s express approval, which may be given in writing, by signed estimate,
+      or via documented electronic communication (email or text confirmation).
+    </p>
+    <p style="margin-bottom:10px;">
+      If the Client fails to make a material selection in a timely manner, the Contractor may delay the project start date without penalty or liability.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">3.2 Handling of Special Orders or Unavailable Materials</h4>
+    <p style="margin-bottom:10px;">
+      In the event that the selected materials are not immediately available due to supplier constraints, manufacturer backorders, or regional shortages,
+      the Contractor will notify the Client promptly, provide alternative options of similar quality, appearance, and price, and adjust the project
+      schedule as reasonably necessary, contingent on material delivery dates.
+      <br><br>
+      Special-order materials may require additional lead time and could impact the timeline outlined in this Agreement. If the Client insists on waiting
+      for a specific unavailable material, any delays associated with such a choice shall not be held against the Contractor.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">3.3 Manufacturer Warranty Overview</h4>
+    <p style="margin-bottom:10px;">
+      All materials used in the performance of this Agreement are subject to the manufacturer’s standard warranties.
+      The Contractor makes no separate or additional warranties regarding materials and shall not be held responsible for any defects covered under
+      the manufacturer’s warranty. The Contractor will review applicable manufacturer warranty information with the Client prior to material selection
+      and provide the Client with copies of warranty documentation upon completion of the project, along with proof of installation if required for registration.
+      <br><br>
+      The Client is responsible for registering any manufacturer warranty that requires post-installation activation unless otherwise agreed in writing.
+    </p>
+  </div>
+
+  <!-- PAGE 5 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+    <h3 style="margin-top:0; font-size:16px; font-weight:bold;">4. PROJECT TIMELINE</h3>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">4.1 Estimated Start and Completion Dates</h4>
+    <p style="margin-bottom:10px;">
+      The Contractor estimates that work will commence:
+    </p>
+    <ul style="margin:0 0 10px 20px;">
+      <li><strong>For insurance-funded projects:</strong> within two (2) weeks of receiving the initial payment from the insurance company;</li>
+      <li><strong>For out-of-pocket (retail) projects:</strong> within two (2) weeks of receiving the first installment payment from the Client.</li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      The estimated duration for completion of the roofing work is typically 1 to 2 business days, depending on the project's size, complexity, and scope.
+      The Contractor will make reasonable efforts to adhere to these timeframes but does not guarantee specific start or end dates unless stated otherwise in writing.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">4.2 Scheduling Conditions</h4>
+    <p style="margin-bottom:10px;">
+      The start date and completion of the project are subject to the following conditions:
+    </p>
+    <ul style="margin-top:0; margin-bottom:10px; padding-left:20px;">
+      <li><strong>Material Availability:</strong> If the selected materials are on backorder or unavailable, the Contractor will communicate delays and offer alternatives or a revised schedule.</li>
+      <li><strong>Weather Delays:</strong> Inclement weather (e.g., rain, storms, freezing temperatures) may delay the project for safety and quality assurance reasons. Such delays shall not be deemed a breach of this Agreement.</li>
+      <li><strong>Permit Delays or Inspections:</strong> If municipal authorities delay or reschedule permits or required inspections, the project timeline may be adjusted accordingly.</li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      The Contractor shall not be held liable for delays caused by factors outside of its control, including but not limited to material shortages, labor strikes, supplier failures, or acts of God.
+    </p>
+  </div>
+
+  <!-- PAGE 6 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">4.3 Worksite Access and Client Responsibilities</h4>
+    <p style="margin-bottom:10px;">
+      The Client agrees to:
+    </p>
+    <ul style="margin-top:0; margin-bottom:10px; padding-left:20px;">
+      <li>Provide reasonable access to the property for the Contractor and its personnel during regular working hours (unless otherwise agreed);</li>
+      <li>Ensure driveways and access points are clear for delivery of materials and movement of equipment;</li>
+      <li>Secure pets, valuables, and personal items in and around the work area;</li>
+      <li>Notify the Contractor in advance of any special property conditions, restrictions, or access issues (e.g., locked gates, HOA rules).</li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      If access is limited or restricted and delays occur, the Contractor reserves the right to adjust the project timeline and/or assess additional fees
+      if the delay results in increased costs or rescheduling.
+    </p>
+
+    <h3 style="margin-bottom:10px; font-size:16px; font-weight:bold;">5. PAYMENT TERMS</h3>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">5.1 Payment Structure</h4>
+    <p style="margin-bottom:10px;">
+      The total cost of the project shall be paid in two installments as follows:
+    </p>
+    <ul style="margin-top:0; margin-bottom:10px; padding-left:20px;">
+      <li><strong>First Installment:</strong> Due prior to ordering materials, this installment secures the project on the Contractor’s schedule and covers the cost of initial materials. Work will not be scheduled or materials ordered until this payment has been received.</li>
+      <li><strong>Second Installment (Due upon completion of the work):</strong> For insurance-funded projects, the Client shall have up to thirty (30) days (Net 30) from the date of completion to remit the final payment. For non-insurance projects, the final installment is due immediately upon completion and a satisfactory walkthrough.</li>
+    </ul>
+  </div>
+
+  <!-- PAGE 7 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">5.2 Accepted Payment Methods</h4>
+    <p style="margin-bottom:10px;">
+      For the client’s convenience, the contractor accepts multiple forms of payment, including checks (made payable to Bluegrass Roofing or Premier Construction Group, LLC),
+      credit cards (processing fees may apply), and third-party financing through approved lenders.
+      The Contractor offers up to $1,500 in in-house financing for clients needing assistance with deductible payments.
+    </p>
+    <p style="margin-bottom:10px;">
+      In-house financing is interest-free if paid in full within 12 months. Any remaining balance after that period will accrue interest at an annual rate of 8%.
+      All payment arrangements must be confirmed and finalized prior to the start of the project to avoid delays in scheduling or material procurement.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">5.3 Financing Terms</h4>
+    <p style="margin-bottom:10px;">
+      Clients using in-house financing must sign a separate financing agreement that includes a payment schedule and acknowledgment of interest terms.
+      Per the terms of the financing plan, missed payments may be subject to late fees and acceleration of the remaining balance.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">5.4 Late Payment Penalties and Standard Fees</h4>
+    <p style="margin-bottom:10px;">
+      Any payment not received within the agreed-upon timeframe will be subject to a late fee of $50 or 5% of the outstanding balance, whichever is greater, along with accrued interest at a rate of 1.5% per month (18% annually) on the overdue amount.
+      Additionally, the Contractor reserves the right to suspend all warranty coverage and related services until the account is brought current.
+      <br><br>
+      In the event that payment remains outstanding beyond thirty (30) days after the due date, the Contractor reserves the right to take appropriate legal action or refer the matter to a collection agency, with the Client being responsible for any collection costs or attorney’s fees incurred.
+    </p>
+  </div>
+
+  <!-- PAGE 8 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">5.5 AOB Payment Process</h4>
+    <p style="margin-bottom:10px;">
+      If the Client executes an Assignment of Benefits (AOB) in favor of Bluegrass Roofing (Premier Construction Group, LLC), the Client agrees
+      that all insurance payments for the roofing work will be made directly to the Contractor by the insurance company. In such cases, the Client shall
+      not be responsible for making any payments to the Contractor, except for any deductible, unrecoverable depreciation, or non-covered work
+      as described elsewhere in this Agreement.
+      <br><br>
+      The Client further acknowledges and agrees that the Contractor’s right to receive direct payment from the insurer fully satisfies the
+      Client’s payment obligation for all work covered by the insurance claim. Any payments issued by the insurance company to the Client in error
+      shall be endorsed and promptly forwarded to the Contractor.
+    </p>
+
+    <h3 style="margin-bottom:10px; font-size:16px; font-weight:bold;">6. INSURANCE AND CLAIMS PROCESS</h3>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">6.1 Insurance Claim Procedures and Payment Handling</h4>
+    <p style="margin-bottom:10px;">
+      For projects funded through an insurance claim, the Client agrees to cooperate fully with Bluegrass Roofing (Premier Construction Group, LLC)
+      in handling claim-related communications, documentation, and disbursement of funds. Standard insurance claim handling includes:
+    </p>
+    <ul style="margin-top:0; margin-bottom:10px; padding-left:20px;">
+      <li><strong>Replacement Cost Payment and Depreciation:</strong> Insurance companies typically issue an initial payment equal to the actual cash value (ACV) of the loss, which is the replacement cost minus depreciation and deductible. After the work is completed, the insurance company will release the recoverable depreciation in a second payment, provided the work matches the approved scope, and the Client submits a signed Letter of Completion.</li>
+      <li><strong>Supplemental Claims for Additional Work:</strong> If, during work, previously undetected damage (e.g., rotten decking, code-required upgrades, or hidden structural issues) is discovered, the Contractor will document the damage with photos and submit a supplemental claim to the insurance company. Any supplemental work performed shall be subject to the same terms and payment conditions as the original scope.</li>
+    </ul>
+  </div>
+
+  <!-- PAGE 9 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+    <p style="margin-bottom:10px;">
+      The Client agrees to promptly cooperate with the Contractor throughout the insurance claim process. This includes endorsing and forwarding
+      all insurance payments received for roofing-related repairs, signing required documents such as the Letter of Completion to facilitate the
+      release of depreciation payments, and immediately notifying the Contractor of any insurer communications or disbursements related to the project.
+      The Client also agrees to provide authorization, where applicable, for the Contractor to communicate directly with the insurance adjuster or
+      representative through an executed Assignment of Benefits (AOB) or Authorization to Contact Insurer (ACI).
+      <br><br>
+      Failure to cooperate may result in project delays, suspension of work, or additional administrative charges.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">6.2 Letter of Completion and Depreciation Release</h4>
+    <p style="margin-bottom:10px;">
+      Upon completion of the roofing project, the Contractor will provide a Letter of Completion for the Client’s review and signature.
+      This letter confirms that the agreed scope of work has been completed and authorizes the insurance company to release any remaining funds,
+      including the recoverable depreciation. The Client agrees to sign and return this letter in a timely manner to avoid delay in closing out the claim.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">6.3 Assignment of Proceeds</h4>
+    <p style="margin-bottom:10px;">
+      If the Client executes an Assignment of Benefits (AOB), all rights to insurance proceeds related to the roofing work are assigned directly
+      to the Contractor. This allows the Contractor to collect payments from the insurer, communicate with adjusters, submit supplements,
+      and finalize settlement amounts on behalf of the Client.
+      <br><br>
+      If no AOB is signed, the Client remains responsible for forwarding all payments in a timely manner and coordinating any remaining balance due
+      to the Contractor.
+    </p>
+
+    <h3 style="margin-bottom:10px; font-size:16px; font-weight:bold;">7. WARRANTIES AND GUARANTEES</h3>
+  </div>
+
+  <!-- PAGE 10 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">7.1 Workmanship Warranty (1 Year)</h4>
+    <p style="margin-bottom:10px;">
+      Bluegrass Roofing (Premier Construction Group, LLC) provides a limited workmanship warranty for one (1) year from project completion.
+      This warranty covers defects in the installation or application of roofing materials that result from improper workmanship.
+      If a covered issue arises during the warranty period, the Contractor agrees to promptly repair the defect at no cost to the Client.
+      <br><br>
+      This warranty does not cover damage caused by storms, wind, hail, fire, acts of God, or other events beyond the Contractor’s control,
+      normal wear and tear, defects in materials (covered separately under manufacturer warranties), or work performed by others after project completion.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">7.2 Manufacturer Warranties</h4>
+    <p style="margin-bottom:10px;">
+      All roofing materials used are covered by the manufacturer’s limited warranty, the terms and duration of which vary based on the product selected.
+      The Contractor does not warrant the materials themselves but will provide support in the following ways:
+    </p>
+    <ul style="margin-top:0; margin-bottom:10px; padding-left:20px;">
+      <li><strong>Review and Selection Prior to Installation:</strong> The Contractor will inform the Client about available manufacturer warranties prior to installation, allowing the Client to make an informed material selection.</li>
+      <li><strong>Delivery of Warranty Documents After Completion:</strong> Upon completion of the roofing project, the Contractor will deliver all applicable warranty documents to the Client. These may include manufacturer brochures, warranty registration forms, and proof of installation.</li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      Unless otherwise agreed in writing, it is the Client’s responsibility to register the warranty with the manufacturer when required.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">7.3 No Additional Warranty Beyond Specified Terms</h4>
+    <p style="margin-bottom:10px;">
+      No other express or implied warranties shall apply to the work performed or materials used beyond those specifically described in this Agreement.
+      The Contractor disclaims any implied warranties of merchantability, fitness for a particular purpose, or performance unless such terms
+      are expressly stated in a separate written agreement.
+      <br><br>
+      The warranties provided herein are the sole and exclusive remedies available to the Client for any alleged defect in workmanship or materials.
+    </p>
+  </div>
+
+  <!-- PAGE 11 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+    <h3 style="margin-top:0; font-size:16px; font-weight:bold;">8. PERMITS, CODES, AND APPROVALS</h3>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">8.1 Responsibility for Permits and Inspections</h4>
+    <p style="margin-bottom:10px;">
+      Bluegrass Roofing (Premier Construction Group, LLC) shall be responsible for obtaining any required building permits for the roofing work
+      covered by this Agreement unless otherwise specified in writing. The Contractor will coordinate any required municipal inspections and
+      ensure the project is scheduled and completed in compliance with the applicable permitting requirements.
+      <br><br>
+      The cost of standard permits and inspections is included in the project pricing unless stated otherwise in the estimate or proposal.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">8.2 Compliance with Local Building Codes</h4>
+    <p style="margin-bottom:10px;">
+      All work under this Agreement shall comply with applicable local, state, and federal building codes, roofing standards, and safety regulations.
+      If updates, corrections, or additions are required to bring the roofing system into code compliance, the Contractor will notify the Client
+      and may issue a change order for the additional work and cost.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">8.3 HOA or Other Third-Party Approvals</h4>
+    <p style="margin-bottom:10px;">
+      If the property is located within a Homeowners’ Association (HOA) or is subject to architectural review, it is the Client’s responsibility
+      to obtain any required HOA or third-party approvals prior to the scheduled start date. This includes approval of roofing material color, type,
+      and design.
+      <br><br>
+      Upon request, the Contractor will provide the necessary documentation (e.g., product data sheets, licenses, insurance certificates)
+      to support the Client’s approval process. However, any delays resulting from failure to obtain such approvals in a timely manner shall not
+      be held against the Contractor and may result in rescheduling or additional charges.
+    </p>
+
+    <h3 style="margin-bottom:10px; font-size:16px; font-weight:bold;">9. INSURANCE AND LIABILITY</h3>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">9.1 Contractor’s Insurance Coverage</h4>
+    <p style="margin-bottom:10px;">
+      Bluegrass Roofing (Premier Construction Group, LLC) maintains comprehensive insurance coverage to protect its operations and clients.
+      This includes:
+    </p>
+    <ul style="margin-top:0; margin-bottom:10px; padding-left:20px;">
+      <li><strong>General Liability Insurance</strong> – Covers bodily injury, property damage, and other liabilities that may arise during work.</li>
+      <li><strong>Workers’ Compensation Insurance</strong> – Covers medical costs and lost wages for employees injured on the job in compliance with applicable state laws.</li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      Proof of insurance can be provided upon request prior to the commencement of work.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">9.2 Client Insurance</h4>
+    <p style="margin-bottom:10px;">
+      While the Contractor is fully insured, it is strongly recommended that the Client maintain an active homeowner’s insurance policy
+      during the roofing project. This policy should remain in force until the work is completed and the final payment is made.
+      <br><br>
+      Although not required as a condition of this Agreement, such coverage may help protect the Client in the event of unforeseen issues
+      not caused by the Contractor (e.g., storm damage during the project).
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">9.3 Damage to Property and Indemnification Terms</h4>
+    <p style="margin-bottom:10px;">
+      The Contractor will take reasonable precautions to avoid damage to landscaping, driveways, siding, gutters, and other areas surrounding
+      the worksite. However, certain incidental impacts may occur due to the nature of roofing work, including but not limited to vibration,
+      falling debris, or necessary equipment use.
+      <br><br>
+      The Contractor shall be responsible for repairing any negligent or avoidable damage directly caused by its personnel or subcontractors.
+      The Client agrees to remove or protect personal property (e.g., vehicles, lawn furniture, fragile items) from the work area prior to the
+      start of the project.
+    </p>
+  </div>
+
+  <!-- PAGE 12 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+    <h3 style="margin-top:0; font-size:16px; font-weight:bold;">10. INDEMNIFICATION</h3>
+    <p style="margin-bottom:10px;">
+      To the fullest extent permitted by law, the Client agrees to indemnify, defend, and hold harmless the Contractor—Bluegrass Roofing
+      (Premier Construction Group, LLC)—and its officers, employees, agents, representatives, and subcontractors (collectively, the
+      “Indemnified Parties”) from and against any and all claims, demands, damages, losses, liabilities, costs, and expenses, including
+      but not limited to reasonable attorney’s fees and court costs, arising out of or resulting from:
+    </p>
+    <ul style="margin-top:0; margin-bottom:10px; padding-left:20px;">
+      <li>The performance of the roofing services under this Agreement;</li>
+      <li>Any alleged or actual injury to persons (including death) or damage to property occurring in connection with the project;</li>
+      <li>Any negligent act or omission, breach of contract, or violation of applicable law by the Client or any third party under the Client’s control.</li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      This indemnification obligation applies regardless of whether the claim is brought by a third party, a neighbor, an insurance company,
+      a government agency, or any other party. However, the Client shall not be responsible for indemnifying the Contractor for any claims,
+      damages, or losses that are found to have been caused solely by the Contractor’s gross negligence, willful misconduct, or intentional wrongdoing.
+      <br><br>
+      The Client’s obligations under this clause shall survive this Agreement’s completion, expiration, or termination.
+    </p>
+
+    <h3 style="margin-bottom:10px; font-size:16px; font-weight:bold;">11. CHANGE ORDERS AND ADDITIONAL WORK</h3>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">11.1 Procedures for Changes in Scope</h4>
+    <p style="margin-bottom:10px;">
+      Any changes to the original scope of work outlined in this Agreement must be made through a formal Change Order.
+      This includes additions, deletions, substitutions, or modifications to materials, labor, or project specifications.
+      <br><br>
+      All Change Orders must be initiated by either the Client or the Contractor, documented in writing, clearly describe the change,
+      and be signed and approved by both parties before the work associated with the change is performed. Verbal requests or informal discussions
+      will not be considered binding or enforceable unless documented and signed as a Change Order.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">11.2 Pricing and Authorization Requirements</h4>
+    <p style="margin-bottom:10px;">
+      If a Change Order changes the contract price, the revised cost will be presented to the Client in advance. The client will not incur
+      additional charges without their express written approval.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">11.3 Documentation of Supplemental Work for Insurance Claims</h4>
+    <p style="margin-bottom:10px;">
+      When additional work is identified during the project that is outside the original insurance scope, the Contractor will document
+      the condition with photos and written descriptions, submit the documentation to the Client’s insurance company as part of a supplemental claim,
+      and notify the Client of the proposed scope and anticipated cost.
+      <br><br>
+      The Client agrees to cooperate with the Contractor and insurance adjuster to process any supplemental claims. Work may be paused until
+      the supplemental claim is approved or the Client provides written authorization to proceed at their own expense.
+    </p>
+
+    <h3 style="margin-bottom:10px; font-size:16px; font-weight:bold;">12. Termination and Cancellation</h3>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">12.1 Conditions for Termination by Either Party</h4>
+    <p style="margin-bottom:10px;">
+      Either party may terminate this Agreement under the following conditions:
+    </p>
+    <ul style="margin-top:0; margin-bottom:10px; padding-left:20px;">
+      <li><strong>By the Client:</strong> The Client may terminate this Agreement prior to the commencement of work, provided written notice is given to the Contractor. If materials have already been ordered or labor has been scheduled, the Client may be responsible for incurred costs as outlined below.</li>
+      <li><strong>By the Contractor:</strong> The Contractor may terminate this Agreement at any time if the Client fails to make required payments, materially breaches any terms of the Agreement, creates or allows conditions that render the work unsafe or impossible to perform, or fails to provide reasonable access to the property or cooperation necessary for the Contractor to complete the work in a timely and professional manner.</li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      Notice of termination must be given in writing and will become effective upon receipt.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">12.2 Obligations Upon Termination</h4>
+    <p style="margin-bottom:10px;">
+      Upon termination of this Agreement, the following obligations shall apply:
+    </p>
+    <ul style="margin-top:0; margin-bottom:10px; padding-left:20px;">
+      <li>The Client must pay the Contractor for all work completed and materials purchased up to the date of termination;</li>
+      <li>The Contractor must return any unearned portion of payments received (if applicable);</li>
+      <li>The Contractor shall provide a final invoice and supporting documentation for labor, materials, and applicable restocking or cancellation fees.</li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      All warranties and services under this Agreement will cease upon termination unless otherwise agreed in writing.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">12.3 Refund and Billing Provisions</h4>
+    <p style="margin-bottom:10px;">
+      If the Client terminates the Agreement before materials are ordered, any prepayments will be refunded, minus administrative fees.
+      If termination occurs after materials have been ordered, the Client is responsible for the cost of those materials, including any supplier
+      restocking fees for unused or returned items.
+      <br><br>
+      If termination occurs after work has begun, the Client is responsible for the full cost of all completed work, a reasonable value
+      for partially completed work, and any non-refundable permit or inspection fees. Any refund due to the Client will be issued within
+      30 business days after the final reconciliation of the project account.
+    </p>
+
+    <h3 style="margin-bottom:10px; font-size:16px; font-weight:bold;">13. DISPUTE RESOLUTION</h3>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">13.1 Informal Resolution Efforts</h4>
+    <p style="margin-bottom:10px;">
+      In the event of any dispute, disagreement, or claim arising out of or relating to this Agreement, both parties agree to first attempt to
+      resolve the matter through good faith informal negotiations. Each party shall provide written notice of the dispute and allow a reasonable
+      opportunity (not less than ten (10) business days) for the other party to respond and attempt to resolve the matter amicably.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">13.2 Binding Arbitration or Mediation</h4>
+    <p style="margin-bottom:10px;">
+      If the dispute cannot be resolved through informal negotiation, the parties agree to submit the matter to binding arbitration or mediation,
+      as determined by mutual agreement or as required by applicable law.
+      <br><br>
+      Arbitration or mediation shall be conducted through a reputable organization such as the American Arbitration Association (AAA)
+      or another mutually agreed-upon provider. A single neutral arbitrator shall conduct the arbitration. The arbitrator's decision shall
+      be final and binding on both parties and enforceable in any court of competent jurisdiction. Each party shall bear its legal fees and costs
+      unless otherwise determined by the arbitrator.
+      <br><br>
+      This clause does not preclude either party from seeking temporary or preliminary injunctive relief in a court of law to prevent irreparable harm
+      prior to the arbitration proceeding.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">13.3 Governing Law and Jurisdiction</h4>
+    <p style="margin-bottom:10px;">
+      This Agreement shall be governed by and construed in accordance with the laws of the State of Kentucky, without regard to its conflict of law principles.
+      Any mediation, arbitration, or legal action shall be conducted in the county where the subject property is located unless otherwise agreed in writing
+      by both parties.
+    </p>
+  </div>
+
+  <!-- SIGNATURE AREA (BOTTOM) -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+    <h3 style="margin-top:0; font-size:16px; font-weight:bold;">SIGNATURES</h3>
+
+    <!-- HOMEOWNER SIGNATURE -->
+    <div style="margin-bottom: 20px;">
+      <h4 style="margin-bottom: 0.5rem;">Homeowner / Client Signature</h4>
+      <label
+      for="homeownerPrintedName"
+      style="display: inline-block; margin-bottom: 0.25rem; font-weight: 600;"
+    >
+      Printed Name*
+    </label>
+    <input
+      type="text"
+      name="homeownerPrintedName"
+      id="homeownerPrintedName"
+      required
+      style="width: 300px; padding: 0.4rem; border: 1px solid #ddd; border-radius: 4px; outline:none; margin-bottom: 1rem;"
+    /><br>
+    <label
+        for="homeownerDate"
+        style="display: inline-block; margin-top: 16px; margin-bottom: 0.25rem; font-weight: 600;"
+      >
+        Date*
+      </label>
+      <input
+        type="date"
+        name="homeownerDate"
+        id="homeownerDate"
+        required
+        style="width: 200px; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; outline:none;"
+      />
+    </div>
+
+      <label
+        for="signatureCanvasHomeowner"
+        style="display: inline-block; margin-bottom: 0.25rem; font-weight: 600;"
+      >
+        Signature*
+      </label>
+      <div
+        style="position: relative; width: 300px; max-width: 100%; height: 100px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 0.5rem;"
+      >
+        <canvas
+          id="signatureCanvasHomeowner"
+          width="300"
+          height="100"
+        ></canvas>
+        <button
+          type="button"
+          id="clearSignatureHomeowner"
+          class="clear-button"
+        >
+          Clear Signature
+        </button>
+      </div>
+      <input
+        type="hidden"
+        name="signatureHomeowner"
+        id="signatureHomeowner"
+        required
+      />
+
+
+
+<!-- Contractor Signature Area -->
+<div style="margin-bottom: 20px; margin-top: 60px;">
+  <p style="margin: 0.5rem 0;">
+    <strong>CONTRACTOR:</strong><br>
+    BLUEGRASS ROOFING<br>
+    a DBA of Premier Construction Group, LLC<br>
+    a Kentucky limited liability company
+  </p>
+
+  <p style="margin: 0.5rem 0;">
+    <!-- Replace the old "By:" text input with a signature canvas + hidden input -->
+    <label for="signatureCanvasContractor" style="display:block; font-weight:bold;">By:</label>
+    <div
+      style="position: relative; width: 300px; max-width: 100%; height: 100px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 0.5rem;"
+    >
+      <canvas
+        id="signatureCanvasContractor"
+        width="300"
+        height="100"
+      ></canvas>
+      <button
+        type="button"
+        id="clearSignatureContractor"
+        class="clear-button"
+      >
+        Clear Signature
+      </button>
+    </div>
+    <!-- This hidden input will store the actual dataURL from the signature canvas -->
+    <input
+      type="hidden"
+      name="signatureContractor"
+      id="signatureContractor"
+    />
+
+    <br>
+
+    <label for="contractorPrintedName">Name:</label>
+    <input
+      type="text"
+      name="contractorPrintedName"
+      id="contractorPrintedName"
+      placeholder="Contractor Name (Optional)"
+      style="width: 250px; margin-bottom: 8px; margin-top: 40px; border: 1px solid #ccc; border-radius: 4px; padding: 2px;"
+    />
+    <br>
+
+    <label for="contractorTitle">Title:</label>
+    <input
+      type="text"
+      name="contractorTitle"
+      id="contractorTitle"
+      placeholder="Contractor Title (Optional)"
+      style="width: 250px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; padding: 2px;"
+    />
+    <br>
+
+    <label for="contractorDate">Date:</label>
+    <input
+      type="date"
+      name="contractorDate"
+      id="contractorDate"
+      placeholder="Optional"
+      style="width: 200px; border: 1px solid #ccc; border-radius: 4px; padding: 2px;"
+    />
+  </p>
+</div>
+
+      
+<!-- BEGIN: Full Updated Code Snippet -->
+
+<script>
+  let sigPadHomeowner, sigPadContractor;
+  let clearHomeownerBtn, clearContractorBtn;
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // ----- Homeowner Signature -----
+    const canvasHome  = document.getElementById('signatureCanvasHomeowner');
+    clearHomeownerBtn = document.getElementById('clearSignatureHomeowner');
+    const homeownerSigInput = document.getElementById('signatureHomeowner');
+
+    if (canvasHome) {
+      sigPadHomeowner = new SignaturePad(canvasHome);
+      // record on endStroke
+      sigPadHomeowner.addEventListener('endStroke', () => {
+        if (!sigPadHomeowner.isEmpty())
+          homeownerSigInput.value = sigPadHomeowner.toDataURL();
+      });
+      clearHomeownerBtn.addEventListener('click', () => {
+        sigPadHomeowner.clear();
+        homeownerSigInput.value = '';
+      });
+    }
+
+    // ----- Contractor Signature -----
+    const canvasContr = document.getElementById('signatureCanvasContractor');
+    clearContractorBtn = document.getElementById('clearSignatureContractor');
+    const contractorSigInput = document.getElementById('signatureContractor');
+
+    if (canvasContr) {
+      sigPadContractor = new SignaturePad(canvasContr);
+      sigPadContractor.addEventListener('endStroke', () => {
+        if (!sigPadContractor.isEmpty())
+          contractorSigInput.value = sigPadContractor.toDataURL();
+      });
+      clearContractorBtn.addEventListener('click', () => {
+        sigPadContractor.clear();
+        contractorSigInput.value = '';
+      });
+    }
+  });
+
+  // Gather **all** fields, including checkboxes & hidden signature inputs
+  function gatherGsaFields() {
+    const selectedTypes = Array.from(
+      document.querySelectorAll('input[name="projectType[]"]:checked')
+    ).map(cb => cb.value);
+
+    return {
+      clientNames:             document.querySelector('[name="clientNames"]').value || '',
+      fullPropertyAddress:     document.querySelector('[name="fullPropertyAddress"]').value || '',
+      effectiveDate:           document.querySelector('[name="effectiveDate"]').value || '',
+      clientNameAgain:         document.querySelector('[name="clientNameAgain"]').value || '',
+      clientAddress:           document.querySelector('[name="clientAddress"]').value || '',
+      clientPhone:             document.querySelector('[name="clientPhone"]').value || '',
+      clientEmail:             document.querySelector('[name="clientEmail"]').value || '',
+      agreementDay:            document.querySelector('[name="agreementDay"]').value || '',
+      agreementMonth:          document.querySelector('[name="agreementMonth"]').value || '',
+
+      clientFullName:          document.querySelector('[name="clientFullName"]').value || '',
+      clientResidingAddress:   document.querySelector('[name="clientResidingAddress"]').value || '',
+      serviceAddress:          document.querySelector('[name="serviceAddress"]').value || '',
+      propertyAddress2:        document.querySelector('[name="propertyAddress2"]').value || '',
+      projectTypes:            selectedTypes,
+      projectTypeOther:        document.querySelector('[name="projectTypeOther"]').value || '',
+
+      homeownerPrintedName:    document.getElementById('homeownerPrintedName').value || '',
+      signatureHomeowner:      document.getElementById('signatureHomeowner').value || '',
+      homeownerDate:           document.getElementById('homeownerDate').value || '',
+
+      contractorPrintedName:   document.getElementById('contractorPrintedName').value || '',
+      contractorTitle:         document.getElementById('contractorTitle').value || '',
+      contractorDate:          document.getElementById('contractorDate').value || '',
+      signatureContractor:     document.getElementById('signatureContractor').value || ''
+    };
+  }
+
+  // Listen for parent messages
+  window.addEventListener('message', function(event) {
+    const msg = event.data;
+    if (!msg || !msg.type) return;
+
+    // A) Initialize & lock admin‐prefilled fields
+    if (msg.type === 'INITIALIZE_GSA_DATA') {
+      const fields = msg.payload || {};
+      Object.entries(fields).forEach(([name, value]) => {
+        if (!value) return;
+        const el = document.querySelector(`[name="${name}"]`);
+        if (el) {
+          el.value = value;
+          el.setAttribute('readonly', 'true');
+          if (el.type === 'checkbox') el.disabled = true;
+        }
+        // replay saved signatures
+        if (name === 'signatureHomeowner' && sigPadHomeowner) {
+          sigPadHomeowner.fromDataURL(value);
+          clearHomeownerBtn.style.display = 'none';
+        }
+        if (name === 'signatureContractor' && sigPadContractor) {
+          sigPadContractor.fromDataURL(value);
+          clearContractorBtn.style.display = 'none';
+        }
+      });
+    }
+    // B) Parent requests our filled data
+    else if (msg.type === 'REQUEST_GSA_DATA') {
+      const payload = gatherGsaFields();
+      window.parent.postMessage({ type: 'GSA_FORM_DATA', payload }, '*');
+    }
+  });
+</script>
+
+
+
+<!-- END: Full Updated Code Snippet -->
+
+</body>
+</html>

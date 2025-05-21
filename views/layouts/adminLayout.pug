@@ -1,3 +1,4 @@
+//- layouts/adminLayout.pug
 doctype html
 html(lang="en")
   head
@@ -22,6 +23,12 @@ html(lang="en")
 
     link(rel="stylesheet", href="/css/admin.css")
     link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css")
+    link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css")
+
+    //- In your adminLayout.pug (inside head)
+    link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined")
+    script(src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js")
+
 
   body
     // Header Bar
@@ -52,6 +59,10 @@ html(lang="en")
             a(href="/admin/customers", class=(activeTab=='customers' ? 'active' : ''))
               i.fa.fa-user
               |  Customers
+          li
+            a(href="/admin/send-documents", class=(activeTab=='send-documents' ? 'active' : ''))
+              i.fa.fa-paper-plane
+              |  Send Documents
           //- li
           //-   a(href="/admin/documents", class=(activeTab=='documents' ? 'active' : ''))
           //-     i.fa.fa-file
@@ -61,6 +72,8 @@ html(lang="en")
       // Main Content Area
       main.admin-content
         block content
+
+
 
     // Scripts (load alert.js and admin.js)
     block scripts

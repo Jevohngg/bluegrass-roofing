@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BlueGrass Roofing Letter of Intent (LOI)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Include SignaturePad from a CDN (mirroring the AOB/ACI approach) -->
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      color: #000;
+      line-height: 1.5;
+    }
+    input:disabled,
+    input[readonly] {
+      background-color: #e9ecef;
+      opacity: 1;
+      cursor: not-allowed;
+    }
+
+    input:focus {
+      border: 1px solid #E18263 !important;
+      outline: none;
+      box-shadow: 0 0 0 2px #E18263;
+    }
+    canvas {
+      width: 100%;
+      height: auto;
+    }
+    .clear-button {
+      display: inline-block;
+      margin-top: 0.5rem;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.9rem;
+      color: #fff;
+      background-color: #999;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      outline: none;
+    }
+    .clear-button:hover {
+      background-color: #777;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PAGE 1 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+    <h2 style="text-align:center; margin-top:0; font-size:18px; font-weight:bold;">
+      BLUEGRASS ROOFING LETTER OF INTENT (LOI)
+    </h2>
+
+    <p style="margin-bottom:10px;">
+      This Letter of Intent (LOI) sets forth the preliminary understanding between Bluegrass Roofing 
+      (Premier Construction Group, LLC) (<strong>“Contractor”</strong>) and the undersigned Client (<strong>“Client”</strong>) 
+      regarding the provision of roofing services, including roof replacement and/or repairs, at the Client’s property. 
+      This LOI aims to establish mutual intent and expectations, allowing Bluegrass Roofing to begin investing time 
+      and resources in support of the project while certain contingencies—such as insurance claim approval or financing—are pending.
+    </p>
+    <p style="margin-bottom:10px;">
+      This LOI also documents the Client’s intent to retain Bluegrass Roofing as the project contractor, 
+      subject to the conditions and terms described herein.
+    </p>
+    <p style="margin-bottom:10px;">
+      This LOI is intended to be a good faith expression of the parties’ intent to proceed with the project 
+      and does <strong>not</strong> constitute a binding agreement to perform services except where explicitly stated.
+      <br><br>
+      A final, binding agreement for the roofing services will be executed upon satisfaction of the outlined contingencies 
+      and mutual agreement on the final terms.
+    </p>
+
+    <h3 style="margin-bottom:6px; font-size:16px; font-weight:bold;">Identification of Parties</h3>
+    <p style="margin-bottom:0;">
+      <strong>Contractor:</strong><br>
+      Bluegrass Roofing, a DBA of Premier Construction Group, LLC<br>
+      3217 Summit Square Place, Suite 100. Lexington, KY 40509<br>
+      Phone: (859) 433-8120 <br>
+      Email: Info@bluegrass-roofing.com
+    </p>
+    <p style="margin-bottom:10px;">
+      <strong>Client:</strong>
+    </p>
+
+    <!-- Interactive Fields (Client Info) -->
+    <div style="border: 1px solid #ddd; padding:1rem; margin-bottom:10px;">
+
+      <!-- Client Name(s) -->
+      <div style="display:flex; flex-wrap:wrap; align-items:center; margin-bottom:1rem;">
+        <label
+          for="clientName"
+          style="min-width:130px; margin-right:8px; font-weight:bold;"
+        >
+          Client Name(s)*:
+        </label>
+        <input
+          type="text"
+          id="clientName"
+          name="clientName"
+          required
+          style="
+            flex:1;
+            padding:0.5rem;
+            border:1px solid #ccc;
+            border-radius:4px;
+            outline:none;
+            max-width:100%;
+          "
+        />
+      </div>
+
+      <!-- Property Address -->
+      <div style="display:flex; flex-wrap:wrap; align-items:center; margin-bottom:1rem;">
+        <label
+          for="propertyAddress"
+          style="min-width:130px; margin-right:8px; font-weight:bold;"
+        >
+          Property Address*:
+        </label>
+        <input
+          type="text"
+          id="propertyAddress"
+          name="propertyAddress"
+          required
+          style="
+            flex:1;
+            padding:0.5rem;
+            border:1px solid #ccc;
+            border-radius:4px;
+            outline:none;
+            max-width:100%;
+          "
+        />
+      </div>
+
+      <!-- Phone Number -->
+      <div style="display:flex; flex-wrap:wrap; align-items:center; margin-bottom:1rem;">
+        <label
+          for="phoneNumber"
+          style="min-width:130px; margin-right:8px; font-weight:bold;"
+        >
+          Phone Number*:
+        </label>
+        <input
+          type="text"
+          id="phoneNumber"
+          name="phoneNumber"
+          required
+          style="
+            flex:1;
+            padding:0.5rem;
+            border:1px solid #ccc;
+            border-radius:4px;
+            outline:none;
+            max-width:100%;
+          "
+        />
+      </div>
+
+      <!-- Email Address -->
+      <div style="display:flex; flex-wrap:wrap; align-items:center; margin-bottom:0;">
+        <label
+          for="emailAddress"
+          style="min-width:130px; margin-right:8px; font-weight:bold;"
+        >
+          Email Address*:
+        </label>
+        <input
+          type="text"
+          id="emailAddress"
+          name="emailAddress"
+          required
+          style="
+            flex:1;
+            padding:0.5rem;
+            border:1px solid #ccc;
+            border-radius:4px;
+            outline:none;
+            max-width:100%;
+          "
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 2 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+    <h3 style="margin-top:0; font-size:16px; font-weight:bold;">1. PROJECT DESCRIPTION</h3>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">1.1 Scope of Work (Roof Replacement and/or Repairs)</h4>
+    <p style="margin-bottom:10px;">
+      This LOI covers a comprehensive range of roofing services, which may include:
+    </p>
+    <ul style="margin-bottom:10px; padding-left:20px;">
+      <li><strong>Roof Replacement:</strong> Complete removal of the existing roof and installation of a new roofing system.</li>
+      <li><strong>Roof Repairs:</strong> Targeted repairs addressing leaks, structural damage, or localized issues as determined by an initial inspection.</li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      Based on the final project scope, additional services such as removal and disposal of old materials, installation of underlayment, 
+      and necessary cleanup may also be included.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">1.2 Property Location</h4>
+    <p style="margin-bottom:10px;">
+      The project will be executed at the Client’s property located at:<br>
+      <strong>Address*:</strong><br>
+      <input
+        type="text"
+        id="propertyAddressAgain"
+        name="propertyAddressAgain"
+        required
+        placeholder="Enter Property Address again"
+        style="
+          width:95%;
+          margin-top:5px;
+          padding:0.5rem;
+          border:1px solid #ccc;
+          border-radius:4px;
+          outline:none;
+        "
+      />
+      <br><br>
+      If the LOI is being executed in connection with an insurance claim, the Client acknowledges that the roof has sustained damage 
+      due to storm or hail damage, wind or water intrusion, and age-related deterioration exacerbated by external factors. 
+      A more detailed assessment of the damage will be conducted during the initial inspection, which will then guide 
+      the final scope of work and cost estimates.
+    </p>
+
+    <h3 style="margin-bottom:6px; font-size:16px; font-weight:bold;">2. ESTIMATED PRICING AND PAYMENT TERMS</h3>
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">2.1 Insurance-Based Projects</h4>
+    <p style="margin-bottom:10px;">
+      For projects funded through a property insurance claim, the following pricing structure applies if the Client executes 
+      an Assignment of Benefits (AOB) or Authorization to Contact Insurer (ACI):
+    </p>
+    <ul style="margin-bottom:10px; padding-left:20px;">
+      <li>
+        <strong>Price Guarantee:</strong> Bluegrass Roofing guarantees that the Client will not be responsible for any out-of-pocket costs 
+        beyond the applicable insurance deductible and, if applicable, any unrecoverable depreciation as determined by the insurer.
+      </li>
+      <li>
+        The Contractor will directly manage the claim process, including negotiations and payment collection, with the insurer.
+      </li>
+      <li>
+        This guarantee applies solely to the scope of work approved by the insurance company. Any additional work the Client requests 
+        outside the approved scope will require a separate agreement and payment.
+      </li>
+    </ul>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">2.2 Non-Insurance Projects</h4>
+    <p style="margin-bottom:10px;">
+      If the Client is not pursuing an insurance claim and elects to pay for the roofing services out-of-pocket, Bluegrass Roofing will 
+      provide an estimated cost range after an initial property assessment. This estimate will reflect the size and complexity of the roof, 
+      material selection, labor and equipment requirements, and local permitting and code compliance costs. The final price will be confirmed 
+      in a separate agreement following the inspection and acceptance of the proposal.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">2.3 Deposit and Installment Requirements</h4>
+    <p style="margin-bottom:10px;">
+      For non-insurance projects, the Client will be required to pay an initial deposit, typically 
+      <strong>[insert standard percentage]</strong>, when signing the final service agreement. The remaining balance will be payable 
+      according to the following structure:
+    </p>
+    <ul style="margin-bottom:10px; padding-left:20px;">
+      <li>[0% upon material delivery]</li>
+      <li>[0% upon completion of work]</li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      For insurance-based projects, work will commence upon receipt of the initial insurance payment, 
+      with final payment drawn from subsequent insurance disbursements. If the insurer issues payments directly to the Client, 
+      the Client agrees to promptly endorse and transfer those funds to Bluegrass Roofing.
+    </p>
+  </div>
+
+  <!-- PAGE 3 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+    <h3 style="margin-top:0; font-size:16px; font-weight:bold;">3. PROJECT TIMELINE</h3>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">3.1 Anticipated Start Date</h4>
+    <p style="margin-bottom:10px;">
+      The anticipated start date for the roofing project will be based on the method of payment and project funding:
+    </p>
+    <ul style="margin-bottom:10px; padding-left:20px;">
+      <li>
+        <strong>Insurance-Based Projects (with an executed AOB):</strong> Work will commence within two (2) weeks of receiving 
+        initial funds from the insurance provider. This timeline assumes Bluegrass Roofing manages the insurance claim 
+        under an executed Assignment of Benefits (AOB).
+      </li>
+      <li>
+        <strong>Non-Insurance Projects:</strong> For projects not involving an insurance claim, work will commence 
+        within two (2) weeks of receipt of the initial installment payment from the Client.
+      </li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      Both timelines are contingent on the availability of required materials and favorable weather conditions during scheduling.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">3.2 Completion Estimate</h4>
+    <p style="margin-bottom:10px;">
+      While the exact duration of the project will depend on the size and complexity of the roofing system, 
+      most residential roofing jobs are expected to be completed within 1 to 5 business days from the start of physical work. 
+      Larger or more complex projects may require additional time. 
+      All timelines are estimates and are subject to extension due to weather conditions, material supply delays, 
+      unforeseen structural issues, and changes requested by the Client.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">3.3 Contingency for Material Supply Delays</h4>
+    <p style="margin-bottom:10px;">
+      In the event that specified roofing materials are unavailable due to supply chain issues, work may be temporarily delayed 
+      until the necessary products are in stock. Bluegrass Roofing will promptly notify the Client of delays and provide 
+      reasonable alternatives or revised scheduling options.
+      <br><br>
+      The Contractor is committed to completing the project efficiently and professionally while 
+      prioritizing quality, safety, and client satisfaction.
+    </p>
+  </div>
+
+  <!-- PAGE 4 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+    <h3 style="margin-top:0; font-size:16px; font-weight:bold;">4. CONTINGENCIES</h3>
+    <p style="margin-bottom:10px;">
+      This Letter of Intent is subject to the following contingencies, which must be satisfied before the commencement of work 
+      or execution of a final agreement:
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">4.1 Insurance Claim Approval</h4>
+    <p style="margin-bottom:10px;">
+      For projects involving an insurance claim, this LOI is contingent upon the Client’s insurance provider approving coverage 
+      for the roofing work. If the claim is denied in full or in part, the Client and Contractor will determine whether to proceed 
+      with the project on a self-pay basis or terminate discussions without further obligation.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">4.2 Financing Approval</h4>
+    <p style="margin-bottom:10px;">
+      If the Client intends to finance the roofing project through a third-party lender or payment program, this LOI is contingent 
+      upon the Client’s approval for such financing. If financing is not approved, either party may withdraw from the project without penalty.
+    </p>
+
+    <h4 style="margin:0; font-size:14px; font-weight:bold;">4.3 Permit or HOA Approvals</h4>
+    <p style="margin-bottom:10px;">
+      In jurisdictions or communities where permits or Homeowners’ Association (HOA) approval is required for roofing work, 
+      this LOI is contingent upon obtaining all necessary permissions. The Contractor will assist with documentation and 
+      submission requirements as needed, but commencement of work may be delayed until such approvals are received.
+    </p>
+    <p style="margin-bottom:10px;">
+      These contingencies are designed to protect both parties and ensure that the project is only initiated 
+      when all necessary approvals and funding sources are confirmed.
+    </p>
+
+    <h3 style="margin-bottom:6px; font-size:16px; font-weight:bold;">5. EXCLUSIVITY</h3>
+    <p style="margin-bottom:10px;">
+      By signing this Letter of Intent, the Client agrees that they will not solicit bids from, enter into agreements with, 
+      or authorize any other roofing contractors to inspect, evaluate, quote, or perform work on the subject property 
+      during the insurance claim evaluation, financing process, or initial inspection phase being conducted by Bluegrass Roofing 
+      (Premier Construction Group, LLC).
+    </p>
+    <p style="margin-bottom:10px;">
+      This exclusivity allows the Contractor to dedicate resources—including inspections, administrative support, claim guidance, 
+      and material planning—without concern that the Client will seek to use that information to engage a competing contractor.
+      <br><br>
+      If the Client receives insurance approval or financing for the roofing work, the Client agrees to proceed with Bluegrass Roofing 
+      as their selected contractor, subject to final agreement on the scope of work and any material selections. 
+      This commitment ensures the integrity of the pre-construction work performed by Bluegrass Roofing and prevents unnecessary delays or disruptions.
+    </p>
+    <p style="margin-bottom:10px;">
+      If the Client breaches this exclusivity agreement by engaging another contractor during the evaluation or claim process 
+      or by using the information, inspection findings, or estimates provided by Bluegrass Roofing to negotiate with another company, 
+      the Contractor reserves the right to:
+    </p>
+    <ul style="margin-bottom:10px; padding-left:20px;">
+      <li>Cease all further work or support immediately, and</li>
+      <li>
+        Invoice the Client for time and resources invested in inspections, documentation, and claim assistance at a flat consultation 
+        rate of <strong>[insert amount]</strong> or a fee otherwise specified in a separate pre-inspection or consultation agreement.
+      </li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      This clause is not a penalty but reasonable compensation for professional services rendered 
+      in reliance on the Client’s expressed intent to proceed in good faith.
+    </p>
+  </div>
+
+  <!-- PAGE 5 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+    <h3 style="margin-top:0; font-size:16px; font-weight:bold;">6. TERM AND EXPIRATION</h3>
+    <p style="margin-bottom:10px;">
+      This Letter of Intent (LOI) shall remain in effect for thirty (30) calendar days from the date of execution by the Client 
+      unless extended in writing by mutual agreement. If a final construction agreement has not been signed within this timeframe, 
+      the LOI will automatically expire unless otherwise agreed.
+    </p>
+    <p style="margin-bottom:10px;">
+      This LOI shall automatically terminate under the following conditions:
+    </p>
+    <ul style="margin-bottom:10px; padding-left:20px;">
+      <li>
+        <strong>Insurance Claim Denial:</strong> If the Client’s insurance provider denies the roofing claim in full and the Client 
+        elects not to proceed on a self-pay basis.
+      </li>
+      <li>
+        <strong>Financing Denial:</strong> If the Client is unable to secure the necessary financing and chooses not to proceed 
+        with an out-of-pocket payment plan.
+      </li>
+      <li>
+        <strong>Written Withdrawal:</strong> If either party provides written notice of intent to withdraw from the LOI 
+        prior to execution of a final agreement for any reason.
+      </li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      Upon termination, neither party shall have any further obligation under this LOI except for any costs recoverable 
+      under the Exclusivity clause (if triggered). Terminating this LOI does not affect the enforceability of separate agreements 
+      signed between the parties.
+    </p>
+
+    <h3 style="margin-bottom:6px; font-size:16px; font-weight:bold;">7. CLIENT ACKNOWLEDGMENT</h3>
+    <p style="margin-bottom:10px;">
+      By signing this Letter of Intent (LOI), the Client affirms that they have read and fully understand the contents of this document. 
+      The Client agrees that they are entering into this LOI in good faith, with the intention of moving forward with Bluegrass Roofing 
+      (Premier Construction Group, LLC) as their selected contractor for the roofing project, subject to the satisfaction of the outlined contingencies.
+    </p>
+    <p style="margin-bottom:10px;">
+      The Client acknowledges that this LOI enables Bluegrass Roofing to begin investing time and resources in pre-construction activities, 
+      including inspections, consultations, estimate preparation, insurance communications, and material planning.
+    </p>
+    <p style="margin-bottom:10px;">
+      The Client understands that this LOI is not a final construction agreement and does not obligate either party to proceed with the project 
+      until a formal contract is executed. However, the Client acknowledges that:
+    </p>
+    <ul style="margin-bottom:10px; padding-left:20px;">
+      <li>The exclusivity clause outlined in this LOI is binding for its stated duration.</li>
+      <li>All other terms, including pricing, scheduling, and scope of work, are non-binding until finalized in a separate written contract.</li>
+    </ul>
+    <p style="margin-bottom:10px;">
+      The Client further agrees to cooperate in good faith with the Contractor through the evaluation process and to communicate 
+      any changes in circumstances that may affect the project’s feasibility or timing.
+    </p>
+  </div>
+
+  <!-- PAGE 6 -->
+  <div style="max-width:800px; margin:0 auto; padding:20px; box-sizing:border-box;">
+
+    <!-- Signature Section (Replaces old table) -->
+
+    <!-- HOMEOWNER 1 SIGNATURE -->
+    <div style="margin-bottom:1.5rem;">
+      <h4 style="margin-bottom:0.5rem;">Client/Homeowner 1</h4>
+      <label for="homeowner1PrintedName" style="display:inline-block; margin-bottom:0.25rem; font-weight:600;">
+        Printed Name*:
+      </label>
+      <input
+        type="text"
+        id="homeowner1PrintedName"
+        name="homeowner1PrintedName"
+        required
+        style="width:95%; padding:0.5rem; max-width: 300px; margin-bottom:1rem; border:1px solid #ddd; border-radius:4px; outline:none;"
+      /><br>
+      <label for="homeowner1Date" style="display:inline-block; margin-top:8px; margin-bottom:0.25rem; font-weight:600;">
+        Date*:
+      </label>
+      <input
+        type="date"
+        id="homeowner1Date"
+        name="homeowner1Date"
+        required
+        style="width:95%; padding:0.5rem;max-width: 300px;  border:1px solid #ddd; border-radius:4px; outline:none;"
+      />
+    </div>
+
+      <label for="signatureCanvasHomeowner1" style="display:inline-block; margin-bottom:0.25rem; font-weight:600; ">
+        Signature*:
+      </label>
+      <div style="position:relative; width:300px; max-width:100%; height:100px; border:1px solid #ccc; border-radius:4px; margin-bottom:0.5rem;">
+        <canvas
+          id="signatureCanvasHomeowner1"
+          width="300"
+          height="100"
+          margin-bottom="40"
+          style="max-width:100%; height:auto;"
+        ></canvas>
+        <button type="button" id="clearSignatureHomeowner1" class="clear-button">Clear Signature</button>
+      </div>
+      <input type="hidden" required name="signatureHomeowner1" id="signatureHomeowner1" />
+
+
+
+    <!-- HOMEOWNER 2 (OPTIONAL) -->
+    <div style="margin-bottom:1.5rem;">
+      <h4 style="margin-bottom:0.5rem; margin-top: 60px;">Client/Homeowner 2 <em>(if applicable)</em></h4>
+      <label for="homeowner2PrintedName" style="display:inline-block; margin-bottom:0.25rem; font-weight:600;">
+        Printed Name:
+      </label>
+      <input
+        type="text"
+        id="homeowner2PrintedName"
+        name="homeowner2PrintedName"
+        style="width:95%; padding:0.5rem;max-width: 300px;  margin-bottom:1rem; border:1px solid #ddd; border-radius:4px; outline:none;"
+      /><br>
+      <label for="homeowner2Date" style="display:inline-block; margin-top:8px; margin-bottom:0.25rem; font-weight:600;">
+        Date:
+      </label>
+      <input
+        type="date"
+        id="homeowner2Date"
+        name="homeowner2Date"
+        style="width:95%; padding:0.5rem;max-width: 300px;  border:1px solid #ddd; border-radius:4px; outline:none;"
+      />
+    </div>
+
+      <label for="signatureCanvasHomeowner2" style="display:inline-block; margin-bottom:0.25rem; font-weight:600;">
+        Signature:
+      </label>
+      <div style="position:relative; width:300px; max-width:100%; height:100px; border:1px solid #ccc; border-radius:4px; margin-bottom:0.5rem;">
+        <canvas
+          id="signatureCanvasHomeowner2"
+          width="300"
+          height="100"
+          margin-bottom="40"
+          style="max-width:100%; height:auto;"
+        ></canvas>
+        <button type="button" id="clearSignatureHomeowner2" class="clear-button">Clear Signature</button>
+      </div>
+      <input type="hidden" name="signatureHomeowner2" id="signatureHomeowner2" />
+
+
+
+    <!-- CONTRACTOR REPRESENTATIVE -->
+    <div style="margin-bottom:1.5rem; margin-top: 60px;">
+      <h4 style="margin-bottom:0.5rem;">Contractor Representative</h4>
+      <label for="contractorRepPrintedName" style="display:inline-block; margin-bottom:0.25rem; font-weight:600;">
+        Printed Name:
+      </label>
+      <input
+        type="text"
+        id="contractorRepPrintedName"
+        name="contractorRepPrintedName"
+        style="width:95%; padding:0.5rem;max-width: 300px;  margin-bottom:1rem; border:1px solid #ddd; border-radius:4px; outline:none;"
+      /><br>
+      <label for="contractorRepDate" style="display:inline-block; margin-top:8px; margin-bottom:0.25rem; font-weight:600;">
+        Date:
+      </label>
+      <input
+        type="date"
+        id="contractorRepDate"
+        name="contractorRepDate"
+        style="width:95%; padding:0.5rem;max-width: 300px;  border:1px solid #ddd; border-radius:4px; outline:none;"
+      />
+    </div>
+
+      <label for="signatureCanvasContractorRep" style="display:inline-block; margin-bottom:0.25rem; font-weight:600;">
+        Signature:
+      </label>
+      <div style="position:relative; width:300px; max-width:100%; height:100px; border:1px solid #ccc; border-radius:4px; margin-bottom:0.5rem;">
+        <canvas
+          id="signatureCanvasContractorRep"
+          width="300"
+          height="100"
+          margin-bottom="40"
+          style="max-width:100%; height:auto;"
+        ></canvas>
+        <button type="button" id="clearSignatureContractorRep" class="clear-button">Clear Signature</button>
+      </div>
+      <input type="hidden" name="signatureContractorRep" id="signatureContractorRep" />
+
+
+
+    <!-- TITLE -->
+    <div style="margin-bottom:1.5rem; margin-top: 60px;">
+
+      <label for="contractorRepTitle" style="display:inline-block; margin-bottom:0.25rem; font-weight:600;">
+        Contractor Rep Title:
+      </label>
+      <input
+        type="text"
+        id="contractorRepTitle"
+        name="contractorRepTitle"
+        style="width:95%; padding:0.5rem;max-width: 300px;  margin-bottom:1rem; border:1px solid #ddd; border-radius:4px; outline:none;"
+      />
+
+    </div>
+  </div>
+
+  <!-- SCRIPT: Initialize signature pads + gather data + postMessage -->
+  <script>
+    // Keep SignaturePad instances in outer scope so we can replay saved signatures
+    let signaturePad1, signaturePad2, signaturePadRep;
+  
+    document.addEventListener('DOMContentLoaded', function() {
+      // Homeowner 1
+      const canvas1 = document.getElementById('signatureCanvasHomeowner1');
+      const clearBtn1 = document.getElementById('clearSignatureHomeowner1');
+      if (canvas1) {
+        signaturePad1 = new SignaturePad(canvas1);
+        signaturePad1.addEventListener('endStroke', function() {
+          document.getElementById('signatureHomeowner1').value = signaturePad1.toDataURL('image/png');
+        });
+        if (clearBtn1) {
+          clearBtn1.addEventListener('click', function() {
+            signaturePad1.clear();
+            document.getElementById('signatureHomeowner1').value = '';
+          });
+        }
+      }
+  
+      // Homeowner 2
+      const canvas2 = document.getElementById('signatureCanvasHomeowner2');
+      const clearBtn2 = document.getElementById('clearSignatureHomeowner2');
+      if (canvas2) {
+        signaturePad2 = new SignaturePad(canvas2);
+        signaturePad2.addEventListener('endStroke', function() {
+          document.getElementById('signatureHomeowner2').value = signaturePad2.toDataURL('image/png');
+        });
+        if (clearBtn2) {
+          clearBtn2.addEventListener('click', function() {
+            signaturePad2.clear();
+            document.getElementById('signatureHomeowner2').value = '';
+          });
+        }
+      }
+  
+      // Contractor Representative
+      const canvasRep = document.getElementById('signatureCanvasContractorRep');
+      const clearBtnRep = document.getElementById('clearSignatureContractorRep');
+      if (canvasRep) {
+        signaturePadRep = new SignaturePad(canvasRep);
+        signaturePadRep.addEventListener('endStroke', function() {
+          document.getElementById('signatureContractorRep').value = signaturePadRep.toDataURL('image/png');
+        });
+        if (clearBtnRep) {
+          clearBtnRep.addEventListener('click', function() {
+            signaturePadRep.clear();
+            document.getElementById('signatureContractorRep').value = '';
+          });
+        }
+      }
+    });
+  
+    // Function to gather all LOI fields
+    function gatherLoiFields() {
+      return {
+        clientName:                document.getElementById('clientName')?.value || '',
+        propertyAddress:           document.getElementById('propertyAddress')?.value || '',
+        phoneNumber:               document.getElementById('phoneNumber')?.value || '',
+        emailAddress:              document.getElementById('emailAddress')?.value || '',
+        propertyAddressAgain:      document.getElementById('propertyAddressAgain')?.value || '',
+  
+        homeowner1PrintedName:     document.getElementById('homeowner1PrintedName')?.value || '',
+        signatureHomeowner1:       document.getElementById('signatureHomeowner1')?.value || '',
+        homeowner1Date:            document.getElementById('homeowner1Date')?.value || '',
+  
+        homeowner2PrintedName:     document.getElementById('homeowner2PrintedName')?.value || '',
+        signatureHomeowner2:       document.getElementById('signatureHomeowner2')?.value || '',
+        homeowner2Date:            document.getElementById('homeowner2Date')?.value || '',
+  
+        contractorRepPrintedName:  document.getElementById('contractorRepPrintedName')?.value || '',
+        signatureContractorRep:    document.getElementById('signatureContractorRep')?.value || '',
+        contractorRepDate:         document.getElementById('contractorRepDate')?.value || '',
+  
+        contractorRepTitle:        document.getElementById('contractorRepTitle')?.value || '',
+      
+      };
+    }
+  
+    // Listen for messages from the parent window
+    window.addEventListener('message', function(event) {
+      const data = event.data;
+      if (!data || !data.type) return;
+  
+      // A) Initialize with admin-prefilled fields
+      if (data.type === 'INITIALIZE_LOI_DATA') {
+        const fields = data.payload || {};
+        Object.entries(fields).forEach(([key, value]) => {
+          if (!value) return; // skip empty
+          // Standard inputs
+          const el = document.getElementById(key);
+          if (el && el.tagName === 'INPUT' && el.type !== 'hidden') {
+            el.value = value;
+            el.setAttribute('readonly', 'true');
+          }
+          // Signature fields
+          if (key === 'signatureHomeowner1' && signaturePad1) {
+            signaturePad1.fromDataURL(value);
+            document.getElementById('signatureHomeowner1').value = value;
+            document.getElementById('clearSignatureHomeowner1').style.display = 'none';
+          }
+          if (key === 'signatureHomeowner2' && signaturePad2) {
+            signaturePad2.fromDataURL(value);
+            document.getElementById('signatureHomeowner2').value = value;
+            document.getElementById('clearSignatureHomeowner2').style.display = 'none';
+          }
+          if (key === 'signatureContractorRep' && signaturePadRep) {
+            signaturePadRep.fromDataURL(value);
+            document.getElementById('signatureContractorRep').value = value;
+            document.getElementById('clearSignatureContractorRep').style.display = 'none';
+          }
+        });
+      }
+  
+      // B) Parent requests our filled data
+      else if (data.type === 'REQUEST_LOI_DATA') {
+        const payload = gatherLoiFields();
+        window.parent.postMessage({ type: 'LOI_FORM_DATA', payload }, '*');
+      }
+    });
+  </script>
+  
+</body>
+</html>

@@ -89,7 +89,9 @@ router.post('/signup', async (req, res) => {
     };
 
     // Redirect to the client portal
-    return res.redirect('/portal');
+     const redirectTo = req.session.returnTo || '/portal';
+     delete req.session.returnTo;
+     return res.redirect(redirectTo);
   } catch (err) {
     console.error('Error creating user:', err);
     return res.status(500).render('auth/signup', {
@@ -166,7 +168,9 @@ router.post('/login', async (req, res) => {
     };
 
     // Redirect to portal
-    return res.redirect('/portal');
+  const redirectTo = req.session.returnTo || '/portal';
+  delete req.session.returnTo;
+   return res.redirect(redirectTo);
   } catch (err) {
     console.error('Error logging in user:', err);
     return res.status(500).render('auth/login', {

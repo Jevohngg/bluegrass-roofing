@@ -34,7 +34,9 @@ const UserSchema = new mongoose.Schema({
   documents: {
     aob: { type: DocumentSchema, default: () => ({}) },
     aci: { type: DocumentSchema, default: () => ({}) },
-    loi: { type: DocumentSchema, default: () => ({}) }
+    loi: { type: DocumentSchema, default: () => ({}) },
+    gsa: { type: DocumentSchema, default: () => ({}) },
+    coc: { type: DocumentSchema, default: () => ({}) },
   },
 
   shingleChoice: {

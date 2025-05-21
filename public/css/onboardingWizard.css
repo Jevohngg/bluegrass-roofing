@@ -80,6 +80,7 @@
   }
   #nextToStep2Btn{
     margin-top: 0px !important;
+    min-height: 36px !important;
   }
   /* Individual step indicators */
   .onboarding-wizard-container .step-indicator {
@@ -319,6 +320,7 @@
     background-color: #e18263;
     border: none;
     color: #fff;
+    min-height: 36px !important;
   }
   .onboarding-wizard-container .btn-primary:hover {
     background-color: #c45e42;
@@ -331,7 +333,7 @@
 }
 
   .onboarding-wizard-container form{
-    gap: 24px;
+    gap: 8px;
     display: flex
 ;
     
@@ -374,7 +376,7 @@
   /* Focus states with accent color outline */
   .onboarding-wizard-container .form-group input:focus,
   .form-group textarea:focus {
-    border-color: var(--color-accent);
+    border-color: var(--color-accent) !important;
     outline: none;
     box-shadow: 0 0 0 2px var(--color-accent-outline);
   }
@@ -386,6 +388,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    min-height: 36px !important;
   }
   
 

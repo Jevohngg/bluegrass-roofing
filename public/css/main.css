@@ -77,6 +77,13 @@
     text-decoration: none;
     color: inherit;
   }
+
+  input:focus,
+  .form-group textarea:focus {
+    border-color: var(--color-accent) !important;
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-accent-outline);
+  }
   
   ul {
     list-style: none;
@@ -86,6 +93,42 @@
     height: 100vh;
     padding: 80px;
   }
+
+  .bold{
+    font-weight: 600;
+    color: black;
+  }
+
+  /* Spinner on button during loading */
+button.loading {
+  position: relative; 
+  pointer-events: none; /* prevent clicks */
+  opacity: 0.8;        /* slightly faded */
+  height: 36px !important;
+}
+
+/* The rotating spinner overlay */
+button.loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1em;
+  height: 1em;
+  border: 2px solid #fff; 
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+
+}
+
+/* Keyframes for rotating spinner */
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
 
 
   /* For all other pages, set the header to white */

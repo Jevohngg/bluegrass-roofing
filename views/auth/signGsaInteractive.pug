@@ -1,0 +1,189 @@
+extends ../layouts/portalLayout
+
+block pageStyles
+  link(rel="stylesheet" href="/css/portal.css")
+  style.
+    .iframe-container {
+      width: 100%;
+      max-width: 800px;
+      margin: 1.5rem auto;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      position: relative;
+      height: 1200px; /* or any desired height */
+    }
+
+    .iframe-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Sticky bottom bar */
+    .sticky-bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #ffffff;
+      border-top: 1px solid #ccc;
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      z-index: 9999;
+      flex-direction: row-reverse;
+    }
+
+    /* Loading button style */
+    .btn-loading {
+      position: relative;
+      color: transparent !important; /* Hide text while spinner shows */
+      pointer-events: none;
+    }
+    .btn-loading::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 1.2rem;
+      height: 1.2rem;
+      margin-left: -0.6rem;
+      margin-top: -0.6rem;
+      border: 2px solid #fff;
+      border-top-color: #777;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+block content
+  section.portal-section
+    .portal-container
+      h2.contract-head General Service Agreement (Fill & Sign)
+
+      // Parent form that handles final submission
+      form#interactiveGsaForm(method="POST" action="/portal/sign-gsa-interactive")
+        .iframe-container
+          // embed the GSA HTML
+          iframe(src="/contracts/gsa.html")
+
+    // Sticky bottom bar with Submit & Cancel
+    .sticky-bottom-bar
+      button.btn.btn-primary(type="submit" id="submitInteractiveGsaBtn" form="interactiveGsaForm")
+        | Submit Document
+      a.btn.btn-light(href="/portal") Cancel
+
+block pageScripts
+  script.
+    (function(){
+      // 1) Grab the JSON you passed in from the server
+      const prefilled = !{JSON.stringify(prefilled)};
+
+      // 2) Find our key elements
+      const form      = document.getElementById("interactiveGsaForm");
+      const submitBtn = document.getElementById("submitInteractiveGsaBtn");
+      const iframe    = document.querySelector(".iframe-container iframe");
+
+      // 3) When the iframe loads, send it the admin prefill data
+      if (iframe) {
+        iframe.addEventListener("load", function(){
+          iframe.contentWindow.postMessage({
+            type:    "INITIALIZE_GSA_DATA",
+            payload: prefilled
+          }, "*");
+        });
+      }
+
+      // 4) Bail out if we’re missing the form or button
+      if (!form || !submitBtn) return;
+
+      // 5) On submit, request the filled data from the iframe
+      form.addEventListener("submit", function(event){
+        event.preventDefault();
+        if (!iframe || !iframe.contentWindow) {
+          alert("Could not communicate with the embedded GSA document. Please try again.");
+          return;
+        }
+        activateLoadingState();
+        window.addEventListener("message", handleChildResponse, { once: true });
+        iframe.contentWindow.postMessage({ type: "REQUEST_GSA_DATA" }, "*");
+      });
+
+      // 6) Handle the iframe’s response
+      function handleChildResponse(event){
+        if (event.data && event.data.type === "GSA_FORM_DATA") {
+          const gsaData = event.data.payload;
+          const missing = findMissingRequired(gsaData);
+          if (missing.length > 0) {
+            alert("Please fill out all required fields:\n" + missing.join(", "));
+            deactivateLoadingState();
+            return;
+          }
+          submitGsaData(gsaData);
+        } else {
+          deactivateLoadingState();
+        }
+      }
+
+      // 7) Send the JSON back to your POST endpoint
+      async function submitGsaData(gsaData){
+        try {
+          const resp = await fetch("/portal/sign-gsa-interactive", {
+            method: "POST",
+            headers: {
+              "Content-Type":       "application/json",
+              "X-Requested-With":   "XMLHttpRequest"
+            },
+            body: JSON.stringify(gsaData)
+          });
+          if (!resp.ok) {
+            let errMsg = "";
+            try { errMsg = (await resp.json()).message; } catch { errMsg = await resp.text(); }
+            throw new Error(errMsg || `Server error: ${resp.status}`);
+          }
+          const result = await resp.json();
+          if (result.success) {
+            window.location.href = "/portal?success=gsaSigned";
+          } else {
+            throw new Error(result.message || "Submission failed. Please try again.");
+          }
+        } catch (err) {
+          console.error("Error submitting GSA data:", err);
+          alert(err.message || "An error occurred while submitting your GSA.");
+          deactivateLoadingState();
+        }
+      }
+
+      // 8) Which fields are required?
+      function findMissingRequired(data){
+        const requiredFields = [
+          { key: "clientNames",            label: "Client Names" },
+          { key: "fullPropertyAddress",    label: "Property Address" },
+          { key: "clientNameAgain",        label: "Prepared-For Name" },
+          { key: "clientAddress",          label: "Prepared-For Address" },
+          { key: "clientPhone",            label: "Prepared-For Phone" },
+          { key: "clientEmail",            label: "Prepared-For Email" },
+          { key: "homeownerPrintedName",   label: "Homeowner Printed Name" },
+          { key: "homeownerDate",          label: "Homeowner Signature Date" },
+          { key: "signatureHomeowner",     label: "Homeowner Signature" }
+        ];
+        return requiredFields
+          .filter(f => !data[f.key] || !data[f.key].trim())
+          .map(f => f.label);
+      }
+
+      function activateLoadingState(){
+        submitBtn.disabled = true;
+        submitBtn.classList.add("btn-loading");
+      }
+      function deactivateLoadingState(){
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("btn-loading");
+      }
+
+    })();

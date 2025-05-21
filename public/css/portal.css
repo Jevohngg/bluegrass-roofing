@@ -483,6 +483,32 @@ hr {
   background-color: rgb(234, 234, 234);
 }
 
+.doc-container-parent{
+  display: flex
+;
+    flex-direction: column;
+    gap: 16px;
+
+}
+
+.general-docs{
+  display: flex
+  ;
+      flex-direction: column;
+      gap: 16px;
+}
+
+.contract-head{
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+}
+
+.portal-section{
+  padding-bottom: 300px;
+}
+
 /****************************************
 * Shingle Modal (Bootstrap-based)
 ****************************************/

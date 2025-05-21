@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   
     // Handle deleting a lead
-    document.querySelectorAll('.btn-delete').forEach(button => {
+    document.querySelectorAll('.btn-delete-lead').forEach(button => {
       button.addEventListener('click', () => {
         const leadId = button.getAttribute('data-id');
         if (confirm('Are you sure you want to delete this lead?')) {

@@ -1,0 +1,186 @@
+extends ../layouts/portalLayout
+
+block pageStyles
+  link(rel="stylesheet" href="/css/portal.css")
+  style.
+    .iframe-container {
+      width: 100%;
+      max-width: 800px;
+      margin: 1.5rem auto;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      position: relative;
+      height: 1200px;
+    }
+    .iframe-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .sticky-bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #ffffff;
+      border-top: 1px solid #ccc;
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      z-index: 9999;
+      flex-direction: row-reverse;
+    }
+    .btn-loading {
+      position: relative;
+      color: transparent !important;
+      pointer-events: none;
+    }
+    .btn-loading::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 1.2rem;
+      height: 1.2rem;
+      margin-left: -0.6rem;
+      margin-top: -0.6rem;
+      border: 2px solid #fff;
+      border-top-color: #777;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+block content
+  section.portal-section
+    .portal-container
+      h2.contract-head Letter of Intent (Fill & Sign)
+
+      form#interactiveLoiForm(method="POST" action="/portal/sign-loi-interactive")
+        .iframe-container
+          iframe(src="/contracts/loi.html")
+
+    .sticky-bottom-bar
+      button.btn.btn-primary(type="submit" id="submitInteractiveLoiBtn" form="interactiveLoiForm") Submit Document
+      a.btn.btn-light(href="/portal") Cancel
+
+block pageScripts
+  script.
+    (function(){
+      // 1) Server-passed object of fields the admin prefilled
+      const prefilled = !{JSON.stringify(prefilled)};
+
+      // 2) Grab key elements
+      const form      = document.getElementById("interactiveLoiForm");
+      const submitBtn = document.getElementById("submitInteractiveLoiBtn");
+      const iframe    = document.querySelector(".iframe-container iframe");
+
+      // 3) When the LOI iframe loads, send it the prefill data
+      if (iframe) {
+        iframe.addEventListener("load", function(){
+          iframe.contentWindow.postMessage({
+            type:    "INITIALIZE_LOI_DATA",
+            payload: prefilled
+          }, "*");
+        });
+      }
+
+      // 4) Bail out if missing form or button
+      if (!form || !submitBtn) return;
+
+      // 5) On submit, request the filled data from the iframe
+      form.addEventListener("submit", function(event){
+        event.preventDefault();
+
+        if (!iframe || !iframe.contentWindow) {
+          alert("LOI document not fully loaded. Please wait and try again.");
+          return;
+        }
+
+        activateLoadingState();
+
+        window.addEventListener("message", handleChildResponse, { once: true });
+        iframe.contentWindow.postMessage({ type: "REQUEST_LOI_DATA" }, "*");
+
+      });
+
+      // 6) Handle the iframe’s response
+      function handleChildResponse(event){
+        if (event.data && event.data.type === "LOI_FORM_DATA") {
+          const loiData = event.data.payload;
+          const missing = findMissingRequired(loiData);
+          if (missing.length > 0) {
+            alert("Please fill out all required fields:\n" + missing.join(", "));
+            deactivateLoadingState();
+            return;
+          }
+          submitLoiData(loiData);
+        } else {
+          deactivateLoadingState();
+        }
+      }
+
+      // 7) Send the JSON back to your POST endpoint
+      async function submitLoiData(loiData){
+        try {
+          const resp = await fetch("/portal/sign-loi-interactive", {
+            method: "POST",
+            headers: {
+              "Content-Type":       "application/json",
+              "X-Requested-With":   "XMLHttpRequest"
+            },
+            body: JSON.stringify(loiData)
+          });
+          if (!resp.ok) {
+            const errMsg = await resp.text();
+            throw new Error(`Server error: ${resp.status} - ${errMsg}`);
+          }
+          const result = await resp.json();
+          if (result.success) {
+            window.location.href = "/portal?success=loiSigned";
+          } else {
+            alert(result.message || "Submission failed. Please try again.");
+            deactivateLoadingState();
+          }
+        } catch (err) {
+          console.error("Error submitting LOI data:", err);
+          alert("An error occurred while submitting your document.");
+          deactivateLoadingState();
+        }
+      }
+
+      // 8) Which fields are mandatory
+      function findMissingRequired(data) {
+        const requiredFields = [
+          { key: "clientName",           label: "Client Name(s)" },
+          { key: "propertyAddress",      label: "Property Address" },
+          { key: "phoneNumber",          label: "Phone Number" },
+          { key: "emailAddress",         label: "Email Address" },
+          { key: "propertyAddressAgain", label: "Property Address (Again)" },
+          { key: "homeowner1PrintedName",label: "Homeowner 1 Printed Name" },
+          { key: "signatureHomeowner1",  label: "Homeowner 1 Signature" },
+          { key: "homeowner1Date",       label: "Homeowner 1 Date" }
+        ];
+        const missing = [];
+        requiredFields.forEach(field => {
+          if (!data[field.key] || !data[field.key].trim()) {
+            missing.push(field.label);
+          }
+        });
+        return missing;
+      }
+
+      // 9) Loading spinner helpers
+      function activateLoadingState(){
+        submitBtn.disabled = true;
+        submitBtn.classList.add("btn-loading");
+      }
+      function deactivateLoadingState(){
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("btn-loading");
+      }
+    })();

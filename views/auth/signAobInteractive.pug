@@ -1,0 +1,198 @@
+extends ../layouts/portalLayout
+
+block pageStyles
+  link(rel="stylesheet" href="/css/portal.css")
+  style.
+    .iframe-container {
+      width: 100%;
+      max-width: 800px;
+      margin: 1.5rem auto;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      position: relative;
+      height: 1200px; /* or any desired height */
+    }
+
+    .iframe-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Sticky bottom bar */
+    .sticky-bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #ffffff;
+      border-top: 1px solid #ccc;
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      z-index: 9999;
+      flex-direction: row-reverse;
+    }
+
+    /* Loading button style */
+    .btn-loading {
+      position: relative;
+      color: transparent !important; /* Hide text while spinner shows */
+      pointer-events: none;
+    }
+    .btn-loading::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 1.2rem;
+      height: 1.2rem;
+      margin-left: -0.6rem;
+      margin-top: -0.6rem;
+      border: 2px solid #fff;
+      border-top-color: #777;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+block content
+  section.portal-section
+    .portal-container
+      h2.contract-head Assignment of Benefits (Fill & Sign)
+
+      // Parent form that handles final submission
+      form#interactiveAobForm(method="POST" action="/portal/sign-aob-interactive")
+        // hidden docSendId so server can mark admin-sent record as signed
+        input(type="hidden" name="docSendId" value=docSendId)
+        // Use an IFRAME instead of EMBED
+        .iframe-container
+          iframe(src="/contracts/aob.html")
+
+    // Sticky bottom bar with Submit & Cancel
+    .sticky-bottom-bar
+      button.btn.btn-primary(type="submit" id="submitInteractiveAobBtn" form="interactiveAobForm") Submit Document
+      a.btn.btn-light(href="/portal") Cancel
+
+block pageScripts
+  script.
+    (function(){
+      // 1) Grab server‐passed data
+      const prefilled  = !{JSON.stringify(prefilled)};
+      const docSendId  = '!{docSendId}';
+
+      // 2) Wire up iframe load to send INITIALIZE_AOB_DATA
+      const iframe = document.querySelector(".iframe-container iframe");
+      if (iframe) {
+        iframe.addEventListener("load", function(){
+          iframe.contentWindow.postMessage({
+            type:    "INITIALIZE_AOB_DATA",
+            payload: prefilled
+          }, "*");
+        });
+      }
+
+      // 3) Grab form + button
+      const form      = document.getElementById("interactiveAobForm");
+      const submitBtn = document.getElementById("submitInteractiveAobBtn");
+      if (!form || !submitBtn) return;
+
+      // 4) On submit, request the filled data
+      form.addEventListener("submit", function(event){
+        event.preventDefault();
+
+        if (!iframe || !iframe.contentWindow) {
+          alert("AOB document not fully loaded. Please wait and try again.");
+          return;
+        }
+
+        activateLoadingState();
+
+        // Listen for the child's response only once
+        window.addEventListener("message", handleChildResponse, { once: true });
+        // Ask child for its data
+        iframe.contentWindow.postMessage("REQUEST_AOB_DATA", "*");
+      });
+
+      // 5) Handle Child → Parent reply
+      function handleChildResponse(event){
+        if (event.data && event.data.type === "AOB_FORM_DATA") {
+          const aobData = event.data.payload;
+          const missing = findMissingRequired(aobData);
+          if (missing.length > 0) {
+            alert("Please fill out all required fields:\n" + missing.join(", "));
+            deactivateLoadingState();
+            return;
+          }
+          // include docSendId so server can mark it signed
+          aobData.docSendId = docSendId;
+          submitAobData(aobData);
+        } else {
+          deactivateLoadingState();
+        }
+      }
+
+      // 6) AJAX POST to your endpoint
+      async function submitAobData(aobData){
+        try {
+          const resp = await fetch("/portal/sign-aob-interactive", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Requested-With": "XMLHttpRequest"
+            },
+            body: JSON.stringify(aobData)
+          });
+          if (!resp.ok) {
+            const errMsg = await resp.text();
+            throw new Error(`Server error: ${resp.status} - ${errMsg}`);
+          }
+          const result = await resp.json();
+          if (result.success) {
+            window.location.href = "/portal?success=aobSigned";
+          } else {
+            alert(result.message || "Submission failed. Please try again.");
+            deactivateLoadingState();
+          }
+        } catch (err) {
+          console.error("Error submitting AOB data:", err);
+          alert("An error occurred while submitting your document.");
+          deactivateLoadingState();
+        }
+      }
+
+      // 7) Which fields are mandatory
+      function findMissingRequired(data) {
+        const requiredFields = [
+          { key: "clientName",           label: "Client Name" },
+          { key: "propertyAddress",      label: "Property Address" },
+          { key: "phoneNumber",          label: "Phone Number" },
+          { key: "emailAddress",         label: "Email Address" },
+          { key: "homeowner1PrintedName",label: "Homeowner 1 Printed Name" },
+          { key: "signatureHomeowner1",  label: "Homeowner 1 Signature" },
+          { key: "homeowner1Date",       label: "Homeowner 1 Date" }
+        ];
+        const missing = [];
+        requiredFields.forEach(field => {
+          if (!data[field.key] || !data[field.key].trim()) {
+            missing.push(field.label);
+          }
+        });
+        return missing;
+      }
+
+      // 8) Loading spinner helpers
+      function activateLoadingState(){
+        submitBtn.disabled = true;
+        submitBtn.classList.add("btn-loading");
+      }
+      function deactivateLoadingState(){
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("btn-loading");
+      }
+    })();

@@ -1,5 +1,3 @@
-
-
 extends ../layouts/adminLayout
 
 block content
@@ -32,29 +30,40 @@ block content
                 // Documents
                 .customer-section
                   h4 Documents
-                  // AOB
-                  if user.documents.aob.docUrl
-                    p AOB: 
+                  if user.documents.aob && user.documents.aob.docUrl
+                    p AOB:
                       a(href=user.documents.aob.docUrl, target="_blank") View PDF
                       |  (#{user.documents.aob.signed ? 'Signed' : 'Not Signed'})
                   else
                     p AOB: No Document
 
-                  // ACI
-                  if user.documents.aci.docUrl
-                    p ACI: 
+                  if user.documents.aci && user.documents.aci.docUrl
+                    p ACI:
                       a(href=user.documents.aci.docUrl, target="_blank") View PDF
                       |  (#{user.documents.aci.signed ? 'Signed' : 'Not Signed'})
                   else
                     p ACI: No Document
 
-                  // LOI
-                  if user.documents.loi.docUrl
-                    p LOI: 
+                  if user.documents.loi && user.documents.loi.docUrl
+                    p LOI:
                       a(href=user.documents.loi.docUrl, target="_blank") View PDF
                       |  (#{user.documents.loi.signed ? 'Signed' : 'Not Signed'})
                   else
                     p LOI: No Document
+
+                  if user.documents.gsa && user.documents.gsa.docUrl
+                    p GSA:
+                      a(href=user.documents.gsa.docUrl, target="_blank") View PDF
+                      |  (#{user.documents.gsa.signed ? 'Signed' : 'Not Signed'})
+                  else
+                    p GSA: No Document
+
+                  if user.documents.coc && user.documents.coc.docUrl
+                    p COC:
+                      a(href=user.documents.coc.docUrl, target="_blank") View PDF
+                      |  (#{user.documents.coc.signed ? 'Signed' : 'Not Signed'})
+                  else
+                    p COC: No Document
 
                 // Claim Files
                 .customer-section
@@ -62,10 +71,10 @@ block content
                   if user.claimUploadUrls && user.claimUploadUrls.length
                     ul
                       each fileUrl in user.claimUploadUrls
-                        li 
+                        li
                           a(href=fileUrl, target="_blank") View/Download
                   else if user.claimUploadUrl
-                    p 
+                    p
                       a(href=user.claimUploadUrl, target="_blank") View/Download
                   else
                     p No claim files uploaded
@@ -80,9 +89,10 @@ block content
                   else
                     p Not Selected
 
-                // Archive button
+                // Archive / Delete buttons
                 .customer-actions
-                  button.btn-archive(data-id=user._id data-status="archived") Archive User
+                  button.btn.btn-sm.btn-secondary.btn-archive(data-id=user._id data-status="archived") Archive User
+                  button.btn.btn-sm.btn-danger.btn-delete(type="button" data-id=user._id) Delete User
         else
           p No active customers.
 
@@ -105,29 +115,33 @@ block content
                 // Documents
                 .customer-section
                   h4 Documents
-                  // AOB
-                  if user.documents.aob.docUrl
-                    p AOB: 
+                  if user.documents.aob && user.documents.aob.docUrl
+                    p AOB:
                       a(href=user.documents.aob.docUrl, target="_blank") View PDF
                       |  (#{user.documents.aob.signed ? 'Signed' : 'Not Signed'})
                   else
                     p AOB: No Document
 
-                  // ACI
-                  if user.documents.aci.docUrl
-                    p ACI: 
+                  if user.documents.aci && user.documents.aci.docUrl
+                    p ACI:
                       a(href=user.documents.aci.docUrl, target="_blank") View PDF
                       |  (#{user.documents.aci.signed ? 'Signed' : 'Not Signed'})
                   else
                     p ACI: No Document
 
-                  // LOI
-                  if user.documents.loi.docUrl
-                    p LOI: 
+                  if user.documents.loi && user.documents.loi.docUrl
+                    p LOI:
                       a(href=user.documents.loi.docUrl, target="_blank") View PDF
                       |  (#{user.documents.loi.signed ? 'Signed' : 'Not Signed'})
                   else
                     p LOI: No Document
+
+                  if user.documents.gsa && user.documents.gsa.docUrl
+                    p GSA:
+                      a(href=user.documents.gsa.docUrl, target="_blank") View PDF
+                      |  (#{user.documents.gsa.signed ? 'Signed' : 'Not Signed'})
+                  else
+                    p GSA: No Document
 
                 // Claim Files
                 .customer-section
@@ -135,10 +149,10 @@ block content
                   if user.claimUploadUrls && user.claimUploadUrls.length
                     ul
                       each fileUrl in user.claimUploadUrls
-                        li 
+                        li
                           a(href=fileUrl, target="_blank") View/Download
                   else if user.claimUploadUrl
-                    p 
+                    p
                       a(href=user.claimUploadUrl, target="_blank") View/Download
                   else
                     p No claim files uploaded
@@ -153,9 +167,61 @@ block content
                   else
                     p Not Selected
 
-                // Unarchive button
+                // Unarchive / Delete buttons
                 .customer-actions
-                  button.btn-archive(data-id=user._id data-status="active") Unarchive User
-
+                  button.btn.btn-sm.btn-secondary.btn-archive(data-id=user._id data-status="active") Unarchive User
+                  button.btn.btn-sm.btn-danger.btn-delete(type="button" data-id=user._id) Delete User
         else
           p No archived customers.
+
+  //–– Confirm Delete User Modal ––
+  .modal.fade#confirmDeleteUserModal(tabindex="-1" role="dialog" aria-labelledby="confirmDeleteUserLabel" aria-hidden="true")
+    .modal-dialog(role="document")
+      .modal-content
+        .modal-header
+          h5.modal-title#confirmDeleteUserLabel Confirm Delete
+          button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
+        .modal-body
+          p Are you sure you want to permanently delete this user? This cannot be undone.
+        .modal-footer
+          button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Cancel
+          button#confirmDeleteUser.btn.btn-danger(type="button") Yes, Delete
+
+  script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js")
+  // Client-side script to handle delete
+  script.
+    (function(){
+      let userToDelete;
+      const deleteButtons = document.querySelectorAll('.btn-delete');
+      const deleteModalEl = document.getElementById('confirmDeleteUserModal');
+      const deleteModal   = bootstrap.Modal.getOrCreateInstance(deleteModalEl);
+      const confirmBtn    = document.getElementById('confirmDeleteUser');
+
+      deleteButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          userToDelete = btn.dataset.id;
+          deleteModal.show();
+        });
+      });
+
+      confirmBtn.addEventListener('click', () => {
+        fetch(`/admin/customer/${userToDelete}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            deleteModal.hide();
+            const card = document.querySelector(`.customer-card[data-id="${userToDelete}"]`);
+            if (card) card.remove();
+          } else {
+            alert(data.message || 'Error deleting user.');
+          }
+        })
+        .catch(err => {
+          console.error('Error deleting user:', err);
+          alert('Server error. Please try again.');
+        });
+      });
+    })();

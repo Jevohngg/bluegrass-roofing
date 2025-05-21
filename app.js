@@ -29,15 +29,47 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Parse incoming JSON and form data
 app.use(express.json());
+
+
 app.use(express.urlencoded({ extended: true }));
 
-// Session middleware configuration
+
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
+
+app.set('trust proxy', 1);
+
+// Session middleware configuration
 app.use(session({
-  secret: '2025RoofingBlueGrassAdminSecret!', // Replace with a secure, random secret in production
+  secret: process.env.SESSION_SECRET || '2025RoofingBlueGrassAdminSecret!',
   resave: false,
   saveUninitialized: false,
+
+  // <-- Tell express-session to reset the cookie on every response
+  rolling: true,
+
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI,
+    collectionName: 'sessions',
+    // expire sessions after 24h
+    ttl: 24 * 60 * 60,
+    // only actually touch (i.e. update lastModified) once per hour
+    touchAfter: 60 * 60
+  }),
+
+  cookie: {
+    // expire browser cookie after 24h
+    maxAge: 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    // in prod, serve secure cookies only over HTTPS
+    secure: process.env.NODE_ENV === 'production',
+    // protect against CSRF on cross-site navigations
+    sameSite: 'lax'
+  }
 }));
+
+
+
 
 // HOME ROUTE
 const homeRoutes = require('./routes/home');

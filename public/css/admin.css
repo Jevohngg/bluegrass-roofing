@@ -123,6 +123,51 @@ ul {
     font-size: 1.5em;
 }
 
+.btn-close{
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    font-weight: 600;
+}
+
+#prefillDrawer {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 400px;
+    height: 100%;
+    background: #fff;
+    box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+    transition: right 0.3s ease;
+    z-index: 1050;
+    overflow-y: auto;
+    padding: 1rem;
+    padding-bottom: 0px !important;
+  }
+  .drawer-body{
+    position: relative;
+  }
+  .drawer-footer{
+    padding-top: 8px;
+    padding-bottom: 8px;
+    display: flex;
+    gap: 8px;
+    position: sticky;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background-color: white;
+    width: 100%;
+
+
+  }
+  #prefillDrawer.open {
+    right: 0;
+  }
+
 .btn-logout {
     font-size: 14px;
     background-color: #dc3545;
@@ -132,6 +177,12 @@ ul {
     border-radius: 4px;
     text-decoration: none;
     display: inline-block;
+    transition: background-color .3s ease-in-out;
+}
+
+.btn-logout:hover{
+    color: white !important;
+    background-color: #b62d3a;
 }
 
 /* Hamburger Menu Styles */
@@ -206,9 +257,27 @@ ul {
     transition: all 0.2s ease-in-out;
 }
 
+.admin-sidebar a:hover {
+  
+    color: #312e2e;
+}
+
 .admin-sidebar a.active {
     background-color: var(--color-accent);
     color: white;
+}
+
+.head-text{
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.btn-primary{
+    background-color: var(--color-accent) !important;
+    border: none !important;
+}
+.btn-primary:hover{
+    background-color: var(--color-accent-hover) !important;
 }
 
 .admin-sidebar a.active:hover {
@@ -492,6 +561,47 @@ ul {
     display: flex;
     gap: 8px;
   }
+
+  a:hover{
+    text-decoration: none !important;
+  }
+
+  .send-docs-container{
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+  }
+
+  .sent-docs{
+        /* width: 100%; */
+        max-width: 750px;
+        display: flex
+    ;
+        align-content: center;
+        /* align-items: center; */
+        margin-left: auto;
+        margin-right: auto;
+  }
+
+  .btn-archived{
+    background-color: orange !important;
+  }
+
+
+  .btn-contacted{
+    background-color: green !important;
+  }
+
+  .btn-delete{
+    background-color: rgb(195, 6, 6) !important;
+    color: white !important;
+  }
+
+  .btn-delete-lead{
+    background-color: rgb(195, 6, 6) !important;
+    color: white !important;
+
+
+  }
   
   .customer-actions button {
     background-color: #ffc107; /* or use .btn-archived style if you prefer */
@@ -552,6 +662,9 @@ ul {
 }
 
 @media (max-width: 600px) {
+    #prefillDrawer{
+        width: 100%;
+    }
     .customers-content .tabs{
         font-size: 12px;
     }
