@@ -100,9 +100,8 @@ async function generateHtmlPdf(html, options = {}) {
     executablePath: process.env.CHROME_PATH || puppeteer.executablePath()
   });
 
+  // 5) Create a new page and render the HTML
   const page = await browser.newPage();
-
-  // 5) Render the HTML
   await page.setContent(html, { waitUntil: 'networkidle0' });
 
   // 6) Build the footer template
@@ -111,7 +110,7 @@ async function generateHtmlPdf(html, options = {}) {
       ${
         base64Logo
           ? `<img src="data:image/png;base64,${base64Logo}" style="width:80px;" />`
-          : 'My Company Logo'
+          : 'BlueGrass Roofing'
       }
     </div>
   `;
