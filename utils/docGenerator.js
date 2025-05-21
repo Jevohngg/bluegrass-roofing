@@ -67,42 +67,47 @@ function parseMarkdownForPdf(text) {
 /**
  * Generates a PDF by rendering full HTML with Puppeteer,
  * and adds a repeating footer logo on each page.
- * @param {string} html - The full HTML content (with placeholders replaced, if needed).
+ * @param {string} html - The full HTML content (with placeholders replaced).
  * @param {Object} options - Additional options (fileName, outputDir, etc.).
  * @returns {Promise<string>} The absolute path of the saved PDF file.
  */
 async function generateHtmlPdf(html, options = {}) {
   // 1) Determine file output path
-  const fileName = options.fileName || `contract-${Date.now()}.pdf`;
-  const outputDir = options.outputDir || path.join(__dirname, '..', 'public', 'uploads', 'docs');
+  const fileName   = options.fileName   || `contract-${Date.now()}.pdf`;
+  const outputDir  = options.outputDir  || path.join(__dirname, '..', 'public', 'uploads', 'docs');
   const outputPath = path.join(outputDir, fileName);
 
   // 2) Ensure output directory exists
   fs.mkdirSync(outputDir, { recursive: true });
 
-  // 3) Read/encode your logo as base64 (adjust file name/path as needed)
-  const logoPath = path.join(__dirname, '..', 'public', 'images', 'bg-logo.png');
+  // 3) Read and base64-encode your footer logo
   let base64Logo = '';
   try {
-    const fileBuffer = fs.readFileSync(logoPath);
-    base64Logo = fileBuffer.toString('base64');
+    const logoPath = path.join(__dirname, '..', 'public', 'images', 'bg-logo.png');
+    base64Logo = fs.readFileSync(logoPath).toString('base64');
   } catch (err) {
-    console.warn("Could not load logo file:", err);
-    // If you prefer, you can throw an error here instead:
-    // throw new Error("Logo file not found, cannot generate PDF footer");
+    console.warn('Could not load logo file:', err);
   }
 
-  // 4) Launch Puppeteer & create a new page
-  const browser = await puppeteer.launch();
+  // 4) Launch Puppeteer with Heroku-friendly flags
+  const browser = await puppeteer.launch({
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--single-process'
+    ],
+    executablePath: process.env.CHROME_PATH || puppeteer.executablePath()
+  });
+
   const page = await browser.newPage();
 
-  // 5) Set the page content to our HTML (supporting CSS, images, etc.)
+  // 5) Render the HTML
   await page.setContent(html, { waitUntil: 'networkidle0' });
 
-  // 6) Prepare a custom footer HTML template
-  //    If the logo fails to load, it will show fallback text.
+  // 6) Build the footer template
   const footerTemplate = `
-    <div style="width: 100%; text-align: center; font-size:10px; padding: 5px 0;">
+    <div style="width:100%; text-align:center; font-size:10px; padding:5px 0;">
       ${
         base64Logo
           ? `<img src="data:image/png;base64,${base64Logo}" style="width:80px;" />`
@@ -111,27 +116,28 @@ async function generateHtmlPdf(html, options = {}) {
     </div>
   `;
 
-  // 7) Generate PDF with Letter size, background printing, custom footer
+  // 7) Generate the PDF
   await page.pdf({
     path: outputPath,
     format: 'Letter',
     printBackground: true,
-    displayHeaderFooter: true,     // enables footer usage
-    headerTemplate: '<span></span>', // minimal or empty header
-    footerTemplate,                 // our custom footer
+    displayHeaderFooter: true,
+    headerTemplate: '<span></span>',
+    footerTemplate,
     margin: {
-      top: '50px',
-      right: '50px',
-      bottom: '80px', // extra space for the footer
-      left: '50px'
+      top:    '50px',
+      right:  '50px',
+      bottom: '80px',
+      left:   '50px'
     }
   });
 
-  // 8) Clean up
+  // 8) Cleanup
   await browser.close();
 
   return outputPath;
 }
+
 
 module.exports = {
   fillContractPlaceholders,
