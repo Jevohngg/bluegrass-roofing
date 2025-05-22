@@ -45,7 +45,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
 
-  // <-- Tell express-session to reset the cookie on every response
+  
   rolling: true,
 
   store: MongoStore.create({
@@ -53,7 +53,7 @@ app.use(session({
     collectionName: 'sessions',
     // expire sessions after 24h
     ttl: 24 * 60 * 60,
-    // only actually touch (i.e. update lastModified) once per hour
+
     touchAfter: 60 * 60
   }),
 
