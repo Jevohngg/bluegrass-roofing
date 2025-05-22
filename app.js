@@ -58,7 +58,7 @@ app.use(session({
   }),
 
   cookie: {
-    // expire browser cookie after 24h
+
     maxAge: 24 * 60 * 60 * 1000,
     httpOnly: true,
     // in prod, serve secure cookies only over HTTPS
