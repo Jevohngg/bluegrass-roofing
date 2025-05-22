@@ -98,9 +98,10 @@ async function generateHtmlPdf(html, options = {}) {
       '--disable-dev-shm-usage',
       '--single-process'
     ],
-    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || process.env.CHROME_PATH || puppeteer.executablePath(),
-    headless:true,
+    // Prefer the buildpack’s CHROME_PATH, then fall back to Puppeteer’s
+    executablePath: process.env.CHROME_PATH || puppeteer.executablePath()
   });
+  
 
   const page = await browser.newPage();
 
