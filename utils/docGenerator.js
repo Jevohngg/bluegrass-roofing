@@ -90,7 +90,7 @@ async function generateHtmlPdf(html, options = {}) {
   }
 
   // 4) Launch Puppeteer with Heroku-friendly flags
-  //    and pick up the Chrome that the buildpack installed
+
   const browser = await puppeteer.launch({
     args: [
       '--no-sandbox',
