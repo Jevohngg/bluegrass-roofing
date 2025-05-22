@@ -228,15 +228,17 @@ router.post('/send-documents', checkAuth, async (req, res) => {
     }
 
     // Look up the user (if any)
-    const user = await User.findOne({ email: recipientEmail });
+    const normalizedEmail = recipientEmail.trim().toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
 
-    // Build a new DocumentSend
     const toSave = new DocumentSend({
-      recipientEmail,
+      // store it lower-cased
+      recipientEmail: normalizedEmail,
+      // link it explicitly
       userId: user ? user._id : null,
       docType,
       customMessage,
-      prefilledFields: {}    // we'll fill this below
+      prefilledFields: new Map()
     });
 
     // Loop through the contract definition and pick up any submitted values
@@ -263,20 +265,39 @@ router.post('/send-documents', checkAuth, async (req, res) => {
 
 
 // DELETE /admin/send-documents/:id
+// DELETE /admin/send-documents/:id
 router.delete('/send-documents/:id', checkAuth, async (req, res) => {
   try {
     const { id } = req.params;
+
+    // 1) Find the send so we know which user & docType to update
     const docSend = await DocumentSend.findById(id);
     if (!docSend) {
       return res.status(404).json({ success: false, message: 'Document not found.' });
     }
+
+    // 2) If this send was linked to a user, clear their signed flag for that docType
+    if (docSend.userId) {
+      const user = await User.findById(docSend.userId);
+      if (user && user.documents && user.documents[docSend.docType]) {
+        user.documents[docSend.docType].signed   = false;
+        user.documents[docSend.docType].signedAt = null;
+        user.documents[docSend.docType].docUrl   = '';
+        await user.save();
+      }
+    }
+
+    // 3) Delete the DocumentSend record
     await DocumentSend.findByIdAndDelete(id);
-    res.json({ success: true });
+
+    // 4) Return success
+    return res.json({ success: true });
   } catch (err) {
     console.error('Error deleting document send:', err);
-    res.status(500).json({ success: false, message: 'Server error.' });
+    return res.status(500).json({ success: false, message: 'Server error.' });
   }
 });
+
 
 
 

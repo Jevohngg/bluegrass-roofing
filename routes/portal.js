@@ -1,5 +1,6 @@
 // routes/portal.js
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 const path = require('path');
 const { S3 } = require('aws-sdk');
@@ -8,6 +9,14 @@ const fs = require('fs');
 const DocumentSend = require('../models/DocumentSend'); // <-- NEW model for admin-sent docs
 
 const cheerio = require('cheerio');
+
+console.log('[DEBUG portal.js] mounting portal routes…');
+
+// ✱ Log every single request *within* this router
+router.use((req, res, next) => {
+  console.log(`[DEBUG portal.js] → ${req.method} ${req.originalUrl}`);
+  next();
+});
 
 // Existing docGenerator & sendEmail utilities
 const {
@@ -142,14 +151,16 @@ router.get('/portal', requireLogin, async (req, res) => {
 
     const { success, error } = req.query;
 
-    // Fetch any documents that an admin explicitly sent to this user.
+    const userEmail = user.email.toLowerCase();
+
     const docSends = await DocumentSend.find({
       $or: [
-        { userId: user._id },
-        { recipientEmail: user.email }
+        { userId:    user._id },
+        { recipientEmail: userEmail }
       ],
       status: { $in: ['sent','signed'] }
     }).sort({ sentAt: -1 });
+    
 
     // Shingle options for the user’s portal
     const shingles = [
@@ -524,39 +535,8 @@ router.get('/portal/download-doc/:docType', requireLogin, async (req, res) => {
   }
 });
 
-// -------------------------------------------------
-// 8) Interactive AOB Page
-// -------------------------------------------------
-router.get('/portal/sign-aob-interactive', requireLogin, async (req, res) => {
-  try {
-    const user = await User.findById(req.session.user.id); // ✅ Add this
 
-    const docSendId = req.query.docSendId;
-    let prefilled = {};
 
-    if (docSendId) {
-      const docSend = await DocumentSend.findById(docSendId);
-      if (docSend) {
-        if (!docSend.userId) {
-          docSend.userId = user._id; // ✅ This now works
-          await docSend.save();
-        } else if (docSend.userId.toString() !== user._id.toString()) {
-          return res.status(403).json({ success: false, message: 'Unauthorized' });
-        }
-
-        prefilled = docSend.prefilledFields || {};
-      }
-    }
-
-    return res.render('auth/signAobInteractive', {
-      pageTitle: 'Sign AOB Interactive | BlueGrass Roofing',
-      prefilled
-    });
-  } catch (err) {
-    console.error('Error serving interactive AOB page:', err);
-    return res.redirect('/portal?error=aobInteractiveError');
-  }
-});
 
 
 // 9) Serve the aob.html static file
@@ -1643,58 +1623,137 @@ router.post('/portal/sign-coc-interactive', requireLogin, async (req, res) => {
   }
 });
 
-// -------------------------------------------------
-//  New Portal Route to Access the Document: /portal/doc/:sendId
-//  Handles both authenticated users (tying doc to userId) and permission checks
-// -------------------------------------------------
+
+
+
+
+
+// GET /portal/doc/:sendId
 router.get('/portal/doc/:sendId', requireLogin, async (req, res) => {
   try {
+    console.log('[DEBUG /portal/doc] called with params:', req.params);
+    console.log('[DEBUG /portal/doc] session user:', req.session.user);
+
     const sendId = req.params.sendId;
     const docSend = await DocumentSend.findById(sendId);
+    console.log('[DEBUG /portal/doc] fetched DocumentSend:', docSend);
 
     if (!docSend) {
+      console.log('[DEBUG /portal/doc] 404 – no DocumentSend');
       return res.status(404).send('Document send record not found.');
     }
 
-    // If docSend.userId is null, link it to the current user
+    const sessionUserId = req.session.user.id.toString();
+    const sessionEmail  = req.session.user.email.toLowerCase();
+    console.log('[DEBUG /portal/doc] sessionUserId:', sessionUserId, 'sessionEmail:', sessionEmail);
+
+    // Link to this user if first visit
     if (!docSend.userId) {
-      docSend.userId = req.session.user.id;
+      console.log('[DEBUG /portal/doc] linking docSend.userId →', sessionUserId);
+      docSend.userId = sessionUserId;
       await docSend.save();
     } else {
-      // If docSend.userId is set, ensure it matches
-      if (docSend.userId.toString() !== req.session.user.id) {
+      const docUserId   = docSend.userId.toString();
+      const emailMatches = docSend.recipientEmail.toLowerCase() === sessionEmail;
+      console.log('[DEBUG /portal/doc] docUserId:', docUserId, 'emailMatches:', emailMatches);
+
+      if (docUserId !== sessionUserId && !emailMatches) {
+        console.log('[DEBUG /portal/doc] 403 – unauthorized');
         return res.status(403).send('You do not have permission to access this document.');
       }
     }
 
-    // Route user to the correct interactive template
+    // pick the correct interactive route
     let interactiveRoute;
     switch (docSend.docType) {
-      case 'aob':
-        interactiveRoute = '/portal/sign-aob-interactive';
-        break;
-      case 'aci':
-        interactiveRoute = '/portal/sign-aci-interactive';
-        break;
-      case 'loi':
-        interactiveRoute = '/portal/sign-loi-interactive';
-        break;
-      case 'gsa':
-        interactiveRoute = '/portal/sign-gsa-interactive';
-        break;
-      case 'coc':
-        interactiveRoute = '/portal/sign-coc-interactive';
-        break;
+      case 'aob': interactiveRoute = '/portal/sign-aob-interactive'; break;
+      case 'aci': interactiveRoute = '/portal/sign-aci-interactive'; break;
+      case 'loi': interactiveRoute = '/portal/sign-loi-interactive'; break;
+      case 'gsa': interactiveRoute = '/portal/sign-gsa-interactive'; break;
+      case 'coc': interactiveRoute = '/portal/sign-coc-interactive'; break;
       default:
+        console.log('[DEBUG /portal/doc] 400 – bad docType:', docSend.docType);
         return res.status(400).send('Invalid document type.');
     }
 
-    // Pass docSendId as a query param
-    return res.redirect(`${interactiveRoute}?docSendId=${docSend._id}`);
+    console.log('[DEBUG /portal/doc] redirecting to:', interactiveRoute, '?docSendId=', docSend._id.toString());
+    return res.redirect(`${interactiveRoute}?docSendId=${docSend._id.toString()}`);
   } catch (err) {
-    console.error('Error loading docSend:', err);
+    console.error('[ERROR /portal/doc] uncaught:', err);
     return res.status(500).send('Server error.');
   }
 });
+
+
+
+
+
+
+// GET /portal/sign-aob-interactive
+router.get('/portal/sign-aob-interactive', requireLogin, async (req, res) => {
+  try {
+    console.log('[DEBUG sign-aob] called with query:', req.query);
+    const docSendId = req.query.docSendId;
+    console.log('[DEBUG sign-aob] docSendId:', docSendId);
+
+    if (!docSendId) {
+      console.log('[DEBUG sign-aob] missing docSendId → 400');
+      return res.status(400).json({ success: false, message: 'Missing document ID' });
+    }
+
+    const docSend = await DocumentSend.findById(docSendId);
+    console.log('[DEBUG sign-aob] fetched DocumentSend:', docSend);
+
+    if (!docSend) {
+      console.log('[DEBUG sign-aob] no DocumentSend → 404');
+      return res.status(404).json({ success: false, message: 'Document not found' });
+    }
+
+    const sessionUserId = req.session.user.id.toString();
+    const sessionEmail  = req.session.user.email.toLowerCase();
+    console.log('[DEBUG sign-aob] session user:', { id: sessionUserId, email: sessionEmail });
+
+    let idMatches = false;
+    let emailMatches = false;
+
+    if (docSend.userId) {
+      idMatches = docSend.userId.toString() === sessionUserId;
+    }
+    emailMatches = docSend.recipientEmail.toLowerCase() === sessionEmail;
+
+    console.log('[DEBUG sign-aob] idMatches:', idMatches, 'emailMatches:', emailMatches);
+
+    // Link to session user if first visit or rightful user by email
+    if (!docSend.userId || (!idMatches && emailMatches)) {
+      console.log('[DEBUG sign-aob] assigning docSend.userId →', sessionUserId);
+      docSend.userId = sessionUserId;
+      await docSend.save();
+      console.log('[DEBUG sign-aob] new docSend.userId:', docSend.userId.toString());
+      idMatches = true;
+    }
+
+    // If still no match, block
+    if (!idMatches && !emailMatches) {
+      console.log('[DEBUG sign-aob] unauthorized → 403');
+      return res.status(403).json({ success: false, message: 'Unauthorized' });
+    }
+
+    // Authorized: render the interactive signing page
+    console.log('[DEBUG sign-aob] authorized, rendering with prefilled fields');
+    const prefilled = docSend.prefilledFields || {};
+
+    return res.render('auth/signAobInteractive', {
+      pageTitle: 'Sign AOB Interactive | BlueGrass Roofing',
+      prefilled,
+      docSendId
+    });
+  } catch (err) {
+    console.error('[ERROR sign-aob] GET /portal/sign-aob-interactive failed:', err);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+
+
 
 module.exports = router;

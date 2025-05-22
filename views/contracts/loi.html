@@ -586,13 +586,15 @@
 
   <!-- SCRIPT: Initialize signature pads + gather data + postMessage -->
   <script>
-    // Keep SignaturePad instances in outer scope so we can replay saved signatures
-    let signaturePad1, signaturePad2, signaturePadRep;
+    // Move these into outer scope so message handler can see them
+    let canvas1, clearBtn1, signaturePad1;
+    let canvas2, clearBtn2, signaturePad2;
+    let canvasRep, clearBtnRep, signaturePadRep;
   
     document.addEventListener('DOMContentLoaded', function() {
       // Homeowner 1
-      const canvas1 = document.getElementById('signatureCanvasHomeowner1');
-      const clearBtn1 = document.getElementById('clearSignatureHomeowner1');
+      canvas1   = document.getElementById('signatureCanvasHomeowner1');
+      clearBtn1 = document.getElementById('clearSignatureHomeowner1');
       if (canvas1) {
         signaturePad1 = new SignaturePad(canvas1);
         signaturePad1.addEventListener('endStroke', function() {
@@ -607,8 +609,8 @@
       }
   
       // Homeowner 2
-      const canvas2 = document.getElementById('signatureCanvasHomeowner2');
-      const clearBtn2 = document.getElementById('clearSignatureHomeowner2');
+      canvas2   = document.getElementById('signatureCanvasHomeowner2');
+      clearBtn2 = document.getElementById('clearSignatureHomeowner2');
       if (canvas2) {
         signaturePad2 = new SignaturePad(canvas2);
         signaturePad2.addEventListener('endStroke', function() {
@@ -622,9 +624,9 @@
         }
       }
   
-      // Contractor Representative
-      const canvasRep = document.getElementById('signatureCanvasContractorRep');
-      const clearBtnRep = document.getElementById('clearSignatureContractorRep');
+      // Contractor Rep
+      canvasRep   = document.getElementById('signatureCanvasContractorRep');
+      clearBtnRep = document.getElementById('clearSignatureContractorRep');
       if (canvasRep) {
         signaturePadRep = new SignaturePad(canvasRep);
         signaturePadRep.addEventListener('endStroke', function() {
@@ -639,74 +641,74 @@
       }
     });
   
-    // Function to gather all LOI fields
     function gatherLoiFields() {
       return {
-        clientName:                document.getElementById('clientName')?.value || '',
-        propertyAddress:           document.getElementById('propertyAddress')?.value || '',
-        phoneNumber:               document.getElementById('phoneNumber')?.value || '',
-        emailAddress:              document.getElementById('emailAddress')?.value || '',
-        propertyAddressAgain:      document.getElementById('propertyAddressAgain')?.value || '',
+        clientName:               document.getElementById('clientName')?.value || '',
+        propertyAddress:          document.getElementById('propertyAddress')?.value || '',
+        phoneNumber:              document.getElementById('phoneNumber')?.value || '',
+        emailAddress:             document.getElementById('emailAddress')?.value || '',
+        propertyAddressAgain:     document.getElementById('propertyAddressAgain')?.value || '',
   
-        homeowner1PrintedName:     document.getElementById('homeowner1PrintedName')?.value || '',
-        signatureHomeowner1:       document.getElementById('signatureHomeowner1')?.value || '',
-        homeowner1Date:            document.getElementById('homeowner1Date')?.value || '',
+        homeowner1PrintedName:    document.getElementById('homeowner1PrintedName')?.value || '',
+        signatureHomeowner1:      document.getElementById('signatureHomeowner1')?.value || '',
+        homeowner1Date:           document.getElementById('homeowner1Date')?.value || '',
   
-        homeowner2PrintedName:     document.getElementById('homeowner2PrintedName')?.value || '',
-        signatureHomeowner2:       document.getElementById('signatureHomeowner2')?.value || '',
-        homeowner2Date:            document.getElementById('homeowner2Date')?.value || '',
+        homeowner2PrintedName:    document.getElementById('homeowner2PrintedName')?.value || '',
+        signatureHomeowner2:      document.getElementById('signatureHomeowner2')?.value || '',
+        homeowner2Date:           document.getElementById('homeowner2Date')?.value || '',
   
-        contractorRepPrintedName:  document.getElementById('contractorRepPrintedName')?.value || '',
-        signatureContractorRep:    document.getElementById('signatureContractorRep')?.value || '',
-        contractorRepDate:         document.getElementById('contractorRepDate')?.value || '',
+        contractorRepPrintedName: document.getElementById('contractorRepPrintedName')?.value || '',
+        signatureContractorRep:   document.getElementById('signatureContractorRep')?.value || '',
+        contractorRepDate:        document.getElementById('contractorRepDate')?.value || '',
   
-        contractorRepTitle:        document.getElementById('contractorRepTitle')?.value || '',
-      
+        contractorRepTitle:       document.getElementById('contractorRepTitle')?.value || ''
       };
     }
   
-    // Listen for messages from the parent window
     window.addEventListener('message', function(event) {
       const data = event.data;
       if (!data || !data.type) return;
   
-      // A) Initialize with admin-prefilled fields
       if (data.type === 'INITIALIZE_LOI_DATA') {
         const fields = data.payload || {};
         Object.entries(fields).forEach(([key, value]) => {
-          if (!value) return; // skip empty
-          // Standard inputs
+          if (!value) return;
+  
+          // 1) Standard inputs
           const el = document.getElementById(key);
           if (el && el.tagName === 'INPUT' && el.type !== 'hidden') {
             el.value = value;
             el.setAttribute('readonly', 'true');
           }
-          // Signature fields
+  
+          // 2) Signature canvases: replay, hide clear button, disable drawing
           if (key === 'signatureHomeowner1' && signaturePad1) {
             signaturePad1.fromDataURL(value);
             document.getElementById('signatureHomeowner1').value = value;
-            document.getElementById('clearSignatureHomeowner1').style.display = 'none';
+            clearBtn1.style.display = 'none';
+            canvas1.style.pointerEvents = 'none';
           }
           if (key === 'signatureHomeowner2' && signaturePad2) {
             signaturePad2.fromDataURL(value);
             document.getElementById('signatureHomeowner2').value = value;
-            document.getElementById('clearSignatureHomeowner2').style.display = 'none';
+            clearBtn2.style.display = 'none';
+            canvas2.style.pointerEvents = 'none';
           }
           if (key === 'signatureContractorRep' && signaturePadRep) {
             signaturePadRep.fromDataURL(value);
             document.getElementById('signatureContractorRep').value = value;
-            document.getElementById('clearSignatureContractorRep').style.display = 'none';
+            clearBtnRep.style.display = 'none';
+            canvasRep.style.pointerEvents = 'none';
           }
         });
       }
-  
-      // B) Parent requests our filled data
       else if (data.type === 'REQUEST_LOI_DATA') {
-        const payload = gatherLoiFields();
-        window.parent.postMessage({ type: 'LOI_FORM_DATA', payload }, '*');
+        window.parent.postMessage({ type: 'LOI_FORM_DATA', payload: gatherLoiFields() }, '*');
       }
     });
   </script>
+  
+  
   
 </body>
 </html>

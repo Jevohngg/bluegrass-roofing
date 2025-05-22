@@ -860,21 +860,22 @@
 <!-- BEGIN: Full Updated Code Snippet -->
 
 <script>
-  let sigPadHomeowner, sigPadContractor;
-  let clearHomeownerBtn, clearContractorBtn;
+  // Outer‐scope references for both canvases and buttons
+  let canvasHomeowner, sigPadHomeowner, clearHomeownerBtn;
+  let canvasContractor, sigPadContractor, clearContractorBtn;
 
   document.addEventListener('DOMContentLoaded', function() {
     // ----- Homeowner Signature -----
-    const canvasHome  = document.getElementById('signatureCanvasHomeowner');
+    canvasHomeowner   = document.getElementById('signatureCanvasHomeowner');
     clearHomeownerBtn = document.getElementById('clearSignatureHomeowner');
     const homeownerSigInput = document.getElementById('signatureHomeowner');
 
-    if (canvasHome) {
-      sigPadHomeowner = new SignaturePad(canvasHome);
-      // record on endStroke
+    if (canvasHomeowner) {
+      sigPadHomeowner = new SignaturePad(canvasHomeowner);
       sigPadHomeowner.addEventListener('endStroke', () => {
-        if (!sigPadHomeowner.isEmpty())
+        if (!sigPadHomeowner.isEmpty()) {
           homeownerSigInput.value = sigPadHomeowner.toDataURL();
+        }
       });
       clearHomeownerBtn.addEventListener('click', () => {
         sigPadHomeowner.clear();
@@ -883,15 +884,16 @@
     }
 
     // ----- Contractor Signature -----
-    const canvasContr = document.getElementById('signatureCanvasContractor');
+    canvasContractor   = document.getElementById('signatureCanvasContractor');
     clearContractorBtn = document.getElementById('clearSignatureContractor');
     const contractorSigInput = document.getElementById('signatureContractor');
 
-    if (canvasContr) {
-      sigPadContractor = new SignaturePad(canvasContr);
+    if (canvasContractor) {
+      sigPadContractor = new SignaturePad(canvasContractor);
       sigPadContractor.addEventListener('endStroke', () => {
-        if (!sigPadContractor.isEmpty())
+        if (!sigPadContractor.isEmpty()) {
           contractorSigInput.value = sigPadContractor.toDataURL();
+        }
       });
       clearContractorBtn.addEventListener('click', () => {
         sigPadContractor.clear();
@@ -900,9 +902,9 @@
     }
   });
 
-  // Gather **all** fields, including checkboxes & hidden signature inputs
+  // Collect everything including checked boxes and hidden signature inputs
   function gatherGsaFields() {
-    const selectedTypes = Array.from(
+    const types = Array.from(
       document.querySelectorAll('input[name="projectType[]"]:checked')
     ).map(cb => cb.value);
 
@@ -916,18 +918,15 @@
       clientEmail:             document.querySelector('[name="clientEmail"]').value || '',
       agreementDay:            document.querySelector('[name="agreementDay"]').value || '',
       agreementMonth:          document.querySelector('[name="agreementMonth"]').value || '',
-
       clientFullName:          document.querySelector('[name="clientFullName"]').value || '',
       clientResidingAddress:   document.querySelector('[name="clientResidingAddress"]').value || '',
       serviceAddress:          document.querySelector('[name="serviceAddress"]').value || '',
       propertyAddress2:        document.querySelector('[name="propertyAddress2"]').value || '',
-      projectTypes:            selectedTypes,
+      projectTypes:            types,
       projectTypeOther:        document.querySelector('[name="projectTypeOther"]').value || '',
-
       homeownerPrintedName:    document.getElementById('homeownerPrintedName').value || '',
       signatureHomeowner:      document.getElementById('signatureHomeowner').value || '',
       homeownerDate:           document.getElementById('homeownerDate').value || '',
-
       contractorPrintedName:   document.getElementById('contractorPrintedName').value || '',
       contractorTitle:         document.getElementById('contractorTitle').value || '',
       contractorDate:          document.getElementById('contractorDate').value || '',
@@ -935,40 +934,54 @@
     };
   }
 
-  // Listen for parent messages
+  // Handle incoming messages from the parent
   window.addEventListener('message', function(event) {
     const msg = event.data;
     if (!msg || !msg.type) return;
 
-    // A) Initialize & lock admin‐prefilled fields
+    // A) Prefill + lock down any fields/buttons
     if (msg.type === 'INITIALIZE_GSA_DATA') {
       const fields = msg.payload || {};
       Object.entries(fields).forEach(([name, value]) => {
         if (!value) return;
+
+        // 1) Standard inputs & checkboxes
         const el = document.querySelector(`[name="${name}"]`);
-        if (el) {
-          el.value = value;
-          el.setAttribute('readonly', 'true');
-          if (el.type === 'checkbox') el.disabled = true;
+        if (el && el.tagName === 'INPUT') {
+          // text/date/email/number inputs
+          if (el.type !== 'checkbox') {
+            el.value = value;
+            el.setAttribute('readonly', 'true');
+          } else {
+            // checkboxes
+            el.checked = true;
+            el.disabled = true;
+          }
         }
-        // replay saved signatures
+
+        // 2) Signature fields: replay, hide clear, disable drawing
         if (name === 'signatureHomeowner' && sigPadHomeowner) {
           sigPadHomeowner.fromDataURL(value);
+          document.getElementById('signatureHomeowner').value = value;
           clearHomeownerBtn.style.display = 'none';
+          canvasHomeowner.style.pointerEvents = 'none';
         }
         if (name === 'signatureContractor' && sigPadContractor) {
           sigPadContractor.fromDataURL(value);
+          document.getElementById('signatureContractor').value = value;
           clearContractorBtn.style.display = 'none';
+          canvasContractor.style.pointerEvents = 'none';
         }
       });
     }
-    // B) Parent requests our filled data
+    // B) Parent wants back your completed payload
     else if (msg.type === 'REQUEST_GSA_DATA') {
       const payload = gatherGsaFields();
       window.parent.postMessage({ type: 'GSA_FORM_DATA', payload }, '*');
     }
   });
 </script>
+
 
 
 

@@ -10,20 +10,33 @@ const crypto = require('crypto');
 // ================
 
 // GET /signup
-// Renders the sign-up page, optionally capturing a "package" query parameter
+// GET /signup
 router.get('/signup', (req, res) => {
+  // If already logged in, redirect back
+  if (req.session.user) {
+    const redirectTo = req.session.returnTo || '/portal';
+    delete req.session.returnTo;
+    return res.redirect(redirectTo);
+  }
+
   const { package: selectedPackage } = req.query;
   if (selectedPackage) {
     req.session.selectedPackage = selectedPackage;
   }
-  return res.render('auth/signup', { currentPage: 'signup', pageTitle: 'Signup | BlueGrass Roofing' });
+  return res.render('auth/signup', {
+    currentPage: 'signup',
+    pageTitle: 'Signup | BlueGrass Roofing'
+  });
 });
 
 // POST /signup
-// Handles creating a new user, hashing password, sending email, setting session, redirecting to portal
+// POST /signup
 router.post('/signup', async (req, res) => {
   try {
-    const { firstName, lastName, email, password, confirmPassword } = req.body;
+    let { firstName, lastName, email, password, confirmPassword } = req.body;
+
+    // normalize email
+    email = email.trim().toLowerCase();
 
     // Basic validation
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
@@ -43,7 +56,7 @@ router.post('/signup', async (req, res) => {
       });
     }
 
-    // Optionally check password length or complexity
+    // Check password length
     if (password.length < 6) {
       return res.status(400).render('auth/signup', {
         currentPage: 'signup',
@@ -65,7 +78,7 @@ router.post('/signup', async (req, res) => {
     // Retrieve the selected package from session if it exists
     const selectedPackage = req.session.selectedPackage || '';
 
-    // Create a new user document
+    // Create and save new user
     const newUser = new User({
       firstName,
       lastName,
@@ -73,14 +86,12 @@ router.post('/signup', async (req, res) => {
       password,
       selectedPackage
     });
-
-    // Save the user (this triggers the password hashing in the pre-save hook)
     await newUser.save();
 
-    // Send a signup confirmation email using SendGrid
+    // Send confirmation email
     await sendUserSignupEmail(newUser);
 
-    // Set session (log in the user)
+    // Log them in
     req.session.user = {
       id: newUser._id,
       email: newUser.email,
@@ -88,10 +99,11 @@ router.post('/signup', async (req, res) => {
       selectedPackage: newUser.selectedPackage
     };
 
-    // Redirect to the client portal
-     const redirectTo = req.session.returnTo || '/portal';
-     delete req.session.returnTo;
-     return res.redirect(redirectTo);
+    // Redirect
+    const redirectTo = req.session.returnTo || '/portal';
+    delete req.session.returnTo;
+    return res.redirect(redirectTo);
+
   } catch (err) {
     console.error('Error creating user:', err);
     return res.status(500).render('auth/signup', {
@@ -102,6 +114,7 @@ router.post('/signup', async (req, res) => {
   }
 });
 
+
 // GET /logout
 router.get('/logout', (req, res) => {
   req.session.destroy(() => {
@@ -111,9 +124,16 @@ router.get('/logout', (req, res) => {
 
 // GET /login
 router.get('/login', (req, res) => {
+  // If already logged in, redirect back
+  if (req.session.user) {
+    const redirectTo = req.session.returnTo || '/portal';
+    delete req.session.returnTo;
+    return res.redirect(redirectTo);
+  }
+
   // Optional success message (e.g., after password reset)
   const successMessage = req.session.successMessage || '';
-  delete req.session.successMessage; // Clear it after use
+  delete req.session.successMessage;
 
   return res.render('auth/login', {
     currentPage: 'login',
@@ -127,7 +147,9 @@ router.get('/login', (req, res) => {
 // POST /login
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+    email = (email || '').trim().toLowerCase();
+
     if (!email || !password) {
       return res.status(400).render('auth/login', {
         currentPage: 'login',
@@ -137,7 +159,7 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Find user by email
+    // Lookup by normalized email
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).render('auth/login', {
@@ -148,7 +170,7 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Compare password with hashed password in DB
+    // Password check
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       return res.status(400).render('auth/login', {
@@ -159,7 +181,7 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // If match, set session
+    // Successful login
     req.session.user = {
       id: user._id,
       email: user.email,
@@ -167,10 +189,10 @@ router.post('/login', async (req, res) => {
       selectedPackage: user.selectedPackage
     };
 
-    // Redirect to portal
-  const redirectTo = req.session.returnTo || '/portal';
-  delete req.session.returnTo;
-   return res.redirect(redirectTo);
+    const redirectTo = req.session.returnTo || '/portal';
+    delete req.session.returnTo;
+    return res.redirect(redirectTo);
+
   } catch (err) {
     console.error('Error logging in user:', err);
     return res.status(500).render('auth/login', {
@@ -181,6 +203,7 @@ router.post('/login', async (req, res) => {
     });
   }
 });
+
 
 // =============================
 // = NEW FORGOT PASSWORD FLOW =
@@ -204,9 +227,12 @@ router.get('/forgot-password', (req, res) => {
  * - Generates a code, saves it to the user's record, and emails them.
  * - Redirects to /forgot-password/code to prompt user for that code.
  */
+// POST /forgot-password
 router.post('/forgot-password', async (req, res) => {
   try {
-    const { email } = req.body;
+    let { email } = req.body;
+    email = (email || '').trim().toLowerCase();
+
     if (!email) {
       return res.status(400).render('auth/forgotPassword_email', {
         error: 'Please enter your email address.',
@@ -215,9 +241,10 @@ router.post('/forgot-password', async (req, res) => {
       });
     }
 
+    // Lookup by normalized email
     const user = await User.findOne({ email });
     if (!user) {
-      // For security, do NOT reveal if the email isn't found
+      // Don't reveal existence
       return res.render('auth/forgotPassword_email', {
         error: 'If an account with that email exists, a code has been sent.',
         success: null,
@@ -225,23 +252,22 @@ router.post('/forgot-password', async (req, res) => {
       });
     }
 
-    // Generate a 6-digit numeric code
+    // Generate and store reset code
     const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
-
     user.resetPasswordCode = resetCode;
-    // Code expires in 1 hour
-    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour from now
+    user.resetPasswordExpires = Date.now() + 3600000; // 1h
     await user.save();
 
-    // Send the code via email
+    // Send the code
     await sendPasswordResetCodeEmail(user, resetCode);
 
-    // Render success message and direct the user to code submission
+    // Prompt for code
     return res.render('auth/forgotPassword_code', {
       error: null,
       success: 'A verification code has been sent to your email.',
       formData: { email }
     });
+
   } catch (err) {
     console.error('Error generating reset code:', err);
     return res.status(500).render('auth/forgotPassword_email', {
@@ -251,6 +277,7 @@ router.post('/forgot-password', async (req, res) => {
     });
   }
 });
+
 
 /**
  * Step 3: GET /forgot-password/code

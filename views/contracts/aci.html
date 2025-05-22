@@ -514,8 +514,8 @@
   
     document.addEventListener('DOMContentLoaded', function() {
       // --- Homeowner 1 ---
-      const canvas1    = document.getElementById('signatureCanvasHomeowner1');
-      const clearBtn1  = document.getElementById('clearSignatureHomeowner1');
+      const canvas1   = document.getElementById('signatureCanvasHomeowner1');
+      const clearBtn1 = document.getElementById('clearSignatureHomeowner1');
       if (canvas1) {
         signaturePad1 = new SignaturePad(canvas1);
         signaturePad1.addEventListener('endStroke', function() {
@@ -565,30 +565,20 @@
     // Collect all ACI form fields into a payload object
     function gatherAciFields() {
       return {
-        // Required contact fields
-        clientName:              document.getElementById('clientName')?.value || '',
-        propertyAddress:         document.getElementById('propertyAddress')?.value || '',
-        insuranceCompany:        document.getElementById('insuranceCompany')?.value || '',
-        claimNumber:             document.getElementById('claimNumber')?.value || '',
-  
-        // Homeowner 1 signature block
-        homeowner1PrintedName:   document.getElementById('homeowner1PrintedName')?.value || '',
-        signatureHomeowner1:     document.getElementById('signatureHomeowner1')?.value || '',
-        homeowner1Date:          document.getElementById('homeowner1Date')?.value || '',
-  
-        // Homeowner 2 signature block (optional)
-        homeowner2PrintedName:   document.getElementById('homeowner2PrintedName')?.value || '',
-        signatureHomeowner2:     document.getElementById('signatureHomeowner2')?.value || '',
-        homeowner2Date:          document.getElementById('homeowner2Date')?.value || '',
-  
-        // Contractor rep signature block
-        contractorRepPrintedName:document.getElementById('contractorRepPrintedName')?.value || '',
-        signatureContractorRep:  document.getElementById('signatureContractorRep')?.value || '',
-        contractorRepDate:       document.getElementById('contractorRepDate')?.value || '',
-  
-        // Title block
-        contractorRepTitle:      document.getElementById('contractorRepTitle')?.value || '',
-  
+        clientName:               document.getElementById('clientName')?.value || '',
+        propertyAddress:          document.getElementById('propertyAddress')?.value || '',
+        insuranceCompany:         document.getElementById('insuranceCompany')?.value || '',
+        claimNumber:              document.getElementById('claimNumber')?.value || '',
+        homeowner1PrintedName:    document.getElementById('homeowner1PrintedName')?.value || '',
+        signatureHomeowner1:      document.getElementById('signatureHomeowner1')?.value || '',
+        homeowner1Date:           document.getElementById('homeowner1Date')?.value || '',
+        homeowner2PrintedName:    document.getElementById('homeowner2PrintedName')?.value || '',
+        signatureHomeowner2:      document.getElementById('signatureHomeowner2')?.value || '',
+        homeowner2Date:           document.getElementById('homeowner2Date')?.value || '',
+        contractorRepPrintedName: document.getElementById('contractorRepPrintedName')?.value || '',
+        signatureContractorRep:   document.getElementById('signatureContractorRep')?.value || '',
+        contractorRepDate:        document.getElementById('contractorRepDate')?.value || '',
+        contractorRepTitle:       document.getElementById('contractorRepTitle')?.value || ''
       };
     }
   
@@ -611,21 +601,30 @@
             el.setAttribute('readonly', 'true');
           }
   
-          // 2) Signature fields: replay into canvas, set hidden input, hide clear button
+          // 2) Signature fields: replay into canvas, set hidden input, hide clear button, disable drawing
           if (key === 'signatureHomeowner1' && signaturePad1) {
+            const c = document.getElementById('signatureCanvasHomeowner1');
+            const b = document.getElementById('clearSignatureHomeowner1');
             signaturePad1.fromDataURL(value);
             document.getElementById('signatureHomeowner1').value = value;
-            document.getElementById('clearSignatureHomeowner1').style.display = 'none';
+            if (b) b.style.display = 'none';
+            if (c) c.style.pointerEvents = 'none';
           }
           if (key === 'signatureHomeowner2' && signaturePad2) {
+            const c = document.getElementById('signatureCanvasHomeowner2');
+            const b = document.getElementById('clearSignatureHomeowner2');
             signaturePad2.fromDataURL(value);
             document.getElementById('signatureHomeowner2').value = value;
-            document.getElementById('clearSignatureHomeowner2').style.display = 'none';
+            if (b) b.style.display = 'none';
+            if (c) c.style.pointerEvents = 'none';
           }
           if (key === 'signatureContractorRep' && signaturePadRep) {
+            const c = document.getElementById('signatureCanvasContractorRep');
+            const b = document.getElementById('clearSignatureContractorRep');
             signaturePadRep.fromDataURL(value);
             document.getElementById('signatureContractorRep').value = value;
-            document.getElementById('clearSignatureContractorRep').style.display = 'none';
+            if (b) b.style.display = 'none';
+            if (c) c.style.pointerEvents = 'none';
           }
         });
       }
@@ -637,6 +636,7 @@
       }
     });
   </script>
+  
   
 </body>
 </html>

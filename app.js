@@ -4,7 +4,7 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
-
+const morgan = require('morgan');
 require('dotenv').config();
 
 const app = express();
@@ -32,6 +32,7 @@ app.use(express.json());
 
 
 app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'));
 
 
 const session = require('express-session');
