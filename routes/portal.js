@@ -43,6 +43,7 @@ async function emailSignedContract(user, docType, pdfPath) {
 
 const { uploadClaim } = require('../utils/aws');
 
+
 const s3 = new S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -699,6 +700,8 @@ router.post('/portal/sign-aob-interactive', requireLogin, async (req, res) => {
 
     const pdfFileName = `aob-${user._id}-${Date.now()}.pdf`;
     const savedPdfPath = await generateHtmlPdf(fullAobHtml, { fileName: pdfFileName });
+    console.log('PDF written to:', savedPdfPath);
+    console.log('Exists on disk?', fs.existsSync(savedPdfPath));
 
     user.documents = user.documents || {};
     user.documents.aob = user.documents.aob || {};
