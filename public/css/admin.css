@@ -99,7 +99,7 @@ ul {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: fixed;
+
     top: 0;
     left: 0;
     right: 0;
@@ -215,7 +215,7 @@ ul {
 
 /* Admin Container Layout */
 .admin-container {
-    padding-top: 60px;
+
     display: flex;
     min-height:100vh;
 }
@@ -829,6 +829,8 @@ ul {
     gap: 16px;
     align-items: center;
     padding: 0.5rem;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
     border-bottom: 1px solid #00000012;
     position: sticky;
     top: 0;
@@ -847,7 +849,7 @@ ul {
 .message-field-container {
     display: flex;
     gap: 0.5rem;
-    padding: 0.75rem 1rem;
+    /* padding: 0.75rem 1rem; */
     border-top: 1px solid var(--thread-border);
     background: #fff;
     position: sticky;
@@ -864,9 +866,11 @@ ul {
     overflow-y: auto;
   }
   .messages-list {
-    padding-bottom: 4rem; /* roughly height of your input area */
+
     overflow-y: auto;     /* keeps only the list scrolling */
   }
+  
+
   
   
   
@@ -981,10 +985,10 @@ ul {
     color: #fff !important;
   }
   
-.conversation{
+/* .conversation{
     overflow-x: hidden;
     overflow-y: hidden;
-}
+} */
 
 
 .thread-meta .badge{
