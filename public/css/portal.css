@@ -966,6 +966,11 @@ body.messages .admin-content {
   background: #fff;
 }
 
+.empty-state-client p{
+  text-align: center;
+
+}
+
 .incoming-message{
   background-color: #e9ecef !important;
   color: #212529 !important;

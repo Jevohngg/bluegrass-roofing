@@ -3,43 +3,55 @@ extends ../layouts/portalLayout
 
 block pageStyles
   link(rel="stylesheet" href="/css/portal.css")
+  // Reuse the same messaging CSS you have for admin
+  link(rel="stylesheet" href="/css/messaging.css")
 
 block content
   .messages-container.d-flex.with-thread
     .conversation.flex-grow-1.d-flex.flex-column
-      //--- header sticks ---
+      //── HEADER ──
       .conversation-header.d-flex.align-items-center.p-2.border-bottom
+        // back to portal home
         a.btn.btn-light.btn-sm(href="/portal")
-            i.fas.fa-chevron-left
+          i.fa.fa-chevron-left.me-2
+          | Back
+        h5.mb-0 BlueGrass Roofing Messaging
 
-        h5.mb-0 BlueGrass Roofing
-
-      //--- message list ---
+      //── MESSAGE LIST ──
       .messages-list#client-chat-container.flex-grow-1.overflow-auto.p-3(data-thread-id=thread._id)
-        each msg in thread.messages
-          .message-row.d-flex.flex-column.mb-3(
-            class=(msg.sender === 'admin' ? 'align-items-start' : 'align-items-end')
-          )
-            .message-bubble.p-2.rounded(
-               class=(msg.sender === 'admin' ? 'incoming-message text-dark' : 'bg-primary text-white')
-            )= msg.text
-            // timestamp: admin → left, client → right
-            small.text-secondary.mt-1(
-              class=(msg.sender === 'admin'
-                ? 'text-start align-self-start'
-                : 'sent-timestamp')
-            )= new Date(msg.createdAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
+        if thread.messages && thread.messages.length
+          each msg in thread.messages
+            .message-row.d-flex.flex-column.mb-3(
+              class=(msg.sender === 'admin' ? 'align-items-start' : 'align-items-end')
+            )
+              .message-bubble.p-2.rounded(
+                class=(msg.sender === 'admin'
+                  ? 'incoming-message text-dark'
+                  : 'bg-primary text-white')
+              )= msg.text
+              // timestamp beneath bubble
+              small.text-secondary.mt-1(
+                class=(msg.sender === 'admin'
+                  ? 'text-start align-self-start'
+                  : 'text-end align-self-end')
+              )= new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        else
+          //── EMPTY-STATE PLACEHOLDER ──
+          .empty-state-client.d-flex.flex-column.justify-content-center.align-items-center.h-100.text-muted
+            i.fa.fa-comments.fa-3x.mb-3
+            p.mb-1 Welcome! Messages from your contractor will appear here.
+            p Feel free to send a message below if you have any questions in the meantime.
 
-      //--- input bar sticks ---
+      //── INPUT BAR ──
       form.message-field-container.d-flex.p-2.border-top(
         action=`/portal/messages/${thread._id}/send`
         method="POST"
       )
-        textarea.form-control.me-2(
+        textarea.form-control.flex-grow-1.me-2(
           name="text",
           placeholder="Type a message…",
           required,
-          style="resize:vertical; max-height:150px; overflow-y:auto;"
+          style="resize: vertical; max-height: 150px; overflow-y: auto;"
         )
         button.btn.btn-primary(type="submit") Send
 

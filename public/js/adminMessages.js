@@ -11,28 +11,33 @@ document.addEventListener('DOMContentLoaded', () => {
         li.style.display = name.includes(q) ? '' : 'none';
       });
     });
-
-      // ── AUTO‐SCROLL ON PAGE LOAD ──
-  const messagesList = document.querySelector('.messages-list');
-  if (messagesList) {
-    // Push the scroll all the way down so the newest messages show
-    messagesList.scrollTop = messagesList.scrollHeight;
-  }
+  
+    // ── AUTO-SCROLL ON PAGE LOAD ──
+    const messagesList = document.querySelector('.messages-list');
+    if (messagesList) {
+      messagesList.scrollTop = messagesList.scrollHeight;
+    }
+  
+    // ── FORMAT ANY <small data-timestamp> ELEMENT ──
+    document.querySelectorAll('small[data-timestamp]').forEach(el => {
+      const iso = el.getAttribute('data-timestamp');
+      if (!iso) return;
+      const d = new Date(iso);
+      el.textContent = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    });
   
     // — “New” button → go to compose mode
-    document.getElementById('newThreadBtn').addEventListener('click', () => {
+    document.getElementById('newThreadBtn')?.addEventListener('click', () => {
       window.location.href = '/admin/messages/new';
     });
   
+    // — Autocomplete recipient when composing
     const recipientInput = document.getElementById('recipientSearch');
-    const sendInput      = document.querySelector(
-   'form[action="/admin/messages/initiate"] textarea[name="text"]'
-    );
-    const sendBtn        = document.getElementById('sendNewBtn');
-    const hiddenUserId   = document.getElementById('selectedUserId');
+    const sendInput = document.querySelector('form[action="/admin/messages/initiate"] textarea[name="text"]');
+    const sendBtn = document.getElementById('sendNewBtn');
+    const hiddenUserId = document.getElementById('selectedUserId');
   
     if (recipientInput) {
-      // Create a dropdown
       const dd = document.createElement('div');
       dd.className = 'list-group position-absolute';
       dd.style.zIndex = 1000;
@@ -51,11 +56,11 @@ document.addEventListener('DOMContentLoaded', () => {
         timeout = setTimeout(async () => {
           const res = await fetch(`/admin/messages/users/search?q=${encodeURIComponent(q)}`);
           const users = await res.json();
-          dd.innerHTML = users.map(u =>
-            `<button type="button" class="list-group-item list-group-item-action" data-id="${u._id}">
-              ${u.firstName} ${u.lastName} &lt;${u.email}&gt;
-            </button>`
-          ).join('');
+          dd.innerHTML = users.map(u => `
+            <button type="button" class="list-group-item list-group-item-action" data-id="${u._id}">
+              ${u.firstName} ${u.lastName} <${u.email}>
+            </button>
+          `).join('');
           dd.querySelectorAll('button').forEach(btn => {
             btn.addEventListener('click', () => {
               hiddenUserId.value = btn.dataset.id;
@@ -69,32 +74,53 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
       });
   
-      // Click outside to close dropdown
       document.addEventListener('click', e => {
         if (!recipientInput.contains(e.target)) dd.innerHTML = '';
       });
     }
   
-    // — Live updates: highlight and append
+    // — Live updates: highlight & append
     ioSocket.on('newMessage', data => {
+      // 1) mark the thread in sidebar
       const li = document.getElementById(`thread-item-${data.threadId}`);
-      if (li) li.classList.add('border-start','border-3','border-danger');
+      if (li) li.classList.add('border-start','border-3','border-danger','unread');
   
-      // if viewing that same thread, append bubble
+      // 2) if we’re viewing that thread, append the bubble
       const threadContainer = document.querySelector('.messages-list');
-      const convoHeader    = document.querySelector('.conversation-header h5');
-      if (convoHeader && threadContainer && window.location.pathname.endsWith(data.threadId)) {
-        const bubble = document.createElement('div');
-        bubble.className = data.sender==='admin'
+      const convoHeader = document.querySelector('.conversation-header h5');
+      if (
+        convoHeader &&
+        threadContainer &&
+        window.location.pathname.endsWith(data.threadId)
+      ) {
+        const isAdmin = data.sender === 'admin';
+        // build a wrapper div
+        const wrapper = document.createElement('div');
+        wrapper.className = isAdmin
           ? 'message-row d-flex justify-content-end mb-3'
           : 'message-row d-flex justify-content-start mb-3';
-        bubble.innerHTML = `
-          <div class="message-bubble ${data.sender==='admin'?'bg-primary text-white':'bg-secondary text-dark'} p-2 rounded">
+  
+        // inner HTML: bubble + timestamp placeholder
+        wrapper.innerHTML = `
+          <div class="message-bubble ${isAdmin ? 'bg-primary text-white' : 'bg-secondary text-dark'} p-2 rounded">
             <p class="mb-1">${data.text}</p>
-            <small class="text-muted d-block text-end">${new Date(data.createdAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</small>
-          </div>`;
-        threadContainer.appendChild(bubble);
+          </div>
+          <small
+            data-timestamp="${data.createdAt}"
+            class="text-secondary mt-1 d-block ${isAdmin ? 'text-end' : 'text-start'}"
+          ></small>
+        `;
+  
+        threadContainer.appendChild(wrapper);
+        // scroll into view
         threadContainer.scrollTop = threadContainer.scrollHeight;
+  
+        // format the new timestamp
+        const tsEl = wrapper.querySelector('small[data-timestamp]');
+        if (tsEl) {
+          const d = new Date(tsEl.getAttribute('data-timestamp'));
+          tsEl.textContent = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
       }
     });
   });

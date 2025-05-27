@@ -13,22 +13,24 @@ block content
           i.fa.fa-plus.me-2
           | New
 
+      
+
       ul#threadList.list-group.flex-grow-1.overflow-auto
         if threads.length
           each t in threads
-            - var msgs    = t.messages || []
-            - var last    = msgs[msgs.length - 1] || {}
-            - var snippet = last.text ? last.text.substr(0, 30) + (last.text.length > 30 ? '…' : '') : 'No messages yet'
-            - var time    = last.createdAt ? new Date(last.createdAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : ''
-            - var unread  = msgs.some(m => m.sender !== 'admin' && !m.read)
+            - const msgs    = t.messages || []
+            - const last    = msgs[msgs.length - 1] || {}
+            - const snippet = last.text ? last.text.substr(0, 30) + (last.text.length > 30 ? '…' : '') : 'No messages yet'
+            - const rawTime = last.createdAt ? last.createdAt.toISOString() : ''
+            - const unread  = msgs.some(m => m.sender !== 'admin' && !m.read)
+      
             li.list-group-item.d-flex.justify-content-between.align-items-start.thread-item(
               id='thread-item-' + t._id,
               class=[
-                thread && t._id.toString() === thread._id.toString() ? 'active' : '',
+                thread && t._id.toString() === (thread._id || '').toString() ? 'active' : '',
                 unread ? 'unread' : ''
               ].join(' ')
             )
-            
               a.thread-link.flex-grow-1.text-decoration-none(href=`/admin/messages/${t._id}`)
                 .thread-name.fw-bold= `${t.userId.firstName} ${t.userId.lastName}`
                 br
@@ -36,16 +38,20 @@ block content
               .thread-meta.ms-2.text-end
                 if unread
                   span.badge.bg-danger.rounded-pill.mb-1 &nbsp;
-                small.text-muted.d-block= time
+                small.text-muted.d-block(data-timestamp=rawTime)
         else
           li.list-group-item.text-muted No conversations yet.
+      
+      
 
     //── CONVERSATION / COMPOSE PANE ──
     .conversation.flex-grow-1.d-flex.flex-column
       //--- header: Compose vs Chat ---
-      .conversation-header.d-flex.justify-content-between.align-items-center.p-2.border-bottom
+      .conversation-header.d-flex.align-items-center.p-2.border-bottom
         // back button always visible in mobile
-        a.btn.btn-light.btn-sm.mobile-back(href="/admin/messages") ← Back
+        //- a.btn.btn-light.btn-sm.mobile-back(href="/admin/messages") ← Back
+        a.btn.btn-light.btn-sm(href="/admin/messages")
+            i.fas.fa-chevron-left
         if !thread
           // Compose mode: type recipient
           input#recipientSearch.form-control(type="text" placeholder="Type user email…")
@@ -57,21 +63,29 @@ block content
 
       //--- message list or placeholder ---
       .messages-list.flex-grow-1.overflow-auto.p-3
-        if thread
+        if thread && thread.messages.length
           each msg in thread.messages
             .message-row.d-flex.flex-column.mb-3(
-              class=(msg.sender==='admin' ? 'align-items-end' : 'align-items-start')
+              class=(msg.sender === 'admin' ? 'align-items-end' : 'align-items-start')
             )
               .message-bubble.p-2.rounded(
-                class=(msg.sender==='admin' ? 'bg-primary text-white' : 'text-dark incoming-message')
+                class=(msg.sender === 'admin'
+                  ? 'bg-primary text-white'
+                  : 'text-dark incoming-message')
               )
                 p.mb-0= msg.text
               // timestamp beneath, dark-gray
               small.text-secondary.mt-1(
-                class=(msg.sender==='admin' ? 'text-end' : 'text-start')
+                class=(msg.sender === 'admin' ? 'text-end' : 'text-start'),
+                data-timestamp=msg.createdAt
               )= new Date(msg.createdAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
         else
-          p.text-muted Start a new conversation by choosing a recipient above and typing a message.
+          //–– Empty state for admin ––
+          .empty-state-admin.d-flex.flex-column.justify-content-center.align-items-center.h-100.text-muted
+            i.fa.fa-comments.fa-3x.mb-3
+            p.mb-0 You haven’t exchanged any messages yet.
+            p Start the conversation by typing below.
+
 
       //--- message input form ---
       if thread
