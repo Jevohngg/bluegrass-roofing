@@ -811,6 +811,15 @@ ul {
   .message-bubble{
     max-width: 70%;
   }
+
+  .messages-list{
+    padding-bottom: 200px !important;
+  }
+
+  .sidebar-header{
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
   
   .conversation-header {
     position: relative !important;
@@ -835,7 +844,7 @@ ul {
 
 
   .message-field-container {
-    position: absolute;
+    position: sticky;
     bottom: 0;
     left: 0;
     width: 100%;

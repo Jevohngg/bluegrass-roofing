@@ -62,7 +62,7 @@ block content
             small.text-muted.ms-2 &lt;#{thread.userId.email}&gt;
 
       //--- message list or placeholder ---
-      .messages-list.flex-grow-1.overflow-auto.p-3
+      .messages-list.flex-grow-1.overflow-auto
         if thread && thread.messages.length
           each msg in thread.messages
             .message-row.d-flex.flex-column.mb-3(
