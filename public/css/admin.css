@@ -846,7 +846,10 @@ ul {
   }
 
   body.messages .admin-content {
-    padding: 16px;        /* your new padding */
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    padding-top: 16px!important;
+    padding-bottom: 0px !important;
     /* any other tweaks: */
     /* background: #fafafa; */
   }
@@ -905,10 +908,38 @@ ul {
     align-self: flex-start;
   }
 
+  #newThreadBtn{
+    gap: 8px;
+  }
+
+  /* Entire thread container when unread */
+.thread-item.unread {
+    background-color: #fff5f5 !important;  /* light pink-ish background */
+  }
+  
+  /* Bold everything in it */
+  .thread-item.unread,
+  .thread-item.unread .thread-name,
+  .thread-item.unread small,
+  .thread-item.unread .thread-meta {
+    font-weight: 600 !important;
+  }
+
+  .thread-item.unread .thread-name{
+    margin-left: 16px;
+  }
+  
+  /* Keep badge visible too */
+  .thread-item.unread .badge {
+    background-color: #d9534f !important;  /* or whatever your accent red is */
+    color: #fff !important;
+  }
+  
+
 .thread-meta .badge{
     width: 12px;
     height: 12px;
-    left: 0;
+    left: 12px;
     top: 18px;
     background-color: #0d6efd !important;
     position: absolute;
