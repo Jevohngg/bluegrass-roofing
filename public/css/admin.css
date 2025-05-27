@@ -822,7 +822,7 @@ ul {
   }
   
   .conversation-header {
-    position: relative !important;
+    position: sticky !important;
     flex: 0 0 auto;
     display: flex;
     justify-content: flex-start;
