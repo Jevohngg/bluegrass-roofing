@@ -870,11 +870,13 @@ ul {
   
   
   
-  /* textarea grows and shrinks within that full-width bar */
-  .message-field-container .form-control {
-    flex: 1 1 auto;
-    min-width: 0;
-  }
+
+  .message-field-container .form-control{
+    width: 100%;
+    padding: 4px;
+    
+    }
+    
   
   /* button stays its natural size on the right */
   .message-field-container button {

@@ -43,74 +43,74 @@ block content
           li.list-group-item.text-muted No conversations yet.
       
       
+    .messages-container
+        //── CONVERSATION / COMPOSE PANE ──
+        .conversation.flex-grow-1.d-flex.flex-column
+          //--- header: Compose vs Chat ---
+          .conversation-header.d-flex.align-items-center.p-2.border-bottom
+            // back button always visible in mobile
+            //- a.btn.btn-light.btn-sm.mobile-back(href="/admin/messages") ← Back
+            a.btn.btn-light.btn-sm(href="/admin/messages")
+                i.fas.fa-chevron-left
+            if !thread
+              // Compose mode: type recipient
+              input#recipientSearch.form-control(type="text" placeholder="Type user email…")
+            else
+              // Chat mode: show name + email
+              h5.mb-0.user-name-conversation
+                | #{thread.userId.firstName} #{thread.userId.lastName}
+                small.text-muted.ms-2 &lt;#{thread.userId.email}&gt;
 
-    //── CONVERSATION / COMPOSE PANE ──
-    .conversation.flex-grow-1.d-flex.flex-column
-      //--- header: Compose vs Chat ---
-      .conversation-header.d-flex.align-items-center.p-2.border-bottom
-        // back button always visible in mobile
-        //- a.btn.btn-light.btn-sm.mobile-back(href="/admin/messages") ← Back
-        a.btn.btn-light.btn-sm(href="/admin/messages")
-            i.fas.fa-chevron-left
-        if !thread
-          // Compose mode: type recipient
-          input#recipientSearch.form-control(type="text" placeholder="Type user email…")
-        else
-          // Chat mode: show name + email
-          h5.mb-0.user-name-conversation
-            | #{thread.userId.firstName} #{thread.userId.lastName}
-            small.text-muted.ms-2 &lt;#{thread.userId.email}&gt;
+          //--- message list or placeholder ---
+          .messages-list.flex-grow-1.overflow-auto
+            if thread && thread.messages.length
+              each msg in thread.messages
+                .message-row.d-flex.flex-column.mb-3(
+                  class=(msg.sender === 'admin' ? 'align-items-end' : 'align-items-start')
+                )
+                  .message-bubble.p-2.rounded(
+                    class=(msg.sender === 'admin'
+                      ? 'bg-primary text-white'
+                      : 'text-dark incoming-message')
+                  )
+                    p.mb-0= msg.text
+                  // timestamp beneath, dark-gray
+                  small.text-secondary.mt-1(
+                    class=(msg.sender === 'admin' ? 'text-end' : 'text-start'),
+                    data-timestamp=msg.createdAt
+                  )= new Date(msg.createdAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
+            else
+              //–– Empty state for admin ––
+              .empty-state-admin.d-flex.flex-column.justify-content-center.align-items-center.h-100.text-muted
+                i.fa.fa-comments.fa-3x.mb-3
+                p.mb-0 You haven’t exchanged any messages yet.
+                p Start the conversation by typing below.
 
-      //--- message list or placeholder ---
-      .messages-list.flex-grow-1.overflow-auto
-        if thread && thread.messages.length
-          each msg in thread.messages
-            .message-row.d-flex.flex-column.mb-3(
-              class=(msg.sender === 'admin' ? 'align-items-end' : 'align-items-start')
+
+          //--- message input form ---
+          if thread
+            form.message-field-container.d-flex.p-2.border-top(
+              action=`/admin/messages/${thread._id}/send`
+              method="POST"
             )
-              .message-bubble.p-2.rounded(
-                class=(msg.sender === 'admin'
-                  ? 'bg-primary text-white'
-                  : 'text-dark incoming-message')
+              textarea.form-control.me-2(
+                name="text",
+                placeholder="Type a message…",
+                required,
+                style="resize: vertical; max-height: 150px; overflow-y: auto;"
               )
-                p.mb-0= msg.text
-              // timestamp beneath, dark-gray
-              small.text-secondary.mt-1(
-                class=(msg.sender === 'admin' ? 'text-end' : 'text-start'),
-                data-timestamp=msg.createdAt
-              )= new Date(msg.createdAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
-        else
-          //–– Empty state for admin ––
-          .empty-state-admin.d-flex.flex-column.justify-content-center.align-items-center.h-100.text-muted
-            i.fa.fa-comments.fa-3x.mb-3
-            p.mb-0 You haven’t exchanged any messages yet.
-            p Start the conversation by typing below.
-
-
-      //--- message input form ---
-      if thread
-        form.message-field-container.d-flex.p-2.border-top(
-          action=`/admin/messages/${thread._id}/send`
-          method="POST"
-        )
-          textarea.form-control.me-2(
-            name="text",
-            placeholder="Type a message…",
-            required,
-            style="resize: vertical; max-height: 150px; overflow-y: auto;"
-          )
-          button.btn.btn-primary(type="submit") Send
-      else
-        form.message-field-container.d-flex.p-2.border-top(
-          action="/admin/messages/initiate"
-          method="POST"
-        )
-          input(type="hidden" name="userId" id="selectedUserId")
-          textarea.form-control.me-2(
-            name="text",
-            placeholder="Type a message…",
-            disabled,
-            required,
-            style="resize: vertical; max-height: 150px; overflow-y: auto;"
-          )
-          button.btn.btn-primary(type="submit" disabled id="sendNewBtn") Send
+              button.btn.btn-primary(type="submit") Send
+          else
+            form.message-field-container.d-flex.p-2.border-top(
+              action="/admin/messages/initiate"
+              method="POST"
+            )
+              input(type="hidden" name="userId" id="selectedUserId")
+              textarea.form-control.me-2(
+                name="text",
+                placeholder="Type a message…",
+                disabled,
+                required,
+                style="resize: vertical; max-height: 150px; overflow-y: auto;"
+              )
+              button.btn.btn-primary(type="submit" disabled id="sendNewBtn") Send
