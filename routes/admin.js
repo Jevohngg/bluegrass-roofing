@@ -6,6 +6,7 @@ const User = require('../models/User');
 const { sendDocumentLinkEmail } = require('../utils/sendEmail'); 
 const contracts = require('../config/contracts');    
 
+
 // Map docType → full title
 const docTypeTitles = {
   aob: 'Assignment of Benefits (AOB)',

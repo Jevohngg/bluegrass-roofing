@@ -12,6 +12,7 @@ html(lang="en")
     // Font imports
     link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap")
     link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css")
+    link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css")
 
     title= pageTitle || 'BlueGrass Roofing'
     link(rel="icon" type="image/x-icon" href="/images/favicon.png")
@@ -47,6 +48,10 @@ html(lang="en")
     // Main content area
     main
       block content
+    //– Floating Chat Button
+    button#msgToggle.floating-msg-btn(type="button" aria-label="Open Messages")
+      i.fa.fa-comments
+      span#msgCount.badge 0
 
     // Optional global scripts or specialized portal scripts
     script(src="/js/animations.js")

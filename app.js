@@ -6,6 +6,8 @@ const path = require('path');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 require('dotenv').config();
+const http = require('http');
+const socketIO = require('socket.io');
 
 const app = express();
 
@@ -29,11 +31,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Parse incoming JSON and form data
 app.use(express.json());
-
-
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
-
 
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
@@ -45,21 +44,15 @@ app.use(session({
   secret: process.env.SESSION_SECRET || '2025RoofingBlueGrassAdminSecret!',
   resave: false,
   saveUninitialized: false,
-
-  
   rolling: true,
-
   store: MongoStore.create({
     mongoUrl: process.env.MONGODB_URI,
     collectionName: 'sessions',
     // expire sessions after 24h
     ttl: 24 * 60 * 60,
-
     touchAfter: 60 * 60
   }),
-
   cookie: {
-
     maxAge: 24 * 60 * 60 * 1000,
     httpOnly: true,
     // in prod, serve secure cookies only over HTTPS
@@ -68,9 +61,6 @@ app.use(session({
     sameSite: 'lax'
   }
 }));
-
-
-
 
 // HOME ROUTE
 const homeRoutes = require('./routes/home');
@@ -98,7 +88,6 @@ app.use(portalRoutes);
 const quoteRoutes = require('./routes/quote');
 app.use('/quote', quoteRoutes);
 
-
 // === Onboarding Route (New) ===
 const onboardingRoutes = require('./routes/onboarding');
 app.use('/onboarding', onboardingRoutes);
@@ -107,8 +96,44 @@ app.use('/onboarding', onboardingRoutes);
 const adminRoutes = require('./routes/admin');
 app.use('/admin', adminRoutes);
 
+// Admin Messaging Routes (new chat system)
+const messagingRoutes = require('./routes/messages');
+app.use('/admin/messages', messagingRoutes);
+
+// Create HTTP server and initialize Socket.io
+const server = http.createServer(app);
+const io = socketIO(server, {
+  // optional config
+});
+
+// Make io accessible inside routes/controllers
+app.set('io', io);
+
+// Socket.io connection events
+io.on('connection', (socket) => {
+  console.log('A user connected:', socket.id);
+
+  // Admin can join a dedicated admin room
+  socket.on('joinAdminRoom', () => {
+    socket.join('admin-room');
+    console.log(`Socket ${socket.id} joined admin-room`);
+  });
+
+  // Clients can join their own room named by userId
+  socket.on('joinUserRoom', (userId) => {
+    if (userId) {
+      socket.join(userId);
+      console.log(`Socket ${socket.id} joined room for user ${userId}`);
+    }
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+  });
+});
+
 // Start server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });

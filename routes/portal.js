@@ -7,6 +7,8 @@ const { S3 } = require('aws-sdk');
 const User = require('../models/User');
 const fs = require('fs');
 const DocumentSend = require('../models/DocumentSend'); // <-- NEW model for admin-sent docs
+const Thread  = require('../models/Thread');
+const { sendNewMessageEmail } = require('../utils/sendEmail');
 
 const cheerio = require('cheerio');
 
@@ -1757,6 +1759,86 @@ router.get('/portal/sign-aob-interactive', requireLogin, async (req, res) => {
 });
 
 
+
+
+
+
+// — GET unread count
+// GET /portal/messages/unread-count
+router.get('/portal/messages/unread-count', requireLogin, async (req, res) => {
+  try {
+    const thread = await Thread.findOne({ userId: req.session.user.id });
+    const count = thread
+      ? thread.messages.filter(m => m.sender === 'admin' && !m.read).length
+      : 0;
+    res.json({ count });
+  } catch (err) {
+    console.error(err);
+    res.json({ count: 0 });
+  }
+});
+
+// — GET the client thread (always exactly one)
+// GET /portal/messages
+router.get('/portal/messages', requireLogin, async (req, res) => {
+  // find or create this user’s single thread
+  let thread = await Thread.findOne({ userId: req.session.user.id }).populate('userId');
+  if (!thread) {
+    thread = new Thread({ userId: req.session.user.id });
+    await thread.save();
+  }
+  // mark admin→client messages as read
+  thread.messages.forEach(m => { if (m.sender === 'admin') m.read = true });
+  await thread.save();
+
+  res.render('auth/messages', {
+    thread,
+    pageTitle: 'Messages',
+    activeTab: 'portal'  // if you use this to highlight portal menu
+  });
+});
+
+// — POST a client message
+// POST /portal/messages/:threadId/send
+router.post('/portal/messages/:threadId/send', requireLogin, async (req, res) => {
+  try {
+    const { text } = req.body;
+    const thread = await Thread.findById(req.params.threadId).populate('userId');
+    if (!thread) return res.status(404).send('Not found');
+    // append client message
+    thread.messages.push({
+      sender: 'client',
+      text,
+      createdAt: new Date(),
+      read: false
+    });
+    thread.lastMessageAt = new Date();
+    await thread.save();
+
+    // email admin every time
+    await sendNewMessageEmail({
+      // recipientEmail: process.env.INTERNAL_TEAM_EMAIL,
+      recipientEmail: 'jevohngentry@gmail.com',
+      fromAdmin: false,
+      messageText: text,
+      link: `${process.env.BASE_URL}/admin/messages/${thread._id}`
+    });
+
+    // socket → adminRoom
+    const io = req.app.get('io');
+    io.to('adminRoom').emit('newMessage', {
+      threadId: thread._id,
+      sender: 'client',
+      text,
+      createdAt: new Date().toISOString()
+    });
+
+    res.redirect('/portal/messages');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error sending');
+  }
+});
 
 
 module.exports = router;

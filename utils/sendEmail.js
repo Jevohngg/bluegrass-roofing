@@ -219,6 +219,38 @@ async function sendDocumentLinkEmail(recipientEmail, docType, signLink, customMe
 }
 
 
+async function sendNewMessageEmail({ recipientEmail, fromAdmin, messageText, link }) {
+  // decide which template to use
+  const adminTpl  = process.env.SENDGRID_ADMIN_MESSAGE_TEMPLATE_ID;
+  const clientTpl = process.env.SENDGRID_CLIENT_MESSAGE_TEMPLATE_ID;
+  const templateId = fromAdmin ? clientTpl : adminTpl;
+
+  if (!templateId) {
+    console.error('Missing SendGrid template ID for', fromAdmin ? 'admin→client' : 'client→admin');
+    return;
+  }
+
+  const msg = {
+    to: recipientEmail,
+    from: {
+      email: 'noreply@bluegrass-roofing.com',
+      name:  'BlueGrass Roofing'
+    },
+    templateId,
+    dynamic_template_data: {
+      // your template can reference these variables:
+      messageText,
+      link
+    }
+  };
+
+  try {
+    await sgMail.send(msg);
+  } catch (err) {
+    console.error('Error sending new message email:', err);
+  }
+}
+
 
 
 module.exports = {
@@ -228,5 +260,6 @@ module.exports = {
   sendPasswordResetCodeEmail,
   sendUserDocSignedEmail,
   sendTeamDocSignedEmail,
-  sendDocumentLinkEmail
+  sendDocumentLinkEmail,
+  sendNewMessageEmail
 };

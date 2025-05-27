@@ -30,7 +30,7 @@ html(lang="en")
     script(src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js")
 
 
-  body
+  body(class=activeTab)
     // Header Bar
     header.admin-header
       .header-content
@@ -63,10 +63,10 @@ html(lang="en")
             a(href="/admin/send-documents", class=(activeTab=='send-documents' ? 'active' : ''))
               i.fa.fa-paper-plane
               |  Send Documents
-          //- li
-          //-   a(href="/admin/documents", class=(activeTab=='documents' ? 'active' : ''))
-          //-     i.fa.fa-file
-          //-     |  Documents
+          li
+            a(href="/admin/messages", class=(activeTab=='messages' ? 'active' : ''))
+              i.fa.fa-comments
+              |  Messages
         // Logout button for mobile only (hidden on desktop via CSS)
         a.btn-logout-mobile(href="/admin/logout") Logout
       // Main Content Area
@@ -77,6 +77,9 @@ html(lang="en")
 
     // Scripts (load alert.js and admin.js)
     block scripts
+      script(src="/socket.io/socket.io.js")
       script(src="/js/alert.js")
       script(src="/js/admin.js")
       script(src="/js/adminCustomers.js")
+      script(src="/js/adminMessages.js")
+

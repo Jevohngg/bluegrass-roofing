@@ -1,0 +1,48 @@
+//- views/auth/messages.pug
+extends ../layouts/portalLayout
+
+block pageStyles
+  link(rel="stylesheet" href="/css/portal.css")
+
+block content
+  .messages-container.d-flex.with-thread
+    .conversation.flex-grow-1.d-flex.flex-column
+      //--- header sticks ---
+      .conversation-header.d-flex.align-items-center.p-2.border-bottom
+        a.btn.btn-light.btn-sm(href="/portal")
+            i.fas.fa-chevron-left
+
+        h5.mb-0 BlueGrass Roofing
+
+      //--- message list ---
+      .messages-list#client-chat-container.flex-grow-1.overflow-auto.p-3(data-thread-id=thread._id)
+        each msg in thread.messages
+          .message-row.d-flex.flex-column.mb-3(
+            class=(msg.sender === 'admin' ? 'align-items-start' : 'align-items-end')
+          )
+            .message-bubble.p-2.rounded(
+               class=(msg.sender === 'admin' ? 'incoming-message text-dark' : 'bg-primary text-white')
+            )= msg.text
+            // timestamp: admin → left, client → right
+            small.text-secondary.mt-1(
+              class=(msg.sender === 'admin'
+                ? 'text-start align-self-start'
+                : 'sent-timestamp')
+            )= new Date(msg.createdAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
+
+      //--- input bar sticks ---
+      form.message-field-container.d-flex.p-2.border-top(
+        action=`/portal/messages/${thread._id}/send`
+        method="POST"
+      )
+        textarea.form-control.me-2(
+          name="text",
+          placeholder="Type a message…",
+          required,
+          style="resize:vertical; max-height:150px; overflow-y:auto;"
+        )
+        button.btn.btn-primary(type="submit") Send
+
+block pageScripts
+  script(src="/socket.io/socket.io.js")
+  script(src="/js/portalMessages.js")

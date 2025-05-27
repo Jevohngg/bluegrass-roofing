@@ -1,0 +1,42 @@
+//- views/admin/messages/index.pug
+extends ../../layouts/adminLayout
+
+block content
+  .messages-container.d-flex
+    //── SIDEBAR ──
+    .sidebar.bg-light.border-end.d-flex.flex-column
+      .sidebar-header.d-flex.justify-content-between.align-items-center.p-2
+        h5.mb-0 Messages
+        // “New” simply opens the “start thread” form
+        button.btn.btn-sm.btn-primary#newThreadBtn(type="button") New
+
+      ul#threadList.list-group.flex-grow-1.overflow-auto
+        if threads.length
+          each t in threads
+            - var msgs = t.messages || []
+            - var lastMsg = msgs[msgs.length -1] || {}
+            - var preview = lastMsg.text ? lastMsg.text.substr(0,30) + (lastMsg.text.length>30?'…':'') : 'No messages yet'
+            - var timestamp = lastMsg.createdAt ? new Date(lastMsg.createdAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : ''
+            - var unread = msgs.some(m => m.sender !== 'admin' && !m.read)
+            li.list-group-item.d-flex.justify-content-between.align-items-start.thread-item(
+                id='thread-item-' + t._id
+              )
+              a.thread-link.flex-grow-1.text-decoration-none(href=`/admin/messages/${t._id}`)
+                .fw-bold= `${t.userId.firstName} ${t.userId.lastName}`
+                br
+                small.text-muted= preview
+              .thread-meta.text-end.ms-2
+                if unread
+                  span.badge.bg-danger.rounded-pill.mb-1 &nbsp;
+                small.text-muted.d-block= timestamp
+        else
+          li.list-group-item.text-muted No conversations yet. Click “New” above.
+      
+      // Hidden form toggled by “New”
+      form#startThreadForm.mt-2(action="/admin/messages/start" method="POST" style="display:none;")
+        input.form-control.mb-2(type="email" name="userEmail" required placeholder="client@example.com")
+        button.btn.btn-sm.btn-success(type="submit") Start Conversation
+
+    //── PLACEHOLDER PANE ──
+    .conversation.flex-grow-1.d-flex.justify-content-center.align-items-center
+      p.text-muted Select a conversation on the left or click “New” to begin.

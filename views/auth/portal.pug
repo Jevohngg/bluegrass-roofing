@@ -202,10 +202,12 @@ block content
           button(type="button" class="btn btn-secondary" data-dismiss="modal") Cancel
 
 block pageScripts
+  script(src="/socket.io/socket.io.js")
   script(src="https://code.jquery.com/jquery-3.6.0.min.js")
   script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js")
   script(src="/js/alert.js")
   script(src="/js/portal.js")
+  script(src="/js/portalMessages.js")
 
   // this one does the title swap
   script.
