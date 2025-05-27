@@ -7,6 +7,18 @@ document.addEventListener('DOMContentLoaded', () => {
   
     if (userId) socket.emit('joinUserRoom', userId);
 
+    // after your auto-scroll logic, e.g. in DOMContentLoaded:
+document.querySelectorAll('small[data-timestamp]').forEach(el => {
+    const iso = el.dataset.timestamp;
+    if (!iso) return;
+    const d = new Date(iso);
+    el.textContent = d.toLocaleTimeString([], {
+      hour:   '2-digit',
+      minute: '2-digit'
+    });
+  });
+  
+
       // 2) Hide the floating toggle if we're on the messages page
   if (window.location.pathname.startsWith('/portal/messages')) {
     if (msgToggle) msgToggle.style.display = 'none';

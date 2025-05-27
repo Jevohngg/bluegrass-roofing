@@ -32,8 +32,10 @@ block content
               small.text-secondary.mt-1(
                 class=(msg.sender === 'admin'
                   ? 'text-start align-self-start'
-                  : 'text-end align-self-end')
-              )= new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                  : 'text-end align-self-end'),
+                data-timestamp= msg.createdAt.toISOString()
+              )
+              
         else
           //── EMPTY-STATE PLACEHOLDER ──
           .empty-state-client.d-flex.flex-column.justify-content-center.align-items-center.h-100.text-muted
