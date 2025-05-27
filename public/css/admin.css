@@ -813,7 +813,7 @@ ul {
   }
 
   .messages-list{
-    padding-bottom: 200px !important;
+    padding-bottom: 100px !important;
   }
 
   .sidebar-header{
@@ -843,20 +843,25 @@ ul {
   }
 
 
-  .message-field-container {
-    position: sticky;
-    bottom: 0;
-    left: 0;
-    width: 100%;
+/* container for textarea + send button */
+.message-field-container {
     display: flex;
     gap: 0.5rem;
-    padding: 0.5rem;
-    background: white;
-    box-sizing: border-box;
-    z-index: 10;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--thread-border);
+    background: #fff;
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+  }
   
-    /* ensure iOS safe-area handling if you care: */
-    padding-bottom: env(safe-area-inset-bottom);
+  /* textarea resize */
+  .message-field-container textarea.form-control {
+    resize: vertical;
+    max-height: 150px;
+    overflow-y: auto;
   }
   .messages-list {
     padding-bottom: 4rem; /* roughly height of your input area */
