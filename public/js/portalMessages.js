@@ -8,14 +8,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (userId) socket.emit('joinUserRoom', userId);
 
     // after your auto-scroll logic, e.g. in DOMContentLoaded:
-document.querySelectorAll('small[data-timestamp]').forEach(el => {
-    const iso = el.dataset.timestamp;
-    if (!iso) return;
-    const d = new Date(iso);
-    el.textContent = d.toLocaleTimeString([], {
-      hour:   '2-digit',
+  /* ---------- Date‑time helper ---------- */
+  function fmtDateTime(iso) {
+    return new Date(iso).toLocaleString('en-US', {
+      month : 'short',
+      day   : 'numeric',
+      year  : 'numeric',
+      hour  : '2-digit',
       minute: '2-digit'
     });
+  }
+
+  //‑‑ Initial pass over any data-timestamp elements
+  document.querySelectorAll('small[data-timestamp]').forEach(el => {
+    const iso = el.dataset.timestamp;
+    if (iso) el.textContent = fmtDateTime(iso);
   });
   
 
@@ -52,9 +59,9 @@ document.querySelectorAll('small[data-timestamp]').forEach(el => {
             row.className = 'message-row d-flex flex-column mb-3 align-items-start';
             row.innerHTML = `
               <div class="message-bubble bg-secondary text-dark p-2 rounded">${data.text}</div>
-              <small class="text-secondary mt-1 text-start">
-                ${new Date(data.createdAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
-              </small>`;
+<small class="text-secondary mt-1 text-start" data-timestamp="${data.createdAt}">
+    ${fmtDateTime(data.createdAt)}
+  </small>`;
             container.appendChild(row);
             container.scrollTop = container.scrollHeight;
             msgCount.textContent = '0';

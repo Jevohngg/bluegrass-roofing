@@ -16,7 +16,7 @@ block content
             - var msgs = t.messages || []
             - var lastMsg = msgs[msgs.length -1] || {}
             - var preview = lastMsg.text ? lastMsg.text.substr(0,30) + (lastMsg.text.length>30?'…':'') : 'No messages yet'
-            - var timestamp = lastMsg.createdAt ? new Date(lastMsg.createdAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : ''
+            - var timestamp = lastMsg.createdAt ? lastMsg.createdAt.toISOString() : ''
             - var unread = msgs.some(m => m.sender !== 'admin' && !m.read)
             li.list-group-item.d-flex.justify-content-between.align-items-start.thread-item(
                 id='thread-item-' + t._id
@@ -28,7 +28,7 @@ block content
               .thread-meta.text-end.ms-2
                 if unread
                   span.badge.bg-danger.rounded-pill.mb-1 &nbsp;
-                small.text-muted.d-block= timestamp
+                small.text-muted.d-block(data-timestamp=timestamp)
         else
           li.list-group-item.text-muted No conversations yet. Click “New” above.
       

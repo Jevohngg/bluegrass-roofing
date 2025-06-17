@@ -5,6 +5,7 @@ block pageStyles
   link(rel="stylesheet" href="/css/portal.css")
 
 block content
+
   section.portal-section
     .portal-container
       // ---------- WELCOME -------------
@@ -86,6 +87,59 @@ block content
           .action-state-success
             p No contracts to sign at this time.
 
+      // ============ WARRANTY DOC ============
+      if user.warranty && user.warranty.docUrl
+        .portal-action-card
+          h3 Warranty Document
+          if user.warranty && user.warranty.docUrl
+            p.subtext Your warranty document is ready.
+            a.warranty-button.btn.btn-primary(href=user.warranty.docUrl target="_blank")
+              i.fas.fa-file-download.me-1
+              | Download Warranty PDF
+          else
+            p.text-muted No warranty document has been uploaded yet.
+      // ============ 3) CHOOSE SHINGLE CONTAINER ============
+      // ============ SHINGLE SELECTION ============
+      - const proposal = user.shingleProposal
+      
+      // ── Only show when an admin has truly proposed (has name + ≥1 image) ──
+      if proposal && proposal.name && proposal.imageUrls && proposal.imageUrls.length > 0 && proposal.status === 'pending'
+        .portal-action-card
+          h3 Review Proposed Shingle
+          p.subtext Please review and confirm the option below.
+          .row.mb-3
+            each url in proposal.imageUrls
+              .col-6.col-md-4.mb-2
+                img.shingle-image-choice.img-fluid(src=url alt=proposal.name)
+          h4.proposal-name #{proposal.name} ?
+          .shingle-confirm-buttons
+            form(action="/portal/shingle-response" method="POST" class="d-inline me-2")
+              input(type="hidden" name="answer" value="yes")
+              button.yes.btn.btn-success(type="submit") Yes
+            form(action="/portal/shingle-response" method="POST" class="d-inline")
+              input(type="hidden" name="answer" value="no")
+              button.no.btn.btn-danger(type="submit") No
+      
+      else if proposal && proposal.name && proposal.imageUrls && proposal.imageUrls.length > 0 && proposal.status === 'accepted'
+        .portal-action-card
+          h3 Shingle Selected
+          .row.mb-2
+            each url in proposal.imageUrls
+              .col-6.col-md-4.mb-2
+                img.shingle-image-choice.img-fluid(src=url alt=proposal.name)
+          p.text-success
+            i.fas.fa-check-circle.me-1
+            | You accepted “#{proposal.name}”.
+      
+      else if proposal && proposal.name && proposal.imageUrls && proposal.imageUrls.length > 0 && proposal.status === 'declined'
+        .portal-action-card
+          h3 Shingle Declined
+          p.text-muted
+            | We’ll be in touch with another option soon.
+      
+      // No fallback: if there’s no valid proposal, nothing renders here
+      
+
       // ---------- PACKAGE INFO CARD -------------
       if packageName
         .portal-action-card.package-confirmation
@@ -101,6 +155,11 @@ block content
           h2 No Package Selected
           p 
             | You haven’t chosen a package yet.
+
+
+      
+
+      
 
       // ============ 1) UPLOAD CLAIM CONTAINER ============
       .portal-action-card(data-upload-claim) 
@@ -146,25 +205,6 @@ block content
             i.fas.fa-upload
             | Upload More
 
-      // ============ 3) CHOOSE SHINGLE CONTAINER ============
-      .portal-action-card
-        h3 Choose a Shingle
-        p.subtext
-          | We offer a variety of shingle options. Please choose one below.
-
-        if user.shingleChoice.name
-          .action-state-success
-            p 
-              | You selected: "#{user.shingleChoice.name}"
-          .container
-            img.shingle-image(src=user.shingleChoice.imageUrl alt=user.shingleChoice.name)
-            button.btn.btn-secondary(type="button" id="changeShingleBtn")
-              i.fas.fa-edit
-              | Change Shingle
-        else
-          button.btn.btn-primary#chooseShingleBtn
-            i.fas.fa-cubes
-            | Select Shingle
 
   // Bootstrap Delete Confirmation Modal
   .modal.fade#confirmDeleteModal(tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true")

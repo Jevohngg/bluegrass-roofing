@@ -44,6 +44,23 @@ const UserSchema = new mongoose.Schema({
     imageUrl: { type: String, default: '' }
   },
 
+
+  // ⇢  NEW  — Admin‑uploaded warranty PDF
+  warranty: {
+    docUrl:    { type: String, default: '' },
+    uploadedAt:{ type: Date      }
+  },
+
+  // ⇢  NEW  — Admin‑proposed shingle(s) awaiting client response
+  shingleProposal: {
+    name:        { type: String,  default: '' },
+    imageUrls:   [{ type: String, default: [] }],      // 1‑N images
+    status:      { type: String,
+                   enum: ['pending','accepted','declined'],
+                   default: 'pending' },
+    respondedAt: { type: Date }
+  },
+
   resetPasswordCode: { type: String, default: '' },
   resetPasswordExpires: { type: Date },
 

@@ -19,6 +19,9 @@ block content
               .customer-card(data-id=user._id)
                 .customer-header
                   h3.customer-name #{user.firstName} #{user.lastName}
+                  a.view-details-button.btn.btn-sm.btn-outline-primary.ms-2(href=`/admin/customer/${user._id}` title="View details")
+                    i.fas.fa-eye 
+                    p View Details
                   p.customer-email #{user.email}
 
                 // Package
@@ -104,6 +107,9 @@ block content
               .customer-card(data-id=user._id)
                 .customer-header
                   h3.customer-name #{user.firstName} #{user.lastName}
+                  a.view-details-button.btn.btn-sm.btn-outline-primary.ms-2(href=`/admin/customer/${user._id}` title="View details")
+                    i.fas.fa-eye 
+                    p View Details
                   p.customer-email #{user.email}
 
                 // Package

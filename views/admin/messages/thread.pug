@@ -38,7 +38,7 @@ block content
               .thread-meta.ms-2.text-end
                 if unread
                   span.badge.bg-danger.rounded-pill.mb-1 &nbsp;
-                small.text-muted.d-block(data-timestamp=rawTime)
+                small.text-muted.d-block(data-timestamp=timestamp)
         else
           li.list-group-item.text-muted No conversations yet.
       
@@ -77,8 +77,9 @@ block content
               // timestamp beneath, dark-gray
               small.text-secondary.mt-1(
                 class=(msg.sender === 'admin' ? 'text-end' : 'text-start'),
-                data-timestamp=msg.createdAt
-              )= new Date(msg.createdAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})
+                data-timestamp=msg.createdAt.toISOString()
+              ) 
+              
         else
           //–– Empty state for admin ––
           .empty-state-admin.d-flex.flex-column.justify-content-center.align-items-center.h-100.text-muted

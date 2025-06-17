@@ -1,3 +1,5 @@
+// routes/admin.js
+
 const express = require('express');
 const router = express.Router();
 const Lead = require('../models/Lead');
@@ -5,6 +7,14 @@ const DocumentSend = require('../models/DocumentSend');
 const User = require('../models/User');
 const { sendDocumentLinkEmail } = require('../utils/sendEmail'); 
 const contracts = require('../config/contracts');    
+const Thread         = require('../models/Thread');
+const { uploadClaim } = require('../utils/aws'); 
+const {
+  sendClientWarrantyEmail,
+  sendClientShingleEmail,
+
+} = require('../utils/sendEmail');
+
 
 
 // Map docType → full title
@@ -167,6 +177,79 @@ router.post('/customer/:id/status', checkAuth, async (req, res) => {
   }
 });
 
+// --- NEW: GET /admin/customer/:id  — customer detail page ---
+router.get('/customer/:id', checkAuth, async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    /* 1) Pull the user (lean for perf) */
+    const user = await User.findById(userId).lean();
+    if (!user) {
+      return res.status(404).render('admin/notFound', { message: 'Customer not found' });
+    }
+
+    /* 2) Pull all DocumentSend rows tied to the user or e‑mail */
+    const docSends = await DocumentSend.find({
+      $or: [
+        { userId: user._id },
+        { recipientEmail: user.email.toLowerCase() }
+      ]
+    }).lean();
+
+    /* NEW  — pull the customer’s single thread (if any) */
+    const thread = await Thread.findOne({ userId: user._id })
+      .select('messages')   // messages is the only field we need
+      .lean();
+
+    // take the last five, newest‑first
+    const lastMessages = (thread?.messages || [])
+      .slice(-5)
+      .reverse();           // newest first – easier to read
+
+
+    /* 3) Normalise docs → two buckets */
+    const docTypes = ['aob', 'aci', 'loi', 'gsa', 'coc'];
+
+    const signedDocs = [];
+    const pendingDocs = [];
+
+    docTypes.forEach(type => {
+      const docMeta = user.documents?.[type];
+      if (docMeta?.docUrl) {
+        signedDocs.push({ docType: type, url: docMeta.docUrl });
+      }
+    });
+
+    docSends.forEach(ds => {
+      if (ds.status === 'sent' && !signedDocs.some(d => d.docType === ds.docType)) {
+        pendingDocs.push({ docType: ds.docType });
+      }
+    });
+
+  // format the join date, e.g. "Jun 10 2025"
+  const joinedDate = new Date(user.createdAt)
+    .toLocaleDateString('en-US', {
+      month: 'short',
+      day:   'numeric',
+      year:  'numeric'
+    });
+
+  res.render('admin/customerDetails', {
+    pageTitle:   `Customer • ${user.firstName} ${user.lastName}`,
+    user,
+    signedDocs,
+    pendingDocs,
+    joinedDate,
+    lastMessages,
+    threadId: thread?._id
+  });
+  } catch (err) {
+    console.error('Error loading customer detail:', err);
+    res.status(500).send('Server Error');
+  }
+});
+
+
 // GET /admin/send-documents
 router.get('/send-documents', checkAuth, async (req, res) => {
   try {
@@ -302,22 +385,105 @@ router.delete('/send-documents/:id', checkAuth, async (req, res) => {
 
 
 
-// DELETE /admin/customer/:id  — hard-delete a user
+
+
+
+// DELETE /admin/customer/:id  — hard-delete a user + cleanup related data
 router.delete('/customer/:id', checkAuth, async (req, res) => {
   try {
-    const deleted = await User.findByIdAndDelete(req.params.id);
-    if (!deleted) {
+    const userId = req.params.id;
+
+    // 1) Find the user
+    const user = await User.findById(userId);
+    if (!user) {
       return res.status(404).json({ success: false, message: 'User not found.' });
     }
-    res.json({ success: true });
+
+    // 2) Delete their one Thread (if any)
+    await Thread.deleteOne({ userId: user._id });
+
+    // 3) Delete all DocumentSend entries tied to them
+    await DocumentSend.deleteMany({ userId: user._id });
+
+    // 4) Finally, delete the user record
+    await User.findByIdAndDelete(userId);
+
+    return res.json({ success: true });
   } catch (err) {
-    console.error('Error deleting user:', err);
-    res.status(500).json({ success: false, message: 'Server error.' });
+    console.error('Error deleting user and related data:', err);
+    return res.status(500).json({ success: false, message: 'Server error.' });
   }
 });
 
 
 
+// ————————————————————————————————————————————————
+// POST /admin/customer/:id/upload-warranty   (single PDF)
+// ————————————————————————————————————————————————
+router.post('/customer/:id/upload-warranty',
+  checkAuth,
+  uploadClaim.single('warrantyFile'),
+  async (req,res) => {
+    try {
+      if (!req.file || !req.file.location) {
+        return res.redirect(`/admin/customer/${req.params.id}?warrantyError=1`);
+      }
+      const user = await User.findById(req.params.id);
+      if (!user) return res.redirect(`/admin/customer/${req.params.id}?warrantyError=1`);
+
+      user.warranty = {
+        docUrl:    req.file.location,
+        uploadedAt:new Date()
+      };
+      await user.save();
+
+      // email client (attachment comes from S3 – download, then forward)
+      // simpler: just attach the buffer already in memory
+      await sendClientWarrantyEmail(user, req.file.path ?? req.file.location);
+
+      return res.redirect(`/admin/customer/${req.params.id}?warrantySuccess=1`);
+    } catch(err){
+      console.error(err);
+      return res.redirect(`/admin/customer/${req.params.id}?warrantyError=1`);
+     
+    }
+  });
+
+
+
+  // ————————————————————————————————————————————————
+// POST /admin/customer/:id/propose-shingle
+// fields: shingleName, images[] (up to 5)
+// ————————————————————————————————————————————————
+router.post('/customer/:id/propose-shingle',
+  checkAuth,
+  uploadClaim.array('images',5),
+  async (req,res)=>{
+    try{
+      const { shingleName } = req.body;
+      if (!shingleName || !req.files.length) {
+        return res.redirect(`/admin/customer/${req.params.id}?shingleError=1`);
+      }
+      const user = await User.findById(req.params.id);
+      if (!user) return res.redirect(`/admin/customer/${req.params.id}?shingleError=1`);
+
+      user.shingleProposal = {
+        name:       shingleName,
+        imageUrls:  req.files.map(f=>f.location),
+        status:     'pending'
+      };
+      await user.save();
+
+      // email client with CTA -> portal
+      const portalLink = `${process.env.BASE_URL}/portal`;
+      await sendClientShingleEmail(user, portalLink);
+
+      return res.redirect(`/admin/customer/${req.params.id}?shingleSuccess=1`);
+    }catch(err){
+      console.error(err);
+      return res.redirect(`/admin/customer/${req.params.id}?shingleError=1`);
+    }
+  });
 
 
 module.exports = router;

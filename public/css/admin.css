@@ -1009,3 +1009,273 @@ ul {
     border-radius: .25rem;
     transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
+
+
+
+
+
+/* ---------- Customer detail page ---------- */
+
+.view-details-button{
+  display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      align-content: center !important;
+      gap: 4px;
+      max-width: 126px;
+      font-size: 14px;
+      border: none !important;
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      text-decoration: none !important;
+      padding: 8px !important;
+
+}
+
+@media (max-width: 400px) {
+  .view-details-button{
+    font-size: 12px !important;
+  }
+
+
+
+}
+
+.view-details-button:hover{
+  background-color: #e282642e !important;
+  color: var(--color-accent) !important;
+}
+
+.view-details-button p{
+  padding: 0px !important;
+  margin: 0px !important;
+}
+.back-button{
+  color: var(--color-text) !important;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+
+}
+
+.back-button:hover{
+  background-color: #f2f2f2 !important;
+  color: #444 !important;
+}
+.doc-tile-title
+ {
+    margin-top: .5rem;
+    font-size: 14px;
+    color: grey;
+    font-weight: 600;
+}
+
+.customer-card{
+  position: relative;
+}
+.customer-detail-header {
+  display:flex; align-items:center; gap:20px; margin-bottom:2rem;
+  margin-top: 24px;
+}
+.customer-detail-avatar {
+  width:96px; height:96px; border-radius:50%; object-fit:cover;
+}
+.doc-grid {
+  display:flex; flex-wrap:wrap;
+}
+
+.details-page-section-header{
+  font-size: 22px;
+  margin: 0px !important;
+
+}
+.doc-tile {
+  width: 120px;
+  text-align: center;
+  position: relative;
+  display: flex
+;
+  flex-direction: column;
+  align-items: center;
+}
+.doc-tile img {
+  width:100%;
+}
+
+.image-container{
+  width:100%; 
+  border-radius:6px;
+  padding: 24px;
+  transition: all 0.2s ease-in-out;
+  width: 100px;
+  height: 100px;
+}
+
+.image-container:hover{
+  background-color: #f2f2f2cf !important;
+}
+
+.doc-tile .tile-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex
+;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 1.75rem;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(4px);
+  height: 80%;
+}
+
+.joined-date{
+  display: flex
+  ;
+      align-content: flex-start;
+      font-size: 12px;
+
+}
+.sections-section{
+  display: flex
+  ;
+      flex-direction: column;
+      gap: 40px;
+
+}
+
+.messages-section{
+  width: 100%;
+  display: flex
+;
+  flex-direction: column;
+  gap: 8px;
+  align-content: flex-start;
+  align-items: flex-start;
+
+}
+
+.more-messages-button{
+  display: flex !important;
+      gap: 8px !important;
+      align-content: center !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 8px !important;
+
+}
+
+.messages-section .list-group{
+  width: 100%;
+}
+
+.section{
+  display: flex
+  ;
+      flex-direction: column;
+      gap: 8px;
+
+}
+
+.tile-overlay .fas{
+  color: white !important;
+  /* Add drop shadow */
+  text-shadow: 0 2px 6px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.18);
+}
+
+.doc-tile-title { margin-top:.5rem; font-size:.9rem; }
+@media (max-width:576px){ .doc-tile{width:110px;} }
+
+
+/* ----- Row tint for recent‑messages preview ----- */
+.admin-row  { background:#eef6ff; }   /* pale blue   */
+.client-row { background:#fff7f2; }   /* pale orange */
+.admin-row:hover,
+.client-row:hover { background:#e1e7ec; } /* subtle hover */
+
+
+.message-text-recent{
+  gap: 8px;
+
+}
+
+.message-text-recent .badge{
+  color: white;
+}
+
+.successful{
+  display: flex
+  ;
+      align-items: center;
+      align-content: center;
+      gap: 8px;
+font-size: 14px;
+}
+
+.shingle-image{
+  max-width: 200px !important;
+  border-radius: 4px;
+
+}
+
+.download-warranty-button{
+  display: flex !important;
+  align-items: center !important;
+  align-content: center !important;
+  gap: 8px !important;
+  font-size: 14px !important;
+  text-align: center;
+  text-align: center;
+  justify-content: center;
+  max-width: 200px;
+
+}
+
+.section-button{
+  display: flex !important;
+  align-items: center !important;
+  align-content: center !important;
+  gap: 8px !important;
+  font-size: 14px !important;
+  text-align: center;
+  text-align: center;
+  justify-content: center;
+  max-width: 250px;
+
+}
+
+#warrantyUploadForm{
+  display: flex
+  ;
+      flex-direction: column;
+      gap: 16px;
+
+}
+
+.shingle-form{
+  display: flex
+  ;
+      flex-direction: column;
+      gap: 16px;
+
+}
+
+.shingle-upload-input{
+  min-height: 46px !important;
+}
+
+.declined-text{
+  display: flex
+  ;
+      align-items: center;
+      align-content: center;
+      gap: 8px;
+font-size: 14px;
+}
+
+.messages-section section{
+  margin-bottom: 200px;
+}

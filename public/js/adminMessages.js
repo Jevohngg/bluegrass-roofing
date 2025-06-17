@@ -18,13 +18,23 @@ document.addEventListener('DOMContentLoaded', () => {
       messagesList.scrollTop = messagesList.scrollHeight;
     }
   
-    // ── FORMAT ANY <small data-timestamp> ELEMENT ──
-    document.querySelectorAll('small[data-timestamp]').forEach(el => {
-      const iso = el.getAttribute('data-timestamp');
-      if (!iso) return;
-      const d = new Date(iso);
-      el.textContent = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  // ── FORMAT ANY <small data-timestamp> ELEMENT ──
+  function fmtDateTime(iso) {
+    return new Date(iso).toLocaleString('en-US', {
+      month : 'short',
+      day   : 'numeric',
+      year  : 'numeric',
+      hour  : '2-digit',
+      minute: '2-digit'
     });
+  }
+
+  document.querySelectorAll('small[data-timestamp]').forEach(el => {
+    const iso = el.getAttribute('data-timestamp');
+    if (!iso) return;
+    el.textContent = fmtDateTime(iso);
+  });
+
   
     // — “New” button → go to compose mode
     document.getElementById('newThreadBtn')?.addEventListener('click', () => {
@@ -119,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tsEl = wrapper.querySelector('small[data-timestamp]');
         if (tsEl) {
           const d = new Date(tsEl.getAttribute('data-timestamp'));
-          tsEl.textContent = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          tsEl.textContent = fmtDateTime(tsEl.getAttribute('data-timestamp'));
         }
       }
     });

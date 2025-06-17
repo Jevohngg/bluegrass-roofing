@@ -1,3 +1,5 @@
+// utils/sendEmail.js
+
 const sgMail = require('@sendgrid/mail');
 const fs = require('fs');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -162,7 +164,8 @@ async function sendTeamDocSignedEmail(user, docType, pdfPath) {
   const firstName = user.firstName || 'Customer'; // Fallback
   const lastName = user.lastName || ''; // Fallback
   const msg = {
-    to: process.env.INTERNAL_TEAM_EMAIL,
+    // to: process.env.INTERNAL_TEAM_EMAIL,
+    to: 'gentryofficialmusic@gmail.com',
     from: {
       email: 'noreply@bluegrass-roofing.com',
       name:  'BlueGrass Roofing'
@@ -252,6 +255,63 @@ async function sendNewMessageEmail({ recipientEmail, fromAdmin, messageText, lin
 }
 
 
+// —————————————  WARRANTY  ————————————
+
+
+async function sendClientWarrantyEmail(user, warrantyUrl) {
+  const templateId = process.env.SENDGRID_CLIENT_WARRANTY_TEMPLATE_ID;
+  if (!templateId) throw new Error('SENDGRID_CLIENT_WARRANTY_TEMPLATE_ID not set');
+
+  return sgMail.send({
+    to: user.email,
+    from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
+    templateId,
+    dynamic_template_data: {
+      firstName: user.firstName || 'Customer',
+      warrantyLink: warrantyUrl,
+      year:        new Date().getFullYear()
+    }
+  });
+}
+
+
+// —————————————  SHINGLE → client  ————————————
+async function sendClientShingleEmail(user, portalLink) {
+  const templateId = process.env.SENDGRID_CLIENT_SHINGLE_TEMPLATE_ID;
+  if (!templateId) throw new Error('SENDGRID_CLIENT_SHINGLE_TEMPLATE_ID not set');
+
+  return sgMail.send({
+    to:   user.email,
+    from: { email:'noreply@bluegrass-roofing.com', name:'BlueGrass Roofing' },
+    templateId,
+    dynamic_template_data: {
+      firstName: user.firstName || 'Customer',
+      shingleName: user.shingleProposal.name,
+      link: portalLink
+    }
+  });
+}
+
+// —————————————  SHINGLE → admin  ————————————
+async function notifyAdminShingleResponse(user, accepted) {
+  const templateId = process.env.SENDGRID_ADMIN_SHINGLE_TEMPLATE_ID;
+  if (!templateId) { console.error('Missing SENDGRID_ADMIN_SHINGLE_TEMPLATE_ID'); return; }
+
+  return sgMail.send({
+    // to:   process.env.INTERNAL_TEAM_EMAIL,
+    to: 'gentryofficialmusic@gmail.com',
+    from: { email:'noreply@bluegrass-roofing.com', name:'BlueGrass Roofing' },
+    templateId,
+    dynamic_template_data: {
+      fullName:     `${user.firstName} ${user.lastName}`.trim(),
+      shingleName:  user.shingleProposal.name,
+      status:       accepted ? 'accepted' : 'declined'
+    }
+  });
+}
+
+
+
 
 module.exports = {
   sendUserConfirmationEmail,
@@ -261,5 +321,8 @@ module.exports = {
   sendUserDocSignedEmail,
   sendTeamDocSignedEmail,
   sendDocumentLinkEmail,
-  sendNewMessageEmail
+  sendNewMessageEmail,
+  sendClientWarrantyEmail,
+  sendClientShingleEmail,
+  notifyAdminShingleResponse
 };

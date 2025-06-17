@@ -25,12 +25,12 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-  if (successParam) {
-    showAlert(successParam, 'success', 5000);
-  }
-  if (errorParam) {
-    showAlert(errorParam, 'error', 5000);
-  }
+  // if (successParam) {
+  //   showAlert(successParam, 'success', 5000);
+  // }
+  // if (errorParam) {
+  //   showAlert(errorParam, 'error', 5000);
+  // }
 
   // 2) Shingle modal logic (Bootstrap-based)
   const chooseBtn = document.getElementById("chooseShingleBtn");
@@ -530,5 +530,39 @@ function initClaimUpload() {
   const initialUploadedUrls = Array.from(document.querySelectorAll('.uploaded-file-preview')).map(preview => preview.dataset.url);
   if (initialUploadedUrls.length) {
     updateUploadedState(initialUploadedUrls);
+  }
+
+
+  const params = new URLSearchParams(window.location.search);
+
+  // success cases
+  if (params.has('success')) {
+    const s = params.get('success');
+    let msg, type = 'success';
+
+    if (s === 'shingleAccepted') {
+      msg = '🎉 You’ve successfully accepted the shingle proposal!';
+    } else if (s === 'shingleDeclined') {
+      msg = '👍 You’ve declined the shingle proposal. We’ll be in touch soon.';
+    } else {
+      msg = s;            // fallback if you ever add new codes
+      type = 'info';
+    }
+
+    showAlert(msg, type);
+  }
+
+  // error cases
+  if (params.has('error')) {
+    const e = params.get('error');
+    let msg, type = 'error';
+
+    if (e === 'shingleResponse') {
+      msg = '⚠️ Sorry, we couldn’t record your response. Please try again.';
+    } else {
+      msg = e;            // fallback for other error codes
+    }
+
+    showAlert(msg, type);
   }
 }

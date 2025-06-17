@@ -8,7 +8,7 @@ const User = require('../models/User');
 const fs = require('fs');
 const DocumentSend = require('../models/DocumentSend'); // <-- NEW model for admin-sent docs
 const Thread  = require('../models/Thread');
-const { sendNewMessageEmail } = require('../utils/sendEmail');
+
 
 const cheerio = require('cheerio');
 
@@ -28,10 +28,17 @@ const {
   generateHtmlPdf
 } = require('../utils/docGenerator');
 
-const { 
-  sendUserDocSignedEmail, 
-  sendTeamDocSignedEmail 
+
+// routes/portal.js
+const {
+  sendNewMessageEmail,
+  sendUserDocSignedEmail,
+  sendTeamDocSignedEmail,
+  sendClientWarrantyEmail,     // if you use it here
+  sendClientShingleEmail,      // if you use it here
+  notifyAdminShingleResponse   // ← add this
 } = require('../utils/sendEmail');
+
 
 async function emailSignedContract(user, docType, pdfPath) {
   try {
@@ -149,6 +156,7 @@ I, **[Homeowner’s Full Name]**, hereby express my intent to proceed with roofi
 // -------------------------------------------------
 router.get('/portal', requireLogin, async (req, res) => {
   try {
+
     const user = await User.findById(req.session.user.id);
     if (!user) return res.redirect('/login');
 
@@ -1839,6 +1847,50 @@ router.post('/portal/messages/:threadId/send', requireLogin, async (req, res) =>
     res.status(500).send('Error sending');
   }
 });
+
+
+// ————————————————————————————————————————————————
+// POST /portal/shingle-response   { answer: 'yes'|'no' }
+// ————————————————————————————————————————————————
+router.post('/portal/shingle-response', requireLogin, async (req,res)=>{
+  try{
+    const { answer } = req.body;
+    if (!['yes','no'].includes(answer)) return res.redirect('/portal');
+
+    const user = await User.findById(req.session.user.id);
+    if (!user || !user.shingleProposal) return res.redirect('/portal');
+
+    user.shingleProposal.status      = answer==='yes' ? 'accepted' : 'declined';
+    user.shingleProposal.respondedAt = new Date();
+    await user.save();
+
+    // notify admin, but don’t let a mail error turn into a portal error
+    try {
+      await notifyAdminShingleResponse(user, answer === 'yes');
+    } catch (mailErr) {
+      console.error('Failed to notify admin of shingle response:', mailErr);
+      // swallow it – we still want to let the user see SUCCESS
+    }
+
+    // if accepted, copy into permanent choice
+    if (answer==='yes') {
+      user.shingleChoice = {
+        name:     user.shingleProposal.name,
+        imageUrl: user.shingleProposal.imageUrls[0] || ''
+      };
+      await user.save();
+    }
+
+    res.redirect('/portal?success=shingle'+(answer==='yes'?'Accepted':'Declined'));
+  }catch(err){
+    console.error(err);
+    res.redirect('/portal?error=shingleResponse');
+  }
+});
+
+
+
+
 
 
 module.exports = router;

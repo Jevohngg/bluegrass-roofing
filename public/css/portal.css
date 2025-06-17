@@ -1096,3 +1096,56 @@ padding: 4px;
 .messages-list{
   background-color: white;
 }
+
+
+.shingle-image-choice{
+  max-width: 200px;
+    border-radius: 4px;
+
+}
+
+.text-success{
+  display: flex
+  ;
+      align-items: center;
+      align-content: center;
+      gap: 8px;
+
+
+}
+
+
+.warranty-button{
+  max-width: 270px;
+
+}
+
+.shingle-confirm-buttons{
+  display: flex;
+  gap: 8px;
+
+}
+
+.shingle-confirm-buttons button{
+  width: 100px;
+  transition: all .3 ease-in-out !important;
+
+
+}
+
+.shingle-confirm-buttons button:hover{
+  transform: scale(1.08);
+
+}
+
+.yes{
+  background-color: #28a745 !important;
+}
+
+.no{
+  background-color: #a94442 !important;
+}
+
+.proposal-name{
+  margin-bottom: 24px !important;
+}

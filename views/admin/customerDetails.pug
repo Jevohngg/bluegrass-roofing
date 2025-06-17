@@ -1,0 +1,151 @@
+extends ../layouts/adminLayout
+
+block content
+  a.back-button(href="/admin/customers").text-decoration-none &larr; Back to list
+  .customer-detail-header
+    img.customer-detail-avatar(src="/images/generic-avatar.png" alt="avatar")
+    .info
+      h2.mb-0 #{user.firstName} #{user.lastName}
+      p.text-muted.mb-0 #{user.email}
+      p.text-muted.mb-1.joined-date Joined #{joinedDate}
+
+  .sections-section
+    .contracts-section.section
+      h3.mt-4.mb-3.details-page-section-header Contracts
+      if !signedDocs.length && !pendingDocs.length
+        p.text-muted No sent or signed documents. Go to the 'send documents' tab to send documents to the customer to sign.
+      else
+        .doc-grid
+          //‑‑ Signed first
+          each doc in signedDocs
+            a.doc-tile(href=doc.url target="_blank")
+              .image-container
+                img(src="/images/pdf-image.png" alt=`${doc.docType.toUpperCase()} PDF`)
+              span.doc-tile-title #{doc.docType.toUpperCase()}
+          //‑‑ Pending
+          each doc in pendingDocs
+            .doc-tile
+              .image-container
+                img(src="/images/pdf-image.png" alt=`${doc.docType.toUpperCase()} awaiting signature`)
+              .tile-overlay
+                i.fas.fa-clock
+              span.doc-tile-title #{doc.docType.toUpperCase()}
+
+
+    //–––––––––  WARRANTY  –––––––––
+    .warranty-section.section
+      h3.mt-4.mb-3.details-page-section-header Warranty Document
+      if !user.warranty.docUrl
+        form#warrantyUploadForm(method="POST" action=`/admin/customer/${user._id}/upload-warranty`
+             enctype="multipart/form-data")
+          input(type="file" name="warrantyFile" accept=".pdf" required)
+          button.section-button.btn.btn-primary(type="submit")
+            i.fas.fa-upload.me-1
+            | Upload & Send to Client
+      else
+        p.text-success.successful
+          i.fas.fa-check-circle.me-1
+          | Sent on #{new Date(user.warranty.uploadedAt).toLocaleString()}
+        a.download-warranty-button.btn.btn-outline-secondary(href=user.warranty.docUrl target="_blank")
+          i.fas.fa-file-download.me-1
+          | Download Warranty
+
+    //–––––––––  SHINGLE PROPOSAL  –––––––––
+    //–––––––––  SHINGLE PROPOSAL  –––––––––
+    .shingle-proposal-section.section
+      h3.mt-4.mb-3.details-page-section-header Shingle Proposal
+
+      //- locals
+      - var pr  = user.shingleProposal
+      - var has = pr && pr.name && pr.imageUrls && pr.imageUrls.length > 0
+
+      //- ── Pending ──
+      if has && pr.status === 'pending'
+        p.text-info Awaiting client response…
+        .row
+          each url in pr.imageUrls
+            .col-4.mb-2
+              img.shingle-image.img-fluid(src=url)
+
+      //- ── Accepted ──
+      else if has && pr.status === 'accepted'
+        p.text-success.successful
+          i.fas.fa-check-circle.me-1
+          | Client accepted this proposal on #{new Date(pr.respondedAt).toLocaleString()}
+        .row
+          each url in pr.imageUrls
+            .col-4.mb-2
+              img.shingle-image.img-fluid(src=url)
+
+      //- ── Declined ──
+      else if has && pr.status === 'declined'
+        p.text-danger
+          i.fas.fa-times-circle.me-1
+          | Client declined this proposal on #{new Date(pr.respondedAt).toLocaleString()}
+        //- immediately render the “send another” form too:
+        form.shingle-form(method="POST" action=`/admin/customer/${user._id}/propose-shingle`
+             enctype="multipart/form-data")
+          .mb-2
+            label.form-label(for="shingleName") Shingle Name
+            input#shingleName.form-control(type="text" name="shingleName" required)
+          .mb-2
+            label.form-label Upload Image(s)
+            input.shingle-upload-input.form-control(type="file" name="images" accept="image/*" multiple required)
+          button.section-button.btn.btn-primary(type="submit")
+            i.fas.fa-paper-plane.me-1
+            | Send Another Proposal
+
+      //- ── No proposal yet ──
+      else
+        form.shingle-form(method="POST" action=`/admin/customer/${user._id}/propose-shingle`
+             enctype="multipart/form-data")
+          .mb-2
+            label.form-label(for="shingleName") Shingle Name
+            input#shingleName.form-control(type="text" name="shingleName" required)
+          .mb-2
+            label.form-label Upload Image(s)
+            input.shingle-upload-input.form-control(type="file" name="images" accept="image/*" multiple required)
+          button.section-button.btn.btn-primary(type="submit")
+            i.fas.fa-paper-plane.me-1
+            | Send Proposal to Client
+
+    
+    
+        
+  
+    .messages-section.section
+      //––– MESSAGES PREVIEW –––––––––––––––––––––––––––––––––
+      h3.mt-4.mb-3.details-page-section-header Recent Messages
+      if !lastMessages.length
+        p.text-muted This customer hasn’t sent any messages yet.
+      else
+        //‑‑ list (newest first)
+        ul.list-group.mb-3
+          each m in lastMessages
+            // flag determines styling & text
+            - const isAdmin  = m.sender === 'admin';
+            - const badgeTxt = isAdmin ? 'You' : 'Client';
+            - const badgeCls = isAdmin ? 'bg-primary' : 'bg-secondary';
+        
+            li.list-group-item.d-flex.justify-content-between.align-items-start(
+              class=isAdmin ? 'admin-row' : 'client-row'
+            )
+              //‑‑ left‑hand badge + snippet
+              .d-flex.message-text-recent.align-items-center.flex-grow-1
+                span.badge.me-2(class=badgeCls)= badgeTxt
+                span.text-truncate= m.text
+              //‑‑ timestamp
+              small.text-muted.ms-2(
+                data-timestamp=m.createdAt.toISOString(),
+                title=new Date(m.createdAt).toLocaleString()
+              )
+        
+              
+        if threadId
+          a.more-messages-button.btn.btn-sm.btn-outline-primary(
+            href=`/admin/messages/${threadId}`,
+            target="_blank"
+          )
+            i.fas.fa-comments.me-1
+            | Open full conversation
+    
