@@ -1276,6 +1276,6 @@ font-size: 14px;
 font-size: 14px;
 }
 
-.messages-section section{
-  margin-bottom: 200px;
+.messages-section{
+  margin-bottom: 200px !important;
 }

@@ -164,8 +164,8 @@ async function sendTeamDocSignedEmail(user, docType, pdfPath) {
   const firstName = user.firstName || 'Customer'; // Fallback
   const lastName = user.lastName || ''; // Fallback
   const msg = {
-    // to: process.env.INTERNAL_TEAM_EMAIL,
-    to: 'gentryofficialmusic@gmail.com',
+    to: process.env.INTERNAL_TEAM_EMAIL,
+    // to: 'gentryofficialmusic@gmail.com',
     from: {
       email: 'noreply@bluegrass-roofing.com',
       name:  'BlueGrass Roofing'
@@ -298,8 +298,8 @@ async function notifyAdminShingleResponse(user, accepted) {
   if (!templateId) { console.error('Missing SENDGRID_ADMIN_SHINGLE_TEMPLATE_ID'); return; }
 
   return sgMail.send({
-    // to:   process.env.INTERNAL_TEAM_EMAIL,
-    to: 'gentryofficialmusic@gmail.com',
+    to:   process.env.INTERNAL_TEAM_EMAIL,
+    // to: 'gentryofficialmusic@gmail.com',
     from: { email:'noreply@bluegrass-roofing.com', name:'BlueGrass Roofing' },
     templateId,
     dynamic_template_data: {
