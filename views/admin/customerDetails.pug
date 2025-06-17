@@ -32,23 +32,7 @@ block content
               span.doc-tile-title #{doc.docType.toUpperCase()}
 
 
-    //–––––––––  WARRANTY  –––––––––
-    .warranty-section.section
-      h3.mt-4.mb-3.details-page-section-header Warranty Document
-      if !user.warranty.docUrl
-        form#warrantyUploadForm(method="POST" action=`/admin/customer/${user._id}/upload-warranty`
-             enctype="multipart/form-data")
-          input(type="file" name="warrantyFile" accept=".pdf" required)
-          button.section-button.btn.btn-primary(type="submit")
-            i.fas.fa-upload.me-1
-            | Upload & Send to Client
-      else
-        p.text-success.successful
-          i.fas.fa-check-circle.me-1
-          | Sent on #{new Date(user.warranty.uploadedAt).toLocaleString()}
-        a.download-warranty-button.btn.btn-outline-secondary(href=user.warranty.docUrl target="_blank")
-          i.fas.fa-file-download.me-1
-          | Download Warranty
+
 
     //–––––––––  SHINGLE PROPOSAL  –––––––––
     //–––––––––  SHINGLE PROPOSAL  –––––––––
@@ -110,7 +94,23 @@ block content
             | Send Proposal to Client
 
     
-    
+    //–––––––––  WARRANTY  –––––––––
+    .warranty-section.section
+      h3.mt-4.mb-3.details-page-section-header Warranty Document
+      if !user.warranty.docUrl
+        form#warrantyUploadForm(method="POST" action=`/admin/customer/${user._id}/upload-warranty`
+             enctype="multipart/form-data")
+          input(type="file" name="warrantyFile" accept=".pdf" required)
+          button.section-button.btn.btn-primary(type="submit")
+            i.fas.fa-upload.me-1
+            | Upload & Send to Client
+      else
+        p.text-success.successful
+          i.fas.fa-check-circle.me-1
+          | Sent on #{new Date(user.warranty.uploadedAt).toLocaleString()}
+        a.download-warranty-button.btn.btn-outline-secondary(href=user.warranty.docUrl target="_blank")
+          i.fas.fa-file-download.me-1
+          | Download Warranty   
         
   
     .messages-section.section
