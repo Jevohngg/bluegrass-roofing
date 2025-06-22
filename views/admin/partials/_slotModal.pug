@@ -1,0 +1,32 @@
+//- Bootstrap modal
+div.modal.fade#slotModal(tabindex="-1")
+  .modal-dialog
+    .modal-content
+      .modal-header
+        h5.modal-title Slot
+        button.btn-close(type="button" data-bs-dismiss="modal")
+      .modal-body
+        //– Entire modal content is now inside the form
+        form#slotForm
+          .modal-body
+            .form-check.form-switch.mb-2
+              input#repeatWeekly.form-check-input(type="checkbox" checked)
+              label.form-check-label(for="repeatWeekly") Repeat weekly
+            .mb-2
+              label.form-label(for="dayOfWeek") Day of week
+              select#dayOfWeek.form-select
+                each val, idx in ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
+                  option(value=idx) #{val}
+            .mb-2#dateOverrideGroup(style="display:none")
+              label.form-label(for="dateOverride") Specific date
+              input#dateOverride.form-control(type="date")
+            .mb-2
+              label.form-label Start time
+              input#startTime.form-control(type="time" step="900" value="09:00")
+            .mb-2
+              label.form-label End time
+              input#endTime.form-control(type="time" step="900" value="17:00")
+          .modal-footer
+            button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Cancel
+            button#btnDeleteSlot.btn.btn-danger(type="button" style="display:none") Delete
+            button#btnSaveSlot.btn.btn-primary(type="submit") Save

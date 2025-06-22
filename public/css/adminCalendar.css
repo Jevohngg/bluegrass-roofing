@@ -1,0 +1,51 @@
+/* FullCalendar overrides */
+.fc-available {
+    background: rgba(40, 167, 69, 0.2);   /* pastel green */
+  }
+  
+  .fc-inspection     { background-color:#0d6efd; border-color:#0d6efd; } /* blue  */
+  .fc-sample         { background-color:#20c997; border-color:#20c997; } /* teal  */
+  .fc-repair         { background-color:#fd7e14; border-color:#fd7e14; } /* orange*/
+  .fc-installation   { background-color:#dc3545; border-color:#dc3545; } /* red   */
+  
+  /* Past slots */
+  .fc-daypast .fc-event { opacity: .5; pointer-events:none; }
+  
+  /* Sticky toolbar spacing */
+  .calendar-page .toolbar { position:sticky; top:70px; z-index:10; background:#fff; }
+  .fc-button-group button{
+    background-color: #00000012 !important;
+    color: black !important;
+    border: none !important;
+  }
+
+  .fc-button-group button:hover{
+    background-color: #00000021 !important;
+  }
+
+  .toolbar button{
+    padding: 10px !important;
+    gap: 7px!important;
+    display: flex!important;
+    align-items: center!important;
+    justify-content: center!important;
+  }
+
+  .fc-toolbar-chunk{
+    display: flex !important;
+  }
+
+  .fc-toolbar-title{
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    margin-left: auto !important;
+
+  }
+
+  #viewSwitcher{
+    padding: 8px !important;
+    border-radius: 6px !important;
+    min-width: 130px !important;
+    border: 1px solid #cbcbcb !important;
+  }
+

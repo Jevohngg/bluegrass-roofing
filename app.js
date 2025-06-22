@@ -100,6 +100,9 @@ app.use('/admin', adminRoutes);
 const messagingRoutes = require('./routes/messages');
 app.use('/admin/messages', messagingRoutes);
 
+const adminCalendarRoutes = require('./routes/adminCalendar');
+app.use('/admin/calendar', adminCalendarRoutes);
+
 // Create HTTP server and initialize Socket.io
 const server = http.createServer(app);
 const io = socketIO(server, {
@@ -112,6 +115,7 @@ app.set('io', io);
 // Socket.io connection events
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
+  socket.on('joinCalendarRoom', () => socket.join('calendarRoom'));
 
   // Admin can join a dedicated admin room
   socket.on('joinAdminRoom', () => {

@@ -1,0 +1,26 @@
+extends ../layouts/adminLayout
+
+block content
+  .calendar-page.container-fluid
+    h2.mb-3 Calendar
+    .toolbar.d-flex.justify-content-between.align-items-center.mb-2
+      .left-group
+        select#viewSwitcher.form-select.w-auto
+          option(value="timeGridWeek") Week
+          option(value="dayGridMonth") Month
+      .right-group
+        button#btnNewSlot.btn.btn-primary
+          i.fas.fa-clock.me-1
+          | Add Availability
+    #calendar(style="min-height:70vh")
+    include ./partials/_slotModal
+append scripts
+  // Bootstrap bundle (includes Popper)
+  script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js")
+  // FullCalendar core
+  script(src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js")
+  // Your calendar logic (calls io())
+  script(src="/js/adminCalendar.js")
+block styles
+  link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.min.css")
+  link(rel="stylesheet", href="/css/adminCalendar.css")

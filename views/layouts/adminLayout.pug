@@ -68,6 +68,10 @@ html(lang="en")
             a(href="/admin/messages", class=(activeTab=='messages' ? 'active' : ''))
               i.fa.fa-comments
               |  Messages
+          li
+            a(href="/admin/calendar" class=(activeTab=='calendar' ? 'active' : ''))
+              i.fa.fa-calendar
+              |  Calendar
         // Logout button for mobile only (hidden on desktop via CSS)
         a.btn-logout-mobile(href="/admin/logout") Logout
       // Main Content Area
@@ -83,4 +87,5 @@ html(lang="en")
       script(src="/js/admin.js")
       script(src="/js/adminCustomers.js")
       script(src="/js/adminMessages.js")
+    block styles
 
