@@ -15,6 +15,47 @@ block content
           | This is your personal client portal. Below are actions you can complete now 
           | to speed up the process while you wait for us to handle the rest.
 
+      // ============  NEW  – BOOK APPOINTMENT  ============
+      // ============  NEW  – BOOK APPOINTMENT  ============
+      .portal-action-card.booking-cta
+        h3 Schedule an Inspection or Shingle Selection Appointment
+        p.subtext
+          | Pick a convenient date and time for us to come out to your home – most visits take less than an hour.
+
+        //—— show current booking (if any) ——————————
+        // —— show current booking (if any) ——————————
+        if nextBookingDate
+          //‑ use nextBookingLabel instead of new Date(…).toLocaleString(…)
+          .action-state-success
+            p
+              i.fas.fa-check-circle.me-1
+              | You’re booked for 
+              strong #{nextBookingLabel}.
+        
+
+
+          //—— ACTION BUTTONS ——————————————————
+          .d-flex.flex-wrap.mt-2.booking-actions
+            // Cancel (opens confirm modal)
+            button.btn.btn-danger.me-2#cancelBookingBtn(
+              type="button",
+              data-booking-id=nextBookingId
+            )
+              i.fas.fa-ban.me-1
+              | Cancel
+          
+            // Reschedule (launches wizard with ?reschedule=ID)
+            a.btn.btn-secondary(
+              href=`/portal/booking?reschedule=${nextBookingId}`
+            )
+              i.fas.fa-calendar-alt.me-1
+              | Reschedule
+        else
+          a.btn.btn-primary.mt-2.booking-button(href="/portal/booking")
+            i.fas.fa-calendar-plus.me-1
+            p Book Now
+          
+
       // ============ 2) SIGN CONTRACTS CONTAINER ============
       .portal-action-card
         h3 Sign Documents
@@ -219,6 +260,19 @@ block content
           button(type="button" class="btn btn-secondary" data-dismiss="modal") No
           button(type="button" class="btn btn-primary" id="confirmDeleteYes") Yes
 
+  // ====== BOOKING CANCEL CONFIRM MODAL ==================
+  .modal.fade#cancelBookingModal(tabindex="-1", role="dialog", aria-labelledby="cancelBookingLabel", aria-hidden="true")
+    .modal-dialog(role="document")
+      .modal-content
+        .modal-header
+          h5#cancelBookingLabel.modal-title Confirm Cancellation
+          button.close(type="button", data-dismiss="modal") &times;
+        .modal-body
+          p Are you sure you want to cancel this appointment?
+        .modal-footer
+          button.btn.btn-secondary(type="button", data-dismiss="modal") No
+          button#confirmCancelBtn.btn.btn-danger(type="button") Yes, Cancel
+
   // ====== UPDATED SHINGLE MODAL WITH CUSTOM CLOSE ICON ======
   .modal.fade#shingleModal(tabindex="-1" role="dialog" aria-labelledby="shingleModalTitle" aria-hidden="true")
     .modal-dialog.modal-dialog-scrollable(role="document")
@@ -248,6 +302,47 @@ block pageScripts
   script(src="/js/alert.js")
   script(src="/js/portal.js")
   script(src="/js/portalMessages.js")
+
+  // Inline JS for cancel button (now wrapped in DOMContentLoaded)
+  // Inline JS for cancel button
+  script.
+    document.addEventListener('DOMContentLoaded', function () {
+      const cancelBtn  = document.getElementById('cancelBookingBtn');
+      const confirmBtn = document.getElementById('confirmCancelBtn');
+      if (!cancelBtn || !confirmBtn) return;
+  
+      const bookingId = cancelBtn.dataset.bookingId;           // ← populated by Pug
+  
+      if (!bookingId) {
+        // Surface the problem immediately instead of a silent POST
+        cancelBtn.addEventListener('click', () =>
+          alert('Sorry — we could not locate your booking ID. Please refresh.')
+        );
+        return;
+      }
+  
+      cancelBtn.addEventListener('click', () => {
+        $('#cancelBookingModal').modal('show');
+      });
+  
+      confirmBtn.addEventListener('click', () => {
+        fetch('/portal/booking', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:   JSON.stringify({ bookingId })
+        })
+        .then(r => r.json())
+        .then(res => {
+          if (res.ok) {
+            window.location.href = '/portal?success=bookingCanceled';
+          } else {
+            alert(res.msg || 'Unable to cancel booking — please try again.');
+          }
+        })
+        .catch(err => alert(err.message || 'Network error'));
+      });
+    });
+  
 
   // this one does the title swap
   script.

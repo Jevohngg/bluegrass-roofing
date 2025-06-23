@@ -1,0 +1,70 @@
+//- views/portal/booking.pug
+extends ../layouts/portalLayout
+
+block pageStyles
+  link(rel="stylesheet" href="/css/portalBooking.css")
+
+block content
+  .booking-wizard.container.py-4
+
+    //—— STEP 1 – appointment type —————————————
+    .wizard-step#step1
+      h2.text-center.mb-4 What would you like to schedule?
+      .row
+        each card in [{ t:'inspection', i:'fa-binoculars',    h:'Roof Inspection',          d:'We will come out to conduct a roof inspection. ' },{ t:'sample',     i:'fa-puzzle-piece', h:'Shingle Selection',   d:'We will come out to finalize a shingle selection.' }]
+          .col-md-6.mb-3
+            .wizard-card(data-type=card.t)
+              i(class=`fas ${card.i} fa-3x mb-3`)
+              h4= card.h
+              p= card.d
+
+    //—— STEP 2 – day & time ———————————————————
+    .wizard-step.d-none#step2
+      h2.text-center.mb-3 Choose a day & time (Eastern Time Zone)
+      .d-flex.justify-content-between.align-items-center.mb-3
+        button.btn.btn-link#prevWeek &laquo; Prev
+        span#currentWeekLabel.font-weight-bold
+        button.btn.btn-link#nextWeek Next &raquo;
+
+      // list of days (populated by JS)
+      .day-list.d-flex.flex-wrap.mb-3#dayList
+
+      // time buttons for selected day (populated by JS)
+      .slot-times.d-none#slotTimes
+
+    //—— STEP 3 – review / confirm ——————————————
+    .wizard-step.d-none#step3
+      h2.text-center.mb-3 Review & confirm
+      dl.row.summary-stuff
+        dt.col-sm-4 Appointment
+        dd.col-sm-8#summaryType
+        dt.col-sm-4 Date & Time
+        dd.col-sm-8#summaryWhen
+      .form-group
+        label(for="notes") Notes (optional)
+        textarea.form-control#notes(maxlength="120" rows="3")
+
+  //—— FIXED FOOTER NAV (persists across steps) ————
+  footer.wizard-footer.fixed-bottom.border-top.bg-white.py-2
+    .container.d-flex.justify-content-between.align-items-center
+      button.btn.btn-primary#btnBack Back
+      .next-cancel
+        button.btn.btn-danger#btnCancel(type="button") Cancel
+        button.btn.btn-primary.disabled#btnNext Next
+
+append pageScripts
+  // existing scripts …
+  script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+  script(src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js")
+  script(src="https://cdn.jsdelivr.net/npm/bootbox@5/dist/bootbox.min.js")
+  script(src="/socket.io/socket.io.js")
+
+  // NEW – dayjs + plugins
+  script(src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js")
+  script(src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/utc.js")
+  script(src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/timezone.js")
+
+  // wizard logic (now EST‑aware)
+  script(src="/js/portalBookingWizard.js")
+
+

@@ -1,9 +1,27 @@
 // controllers/calendarAdminController.js
-const dayjs          = require('dayjs');
-const Availability   = require('../models/AvailabilitySlot');
-const Booking        = require('../models/Booking');
+// ------------------------------------------------------------
+//  BlueGrass Roofing  •  Admin Calendar (FullCalendar feeds)
+//  All times are stored UTC in MongoDB and displayed as
+//  Eastern Time (America/New_York) inside the admin dashboard.
+// ------------------------------------------------------------
+const dayjs        = require('dayjs');
+const Availability = require('../models/AvailabilitySlot');
+const Booking      = require('../models/Booking');
 
-/* –––– Helpers –––– */
+// —— Time‑zone constant ———————————————————————————
+const LOCAL_TZ = process.env.LOCAL_TZ || 'America/New_York';
+// ── add this mapping
+const TYPE_LABEL = {
+  inspection:   'Roof Inspection',
+  sample:       'Shingle Selection',
+  repair:       'Repair',
+  installation: 'Installation'
+};
+
+
+/* ---------- helpers ---------- */
+
+// Convert FullCalendar GET params (start/end ISO) → native Dates
 function utcRange(req) {
   return {
     start: dayjs(req.query.start).toDate(),
@@ -11,100 +29,113 @@ function utcRange(req) {
   };
 }
 
-/* –––– ROUTE HANDLERS –––– */
+// Map a Booking doc → FullCalendar event object
+function toFcEvent(b) {
+  return {
+    id       : b._id,
+    start    : b.startAt,       // UTC; FC will shift according to timeZone option
+    end      : b.endAt,
+    title: TYPE_LABEL[b.type] || (b.type[0].toUpperCase() + b.type.slice(1)),
 
-// 1) Page render
+    className: `fc-${b.type}`,
+    extendedProps: {
+      status: b.status,
+      tz    : LOCAL_TZ            // for any future client use / debugging
+    }
+  };
+}
+
+/* ---------- ROUTE HANDLERS ---------- */
+
+// 1 ) Render admin calendar page
 exports.renderPage = (req, res) =>
   res.render('admin/calendar', {
     pageTitle: 'BlueGrass Roofing | Calendar',
-    adminTz:   Intl.DateTimeFormat().resolvedOptions().timeZone,
+    adminTz  : LOCAL_TZ,            // Pug injects into window.COMPANY_TZ
     activeTab: 'calendar'
   });
 
-// 2) Return all bookings for FullCalendar “event source”
+// 2 ) Bookings feed (events)
 exports.listEvents = async (req, res) => {
   const { start, end } = utcRange(req);
+
   const bookings = await Booking.find({
     startAt: { $lt: end  },
-    endAt:   { $gt: start }
+    endAt:   { $gt: start },
+    status:  { $ne: 'canceled' }
   }).lean();
 
-  /* Map → FC event */
-  res.json(bookings.map(b => ({
-    id:     b._id,
-    start:  b.startAt,
-    end:    b.endAt,
-    title:  b.type[0].toUpperCase() + b.type.slice(1),
-    className: `fc-${b.type}`,
-    extendedProps: { status: b.status }
-  })));
+  res.json(bookings.map(toFcEvent));
 };
 
-// 3) Weekly availability background events
+// 3 ) Weekly availability (background events)
 exports.listAvailability = async (req, res) => {
   const { start, end } = utcRange(req);
-  const weekStart = dayjs(start).startOf('week').toDate();   // Sunday
-  const slots     = await Availability.find().lean();
+  const weekStart = dayjs.tz(start, LOCAL_TZ)              // <-- Eastern
+                       .startOf('week')
+                       .toDate();
+  const templates = await Availability.find().lean();
 
-  /* Convert templates to concrete dates inside the requested range */
   const events = [];
-  slots.forEach(raw => {
-    const s = new Availability(raw);
-    events.push(s.toBackgroundEvent(weekStart));
+  templates.forEach(raw => {
+    const slot = new Availability(raw);
+    events.push(slot.toBackgroundEvent(weekStart));
   });
   res.json(events);
 };
 
-// 4) Create slot
+// 4 ) Create availability slot
 exports.createAvailability = async (req, res, next) => {
   try {
     const { dayOfWeek, startTime, endTime, repeatWeekly, dateOverride } = req.body;
 
-    // Validation R‑1 / R‑2
+    // Validate HH:MM strings
     const [sh, sm] = startTime.split(':').map(Number);
     const [eh, em] = endTime.split(':').map(Number);
     const startMinutes = sh * 60 + sm;
     const endMinutes   = eh * 60 + em;
+
     if (endMinutes <= startMinutes) return res.status(400).json({ msg:'End > start' });
     if (endMinutes - startMinutes < 15) return res.status(400).json({ msg:'Too short' });
     if (endMinutes - startMinutes > 720) return res.status(400).json({ msg:'Too long' });
 
     const slot = await Availability.create({
       dayOfWeek,
-      startMinutes,
-      endMinutes,
+      startMinutes,      // computed from startTime
+      endMinutes,        // computed from endTime
       repeatWeekly,
       dateOverride: repeatWeekly ? null : dateOverride
     });
 
     req.app.get('io').to('calendarRoom').emit('calendarUpdated');
-    res.status(201).json(slot);
-  } catch (err) { next(err); }
+    return res.status(201).json(slot);
+
+  } catch (err) {
+    // if it's a duplicate-key error, tell the client
+    if (err.code === 11000) {
+      return res.status(409).json({
+        msg: 'That availability slot already exists for this day and time.'
+      });
+    }
+    // otherwise let your global error handler take it
+    return next(err);
+  }
 };
 
-// 5) Update slot
+// 5 ) Update availability slot
 exports.updateAvailability = async (req, res, next) => {
   try {
     const { dayOfWeek, startTime, endTime, repeatWeekly, dateOverride } = req.body;
 
-    // Convert times (HH:MM) → minutes since midnight
     const [sh, sm] = startTime.split(':').map(Number);
     const [eh, em] = endTime.split(':').map(Number);
     const startMinutes = sh * 60 + sm;
     const endMinutes   = eh * 60 + em;
 
-    // Validate R-1,R-2: length & ordering
-    if (endMinutes <= startMinutes) {
-      return res.status(400).json({ msg: 'End time must be after start time' });
-    }
-    if (endMinutes - startMinutes < 15) {
-      return res.status(400).json({ msg: 'Slot must be at least 15 minutes' });
-    }
-    if (endMinutes - startMinutes > 720) {
-      return res.status(400).json({ msg: 'Slot cannot exceed 12 hours' });
-    }
+    if (endMinutes <= startMinutes)  return res.status(400).json({ msg:'End time must be after start time' });
+    if (endMinutes - startMinutes < 15)  return res.status(400).json({ msg:'Slot must be ≥15 minutes' });
+    if (endMinutes - startMinutes > 720) return res.status(400).json({ msg:'Slot cannot exceed 12 hours' });
 
-    // Build the actual update object
     const update = {
       dayOfWeek,
       startMinutes,
@@ -113,32 +144,24 @@ exports.updateAvailability = async (req, res, next) => {
       dateOverride: repeatWeekly ? null : dateOverride
     };
 
-    const slot = await Availability.findByIdAndUpdate(
-      req.params.id, update, { new: true }
-    );
+    const slot = await Availability.findByIdAndUpdate(req.params.id, update, { new:true });
     if (!slot) return res.status(404).end();
 
-    // Notify live clients
     req.app.get('io').to('calendarRoom').emit('calendarUpdated');
     res.json(slot);
-  } catch (err) {
-    next(err);
-  }
+  } catch (err) { next(err); }
 };
 
-// 6) Delete slot – R‑4
+// 6 ) Delete availability slot
 exports.deleteAvailability = async (req, res, next) => {
   try {
     const slot = await Availability.findById(req.params.id);
     if (!slot) return res.status(404).end();
 
-    // Conflict – any booking overlapping?
+    // Check for booking conflict this week
     const weekStart = dayjs().startOf('week').toDate();
     const { start, end } = slot.toBackgroundEvent(weekStart);
-    const clash = await Booking.findOne({
-      startAt: { $lt: end },
-      endAt:   { $gt: start }
-    }).lean();
+    const clash = await Booking.findOne({ startAt:{ $lt:end }, endAt:{ $gt:start } }).lean();
     if (clash) return res.status(409).json({ msg:'Slot has bookings' });
 
     await slot.deleteOne();
@@ -147,7 +170,7 @@ exports.deleteAvailability = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-/* (Optional) collision test */
+// 7 ) Optional overlap tester
 exports.testCollision = async (req, res) => {
   const { startAt, endAt } = req.body;
   const conflict = await Booking.findOne({

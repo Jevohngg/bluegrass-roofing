@@ -1149,3 +1149,37 @@ padding: 4px;
 .proposal-name{
   margin-bottom: 24px !important;
 }
+
+
+/* —— Booking CTA card —— */
+.portal-action-card.booking-cta {
+  border-left: 6px solid #e18263;          /* matches brand accent */
+}
+
+/* Button icons align nicely */
+.portal-action-card.booking-cta i {
+  margin-right: 6px;
+}
+
+
+.booking-button{
+  max-width: 230px;
+}
+
+.booking-actions{
+  display: flex
+  ;
+      align-items: center;
+      align-content: center;
+      justify-content: flex-start;
+      gap: 4px;
+      font-size: 14px;
+}
+
+.booking-actions button{
+  font-size: 14px !important;
+}
+
+.booking-actions .btn-secondary{
+  font-size: 14px !important;
+}

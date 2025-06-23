@@ -54,5 +54,8 @@ html(lang="en")
       span#msgCount.badge 0
 
     // Optional global scripts or specialized portal scripts
+    script.
+      window.sessionUserId = '!{(locals && locals.user && locals.user._id) || ""}';
+    
     script(src="/js/animations.js")
     block pageScripts

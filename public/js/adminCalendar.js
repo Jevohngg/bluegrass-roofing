@@ -1,39 +1,59 @@
+// public/js/adminCalendar.js
+
+/* global FullCalendar bootstrap */
 /* global FullCalendar bootstrap */
 (() => {
-    const calendarEl   = document.getElementById('calendar');
-    const slotModalEl  = document.getElementById('slotModal');
-    const slotModal    = new bootstrap.Modal(slotModalEl);
-    const form         = document.getElementById('slotForm');
-    const adminTz      = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  
-    /* —— FC instance —— */
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: 'timeGridWeek',
-      firstDay: 0,
-      slotDuration: '00:30:00',
-      timeZone: 'local',
-      nowIndicator: true,
-      themeSystem: 'bootstrap5',
-      headerToolbar: { left:'today prev,next', center:'title', right:'' },
-      eventSources: [
-        {
-          id: 'bookings',
-          url: '/admin/calendar/events',
-          method: 'GET',
-          failure: () => alert('Failed loading events')
-        },
-        {
-          id: 'availability',
-          url: '/admin/calendar/availability',
-          method: 'GET',
-          display: 'background'
-        }
-      ],
-      eventClick(info) {
-        if (info.event.display === 'background') openEditModal(info.event);
-      }
-    });
-    calendar.render();
+  const calendarEl   = document.getElementById('calendar');
+  const slotModalEl  = document.getElementById('slotModal');
+  const slotModal    = new bootstrap.Modal(slotModalEl);
+  const form         = document.getElementById('slotForm');
+
+  // Use the server‑supplied zone or fall back to Eastern
+  const adminTz      = window.COMPANY_TZ || 'America/New_York';
+
+  /* —— FC instance —— */
+  const calendar = new FullCalendar.Calendar(calendarEl, {
+
+    initialView : 'timeGridWeek',
+    firstDay    : 0,
+    slotDuration: '00:30:00',
+    timeZone    : adminTz,        // ← was "local"
+    nowIndicator: true,
+    themeSystem : 'bootstrap5',
+    headerToolbar: { left:'today prev,next', center:'title', right:'' },
+    eventSources : [
+      {
+        id: 'bookings',
+        url: '/admin/calendar/events',
+        method: 'GET',
+        failure: () => alert('Failed loading events')
+      },
+      {
+              id: 'availability',
+              url: '/admin/calendar/availability',
+              method: 'GET',
+              display: 'background',
+              className: 'fc-available' 
+
+            }
+           ],
+           eventContent: info => {
+            if (info.event.display === 'background') return;
+       
+           const timeWithZone = info.timeText + ' EST';
+           const title        = info.event.title;
+           return {
+             html: `<span class="fc-event-time">${timeWithZone}</span>
+                    <span class="fc-event-title"> ${title}</span>`
+           };
+          },
+    
+    eventClick(info) {
+      if (info.event.display === 'background') openEditModal(info.event);
+    }
+  });
+  calendar.render();
+
   
     /* —— Toolbar helpers —— */
     document.getElementById('viewSwitcher').addEventListener('change', e => {
@@ -68,21 +88,30 @@
     }
   
     function openEditModal(event) {
-      idField.value             = event.id;
-      repeatWeekly.checked      = true; // templates only for now
-      document.getElementById('dayOfWeek').value = new Date(event.start).getDay();
-      function pad(n){ return n.toString().padStart(2,'0'); }
-
-      const start = event.start;
-      const end   = event.end;
-      document.getElementById('startTime').value =
-        `${pad(start.getHours())}:${pad(start.getMinutes())}`;
-      document.getElementById('endTime').value   =
-        `${pad(end.getHours())}:${pad(end.getMinutes())}`;
-      
+      idField.value        = event.id;
+      repeatWeekly.checked = true;               // templates only for now
+    
+      const opts = { timeZone: adminTz, hour12:false };
+      const start = new Date(event.start).toLocaleString('en-US', opts);
+      const end   = new Date(event.end  ).toLocaleString('en-US', opts);
+    
+      const [sH,sM] = start.split(', ')[1].split(':');
+      const [eH,eM] = end.split(', ')[1].split(':');
+    
+      document.getElementById('dayOfWeek').value   =
+        new Date(event.start).toLocaleString('en-US', { timeZone: adminTz, weekday:'short' }) === 'Sun' ? 0 :
+        new Date(event.start).getDay();            // still fine
+    
+      document.getElementById('startTime').value = `${sH}:${sM}`;
+      document.getElementById('endTime').value   = `${eH}:${eM}`;
+    
       document.getElementById('btnDeleteSlot').style.display = '';
       slotModal.show();
     }
+
+
+    
+    
   
     /* Save */
     form.addEventListener('submit', async e => {
@@ -100,7 +129,10 @@
         headers: { 'Content-Type':'application/json' },
         body: JSON.stringify(payload)
       });
-      if (!res.ok) return alert('Error saving slot');
+      const body = await res.json();
+      if (!res.ok) {
+        return alert(body.msg || 'Error saving slot');
+      }
       slotModal.hide();
       calendar.refetchEvents();
     });

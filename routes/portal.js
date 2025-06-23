@@ -8,6 +8,18 @@ const User = require('../models/User');
 const fs = require('fs');
 const DocumentSend = require('../models/DocumentSend'); // <-- NEW model for admin-sent docs
 const Thread  = require('../models/Thread');
+const Booking = require('../models/Booking');   // ← add just once
+// routes/portal.js
+const dayjs = require('dayjs');
+const utc   = require('dayjs/plugin/utc');
+const tz    = require('dayjs/plugin/timezone');
+dayjs.extend(utc);
+dayjs.extend(tz);
+
+/** Eastern Time for Lexington, KY */
+const LOCAL_TZ = process.env.LOCAL_TZ || 'America/New_York';
+
+
 
 
 const cheerio = require('cheerio');
@@ -171,6 +183,28 @@ router.get('/portal', requireLogin, async (req, res) => {
       ],
       status: { $in: ['sent','signed'] }
     }).sort({ sentAt: -1 });
+
+    //  Next upcoming confirmed booking (if any)
+// Next upcoming confirmed booking (if any)
+const nextBooking = await Booking.findOne({
+  userId: user._id,
+  status: 'confirmed',
+  startAt: { $gt: new Date() }
+})
+  .sort({ startAt: 1 })
+  .lean();
+
+// Pull out raw values
+const nextBookingDate  = nextBooking ? nextBooking.startAt       : null;
+const nextBookingId    = nextBooking ? nextBooking._id.toString() : null;
+
+// right here, add “ (EST)”:
+const nextBookingLabel = nextBooking
+  ? dayjs(nextBooking.startAt)
+      .tz(LOCAL_TZ)
+      .format('ddd, MMM D h:mm A') + ' (EST)'
+  : null;
+
     
 
     // Shingle options for the user’s portal
@@ -211,7 +245,12 @@ router.get('/portal', requireLogin, async (req, res) => {
       shingles,
       success,
       error,
-      pageTitle: 'Client Portal | BlueGrass Roofing'
+      pageTitle: 'Client Portal | BlueGrass Roofing',
+      // nextBookingDate: nextBooking ? nextBooking.startAt       : null,
+      // nextBookingId:   nextBooking ? nextBooking._id.toString() : null,
+      nextBookingDate,
+      nextBookingId,
+      nextBookingLabel,   
     });
   } catch (err) {
     console.error('Error loading portal:', err);

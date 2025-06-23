@@ -103,6 +103,11 @@ app.use('/admin/messages', messagingRoutes);
 const adminCalendarRoutes = require('./routes/adminCalendar');
 app.use('/admin/calendar', adminCalendarRoutes);
 
+// —— Self‑service booking routes ——
+const portalBookingRoutes = require('./routes/portalBooking');
+app.use('/portal/booking', portalBookingRoutes);
+
+
 // Create HTTP server and initialize Socket.io
 const server = http.createServer(app);
 const io = socketIO(server, {
@@ -111,6 +116,10 @@ const io = socketIO(server, {
 
 // Make io accessible inside routes/controllers
 app.set('io', io);
+
+const startReminderJob = require('./jobs/bookingReminderJob');
+startReminderJob(io);
+
 
 // Socket.io connection events
 io.on('connection', (socket) => {

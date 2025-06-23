@@ -12,6 +12,13 @@ const TEAM_NOTIFY_TEMPLATE_ID = process.env.SENDGRID_TEAM_TEMPLATE_ID;
 const USER_DOC_SIGNED_TEMPLATE_ID = process.env.SENDGRID_USER_DOC_SIGNED_TEMPLATE_ID;
 const TEAM_DOC_SIGNED_TEMPLATE_ID = process.env.SENDGRID_TEAM_DOC_SIGNED_TEMPLATE_ID;
 
+const TYPE_LABEL = {
+  inspection : 'Roof Inspection',
+  sample     : 'Shingle Selection',
+  repair     : 'Repair',
+  installation: 'Installation'
+};
+
 async function sendUserConfirmationEmail(lead) {
   const msg = {
     to: lead.emailAddress,
@@ -310,6 +317,140 @@ async function notifyAdminShingleResponse(user, accepted) {
   });
 }
 
+/* ──────────────────────────────────────────────────────────
+   Self‑Service Booking e‑mails  (BlueGrass Roofing)
+   • Confirms / Cancels / Reschedules / Reminders
+   • Always show date‑time in Eastern Time + “(EST)”
+   ────────────────────────────────────────────────────────── */
+
+   
+   const dayjs = require('dayjs');
+   const utc   = require('dayjs/plugin/utc');
+   const tz    = require('dayjs/plugin/timezone');
+   dayjs.extend(utc);
+   dayjs.extend(tz);
+   
+   /* ── constants ─────────────────────────────────────────── */
+   const LOCAL_TZ = process.env.LOCAL_TZ || 'America/New_York'; // Lexington, KY
+
+   
+   /* Helper → “Tue, Mar 5 3:00 PM (EST)” */
+   function fmt(dt) {
+     return dayjs(dt).tz(LOCAL_TZ).format('ddd, MMM D h:mm A') + ' (EST)';
+   }
+   
+   /* ── CONFIRM ────────────────────────────────────────────── */
+   async function sendClientBookingConfirm(user, booking) {
+     return sgMail.send({
+       to  : user.email,
+       from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
+       templateId: process.env.SENDGRID_BOOKING_CONFIRM_CLIENT_TEMPLATE_ID,
+       dynamic_template_data: {
+         firstName: user.firstName,
+         start    : fmt(booking.startAt),
+         type     : TYPE_LABEL[booking.type] || booking.type
+       }
+     });
+   }
+   
+   async function sendAdminBookingConfirm(user, booking) {
+     return sgMail.send({
+       to  : 'gentryofficialmusic@gmail.com', // or process.env.INTERNAL_TEAM_EMAIL
+       from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
+       templateId: process.env.SENDGRID_BOOKING_CONFIRM_ADMIN_TEMPLATE_ID,
+       dynamic_template_data: {
+         fullName: [user.firstName, user.lastName].filter(Boolean).join(' '),
+         start   : fmt(booking.startAt),
+         type    : TYPE_LABEL[booking.type] || booking.type
+       }
+     });
+   }
+   
+   /* ── CANCEL ─────────────────────────────────────────────── */
+   async function sendClientBookingCancel(user, booking) {
+     return sgMail.send({
+       to  : user.email,
+       from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
+       templateId: process.env.SENDGRID_BOOKING_CANCEL_CLIENT_TEMPLATE_ID,
+       dynamic_template_data: {
+         firstName: user.firstName,
+         start    : fmt(booking.startAt),
+         type     : TYPE_LABEL[booking.type] || booking.type
+       }
+     });
+   }
+   
+   async function sendAdminBookingCancel(user, booking) {
+     return sgMail.send({
+       to  : 'gentryofficialmusic@gmail.com',
+       from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
+       templateId: process.env.SENDGRID_BOOKING_CANCEL_ADMIN_TEMPLATE_ID,
+       dynamic_template_data: {
+         fullName: [user.firstName, user.lastName].filter(Boolean).join(' '),
+         start   : fmt(booking.startAt),
+         type    : TYPE_LABEL[booking.type] || booking.type
+       }
+     });
+   }
+   
+   /* ── RESCHEDULE ─────────────────────────────────────────── */
+   async function sendClientBookingReschedule(user, booking, oldStart) {
+     return sgMail.send({
+       to  : user.email,
+       from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
+       templateId: process.env.SENDGRID_BOOKING_RESCHEDULE_CLIENT_TEMPLATE_ID,
+       dynamic_template_data: {
+         firstName: user.firstName,
+         oldTime  : fmt(oldStart),
+         newTime  : fmt(booking.startAt),
+         type     : TYPE_LABEL[booking.type] || booking.type
+       }
+     });
+   }
+   
+   async function sendAdminBookingReschedule(user, booking, oldStart) {
+     return sgMail.send({
+       to  : 'gentryofficialmusic@gmail.com',
+       from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
+       templateId: process.env.SENDGRID_BOOKING_RESCHEDULE_ADMIN_TEMPLATE_ID,
+       dynamic_template_data: {
+         fullName : [user.firstName, user.lastName].filter(Boolean).join(' '),
+         oldTime  : fmt(oldStart),
+         newTime  : fmt(booking.startAt),
+         type     : TYPE_LABEL[booking.type] || booking.type
+       }
+     });
+   }
+   
+   /* ── REMINDERS (24 h / 2 h) ─────────────────────────────── */
+   async function sendClientBookingReminder(user, booking, diffLabel) {
+     return sgMail.send({
+       to  : user.email,
+       from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
+       templateId: process.env.SENDGRID_BOOKING_REMINDER_CLIENT_TEMPLATE_ID,
+       dynamic_template_data: {
+         firstName: user.firstName,
+         type     : TYPE_LABEL[booking.type] || booking.type,
+         start    : fmt(booking.startAt),
+         diffLabel
+       }
+     });
+   }
+   
+   async function sendAdminBookingReminder(user, booking, diffLabel) {
+     return sgMail.send({
+       to  : 'gentryofficialmusic@gmail.com',
+       from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
+       templateId: process.env.SENDGRID_BOOKING_REMINDER_ADMIN_TEMPLATE_ID,
+       dynamic_template_data: {
+         fullName : [user.firstName, user.lastName].filter(Boolean).join(' '),
+         type     : TYPE_LABEL[booking.type] || booking.type,
+         start    : fmt(booking.startAt),
+         diffLabel
+       }
+     });
+   }
+
 
 
 
@@ -318,11 +459,19 @@ module.exports = {
   sendInternalNotificationEmail,
   sendUserSignupEmail,
   sendPasswordResetCodeEmail,
+  sendAdminBookingReschedule,
   sendUserDocSignedEmail,
+  sendClientBookingReschedule,
   sendTeamDocSignedEmail,
   sendDocumentLinkEmail,
   sendNewMessageEmail,
   sendClientWarrantyEmail,
   sendClientShingleEmail,
-  notifyAdminShingleResponse
+  notifyAdminShingleResponse,
+  sendClientBookingConfirm,
+  sendAdminBookingConfirm,
+  sendClientBookingCancel,
+  sendAdminBookingCancel,
+  sendClientBookingReminder,
+  sendAdminBookingReminder
 };
