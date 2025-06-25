@@ -18,6 +18,8 @@ const tz    = require('dayjs/plugin/timezone');
 dayjs.extend(utc);
 dayjs.extend(tz);
 
+
+
 /** Eastern Time for Lexington, KY */
 const LOCAL_TZ = process.env.LOCAL_TZ || 'America/New_York';
 
@@ -1989,8 +1991,8 @@ router.post('/portal/shingle-response', requireLogin, async (req,res)=>{
 
 async function buildOpenRepairDays(rangeStart, rangeEnd, dur, ignoreId = null){
 
-  const utc0 = dayjs(rangeStart).startOf('day');
-  const utc1 = dayjs(rangeEnd  ).startOf('day');
+   const utc0 = dayjs(rangeStart).tz(LOCAL_TZ).startOf('day');   // 🔧 force Eastern
+   const utc1 = dayjs(rangeEnd  ).tz(LOCAL_TZ).startOf('day');
 
   /* 1 ) pull templates once */
   const templates = await Availability.find().lean();
@@ -2095,29 +2097,51 @@ router.get('/portal/repair-booking', requireLogin, async (req,res)=>{
 
 
 // GET /portal/repair-feed
-// GET /portal/repair-feed
+
+
+dayjs.extend(utc);
+dayjs.extend(tz);
+
+
+
+
+// ── GET /portal/repair-feed ───────────────────────────
 router.get('/portal/repair-feed', requireLogin, async (req, res) => {
   const { start, end, dur, ignoreId } = req.query;
   const durNum = Number(dur);
 
-  console.log('[repair-feed] user:', req.session.user.id,
-              'start:', start,
-              'end:', end,
-              'dur:', durNum,
-              'ignoreId:', ignoreId);
+  console.log(
+    '[repair-feed] user:', req.session.user.id,
+    'start:', start,
+    'end:', end,
+    'dur:', durNum,
+    'ignoreId:', ignoreId
+  );
 
   if (isNaN(durNum) || durNum <= 0) {
     return res.json([]);
   }
 
   try {
-    const days = await buildOpenRepairDays(
+    // 1) get the raw array of Date or ISO strings
+    const rawDays = await buildOpenRepairDays(
       new Date(start),
       new Date(end),
       durNum,
       ignoreId || null
     );
-    console.log('[repair-feed] computed days:', days);
+    console.log('[repair-feed] computed raw days:', rawDays);
+
+    // 2) normalize each to midnight Eastern → UTC ISO
+    const days = rawDays.map(d =>
+      dayjs(d)
+        .tz(LOCAL_TZ)     // interpret in Eastern Time
+        .startOf('day')   // midnight Eastern
+        .toDate()
+        .toISOString()    // e.g. "2025-07-14T04:00:00.000Z"
+    );
+    console.log('[repair-feed] normalized days:', days);
+
     return res.json(days);
   } catch (err) {
     console.error('[repair-feed] error in buildOpenRepairDays:', err);
@@ -2126,105 +2150,165 @@ router.get('/portal/repair-feed', requireLogin, async (req, res) => {
 });
 
 
-
-router.post('/portal/repair-booking', requireLogin, async (req,res)=>{
-  try{
+// ── POST /portal/repair-booking ───────────────────────
+router.post('/portal/repair-booking', requireLogin, async (req, res) => {
+  try {
     const { startAt, purpose = '', bookingId } = req.body;
-    const startDay = dayjs(startAt).startOf('day');
-    if (!startDay.isValid())
-      return res.status(400).json({ ok:false, msg:'Invalid date' });
+
+    // parse the incoming ISO as Eastern-time midnight
+    const startDay = dayjs(startAt)
+      .tz(LOCAL_TZ)       // interpret in Eastern
+      .startOf('day');    // midnight Eastern
+
+    if (!startDay.isValid()) {
+      return res.status(400).json({ ok: false, msg: 'Invalid date' });
+    }
 
     /* ───────────────────────────────
        A)  RESCHEDULE AN EXISTING BOOKING
     ─────────────────────────────── */
-    if (bookingId){
+    if (bookingId) {
       const booking = await Booking.findById(bookingId);
-      if (!booking ||
-          booking.userId.toString() !== req.session.user.id ||
-          booking.type !== 'roofRepair')
-        return res.status(403).json({ ok:false, msg:'Not yours' });
-
-      if (!booking.canBeRescheduled())
-        return res.status(400).json({ ok:false,
-          msg:'Rescheduling requires at least 3 hours’ notice.' });
+      if (
+        !booking ||
+        booking.userId.toString() !== req.session.user.id ||
+        booking.type !== 'roofRepair'
+      ) {
+        return res.status(403).json({ ok: false, msg: 'Not yours' });
+      }
+      if (!booking.canBeRescheduled()) {
+        return res.status(400).json({
+          ok: false,
+          msg: 'Rescheduling requires at least 3 hours’ notice.'
+        });
+      }
 
       const dur   = booking.durationDays || 1;
       const endAt = startDay.add(dur, 'day').toDate();
 
-      // day still free?
+      // check availability for this single day
       const okDays = await buildOpenRepairDays(
-        startDay.toDate(), startDay.add(1,'day').toDate(), dur, bookingId);
-      if(!okDays.includes(startDay.toDate().toISOString()))
-        return res.status(400).json({ ok:false, msg:'Day no longer available' });
+        startDay.toDate(),
+        startDay.add(1, 'day').toDate(),
+        dur,
+        bookingId
+      );
+      // normalize okDays to midnight Eastern ISO
+      const okDaysNorm = okDays.map(d =>
+        dayjs(d)
+          .tz(LOCAL_TZ)
+          .startOf('day')
+          .toDate()
+          .toISOString()
+      );
+      +  /* ── DEBUG (leave it in production – it is cheap) ───────── */
+  console.debug('[repair-booking]  startDay ISO  :', startDay.toDate().toISOString());
+  console.debug('[repair-booking]  okDaysNorm[0] :', okDaysNorm[0]);
+  console.debug('[repair-booking]  match?        :',
+               okDaysNorm.includes(startDay.toDate().toISOString()));
+
+      if (!okDaysNorm.includes(startDay.toDate().toISOString())) {
+        return res
+          .status(400)
+          .json({ ok: false, msg: 'Day no longer available' });
+      }
 
       // collision check (skip self)
-      const clash = await Booking.overlaps(startDay.toDate(), endAt, bookingId);
-      if (clash)
-        return res.status(409).json({ ok:false, msg:'Day already full' });
+      const clash = await Booking.overlaps(
+        startDay.toDate(),
+        endAt,
+        bookingId
+      );
+      if (clash) {
+        return res
+          .status(409)
+          .json({ ok: false, msg: 'Day already full' });
+      }
 
-      // update + history
+      // perform the reschedule
       const oldStart = booking.startAt;
       booking.startAt = startDay.toDate();
       booking.endAt   = endAt;
       booking.purpose = purpose;
       booking.history.push({
-        evt:'rescheduled', by:req.session.user.id,
-        details:{ from: oldStart, to: startDay.toDate() }
+        evt: 'rescheduled',
+        by: req.session.user.id,
+        details: { from: oldStart, to: startDay.toDate() }
       });
       await booking.save();
 
       const user = await User.findById(req.session.user.id).lean();
       await Promise.all([
         safeSend(sendClientBookingReschedule(user, booking, oldStart)),
-        safeSend(sendAdminBookingReschedule (user, booking, oldStart))
+        safeSend(sendAdminBookingReschedule(user, booking, oldStart))
       ]);
       req.app.get('io').to('calendarRoom').emit('calendarUpdated');
-      return res.json({ ok:true, rescheduled:true, booking });
+
+      return res.json({ ok: true, rescheduled: true, booking });
     }
 
     /* ───────────────────────────────
        B)  CREATE A NEW REPAIR BOOKING
     ─────────────────────────────── */
-    const invite = await RepairInvite
-      .findOne({ userId:req.session.user.id, active:true });
-    if (!invite)
-      return res.status(400).json({ ok:false, msg:'No invite' });
+    const invite = await RepairInvite.findOne({
+      userId: req.session.user.id,
+      active: true
+    });
+    if (!invite) {
+      return res.status(400).json({ ok: false, msg: 'No invite' });
+    }
 
     const dur   = invite.durationDays;
-    const endAt = startDay.add(dur,'day').toDate();
+    const endAt = startDay.add(dur, 'day').toDate();
 
+    // check availability for this single day
     const okDays = await buildOpenRepairDays(
-      startDay.toDate(), startDay.add(1,'day').toDate(), dur);
-    if(!okDays.includes(startDay.toDate().toISOString()))
-      return res.status(400).json({ ok:false, msg:'Day no longer available' });
+      startDay.toDate(),
+      startDay.add(1, 'day').toDate(),
+      dur
+    );
+    // normalize okDays to midnight Eastern ISO
+    const okDaysNorm = okDays.map(d =>
+      dayjs(d)
+        .tz(LOCAL_TZ)
+        .startOf('day')
+        .toDate()
+        .toISOString()
+    );
+    if (!okDaysNorm.includes(startDay.toDate().toISOString())) {
+      return res
+        .status(400)
+        .json({ ok: false, msg: 'Day no longer available' });
+    }
 
+    // create the booking
     const booking = await Booking.create({
-      userId        : req.session.user.id,
-      startAt       : startDay.toDate(),
+      userId:        req.session.user.id,
+      startAt:       startDay.toDate(),
       endAt,
-      durationDays  : dur,
-      type          : 'roofRepair',
+      durationDays:  dur,
+      type:          'roofRepair',
       purpose,
-      status        : 'confirmed',
-      isSelfService : false,
-      history       : [{ evt:'created', by:req.session.user.id }]
+      status:        'confirmed',
+      isSelfService: false,
+      history:       [{ evt: 'created', by: req.session.user.id }]
     });
 
-    invite.active = false; await invite.save();
+    invite.active = false;
+    await invite.save();
 
     const user = await User.findById(req.session.user.id).lean();
     await Promise.all([
       safeSend(sendClientRepairConfirm(user, booking)),
-      safeSend(sendAdminRepairConfirm (user, booking))
+      safeSend(sendAdminRepairConfirm(user, booking))
     ]);
     req.app.get('io').to('calendarRoom').emit('calendarUpdated');
-    res.json({ ok:true, booking });
-  }catch(err){
-    console.error(err);
+
+    res.json({ ok: true, booking });
+  } catch (err) {
+    console.error('[repair-booking] error:', err);
     res.status(500).end();
   }
 });
-
-
 
 module.exports = router;
