@@ -2098,25 +2098,33 @@ router.get('/portal/repair-booking', requireLogin, async (req,res)=>{
 // GET /portal/repair-feed
 router.get('/portal/repair-feed', requireLogin, async (req, res) => {
   const { start, end, dur, ignoreId } = req.query;
-
-  // 1) Defensive: make sure dur is a positive number
   const durNum = Number(dur);
+
+  console.log('[repair-feed] user:', req.session.user.id,
+              'start:', start,
+              'end:', end,
+              'dur:', durNum,
+              'ignoreId:', ignoreId);
+
   if (isNaN(durNum) || durNum <= 0) {
-    // no valid duration ⇒ no available days
     return res.json([]);
   }
 
-  // 2) Compute allowed repair days, possibly ignoring the booking being rescheduled
-  const days = await buildOpenRepairDays(
-    new Date(start),
-    new Date(end),
-    durNum,
-    ignoreId || null
-  );
-
-  // 3) Send them back as JSON
-  return res.json(days);
+  try {
+    const days = await buildOpenRepairDays(
+      new Date(start),
+      new Date(end),
+      durNum,
+      ignoreId || null
+    );
+    console.log('[repair-feed] computed days:', days);
+    return res.json(days);
+  } catch (err) {
+    console.error('[repair-feed] error in buildOpenRepairDays:', err);
+    return res.status(500).json([]);
+  }
 });
+
 
 
 router.post('/portal/repair-booking', requireLogin, async (req,res)=>{
