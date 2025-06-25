@@ -173,7 +173,7 @@ async function sendTeamDocSignedEmail(user, docType, pdfPath) {
   const lastName = user.lastName || ''; // Fallback
   const msg = {
     to: process.env.INTERNAL_TEAM_EMAIL,
-    // to: 'gentryofficialmusic@gmail.com',
+
     from: {
       email: 'noreply@bluegrass-roofing.com',
       name:  'BlueGrass Roofing'
@@ -307,7 +307,7 @@ async function notifyAdminShingleResponse(user, accepted) {
 
   return sgMail.send({
     to:   process.env.INTERNAL_TEAM_EMAIL,
-    // to: 'gentryofficialmusic@gmail.com',
+
     from: { email:'noreply@bluegrass-roofing.com', name:'BlueGrass Roofing' },
     templateId,
     dynamic_template_data: {
@@ -361,7 +361,7 @@ async function sendClientBookingConfirm(user, booking) {
 
 async function sendAdminBookingConfirm(user, booking) {
   return sgMail.send({
-    to: 'gentryofficialmusic@gmail.com',
+    to:   process.env.INTERNAL_TEAM_EMAIL,
     from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
     templateId: process.env.SENDGRID_BOOKING_CONFIRM_ADMIN_TEMPLATE_ID,
     dynamic_template_data: {
@@ -392,7 +392,7 @@ async function sendClientBookingCancel(user, booking) {
 
 async function sendAdminBookingCancel(user, booking) {
   return sgMail.send({
-    to: 'gentryofficialmusic@gmail.com',
+    to:   process.env.INTERNAL_TEAM_EMAIL,
     from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
     templateId: process.env.SENDGRID_BOOKING_CANCEL_ADMIN_TEMPLATE_ID,
     dynamic_template_data: {
@@ -426,7 +426,7 @@ async function sendClientBookingReschedule(user, booking, oldStart) {
 
 async function sendAdminBookingReschedule(user, booking, oldStart) {
   return sgMail.send({
-    to: 'gentryofficialmusic@gmail.com',
+    to:   process.env.INTERNAL_TEAM_EMAIL,
     from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
     templateId: process.env.SENDGRID_BOOKING_RESCHEDULE_ADMIN_TEMPLATE_ID,
     dynamic_template_data: {
@@ -461,7 +461,7 @@ async function sendClientBookingReminder(user, booking, diffLabel) {
 
 async function sendAdminBookingReminder(user, booking, diffLabel) {
   return sgMail.send({
-    to: 'gentryofficialmusic@gmail.com',
+    to:   process.env.INTERNAL_TEAM_EMAIL,
     from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
     templateId: process.env.SENDGRID_BOOKING_REMINDER_ADMIN_TEMPLATE_ID,
     dynamic_template_data: {
@@ -506,7 +506,7 @@ async function sendClientRepairConfirm(user, booking){
 }
 async function sendAdminRepairConfirm(user, booking){
   return sgMail.send({
-    to:'gentryofficialmusic@gmail.com',
+    to:   process.env.INTERNAL_TEAM_EMAIL,
     from:{ email:'noreply@bluegrass-roofing.com',name:'BlueGrass Roofing'},
     templateId:process.env.SENDGRID_REPAIR_CONFIRM_ADMIN_TEMPLATE_ID,
     dynamic_template_data:{
