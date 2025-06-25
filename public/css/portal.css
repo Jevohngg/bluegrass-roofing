@@ -179,6 +179,15 @@
   margin-bottom: 2rem;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
+
+.app-list-item{
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.booking-head-text{
+  margin-bottom: 24px;
+}
+
 .portal-action-card h3 {
   margin-bottom: 0.5rem;
   font-size: 1.3rem;

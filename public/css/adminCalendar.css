@@ -74,6 +74,10 @@
 
 }
 
+.modal-header button{
+  min-width: 0px !important;
+}
+
 /* public/css/adminCalendar.css */
 .fc-available {                     /* optional hover, etc. */
   pointer-events:auto;
@@ -91,6 +95,7 @@
 
 .fc-timegrid-event .fc-event-main{
   cursor: pointer;
+  overflow: hidden !important;
 }
 
 

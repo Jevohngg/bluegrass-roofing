@@ -79,9 +79,15 @@ async function buildOpenSlots(rangeStartUtc, rangeEndUtc) {
     'startAt endAt'
   ).lean();
 
-  return slots.filter(s =>
-    !taken.some(b => b.startAt <= s.start && b.endAt > s.start)
-  );
+// ── 4)  Hide slots that are in the past or < 3 h away (LOCAL_TZ)
+const cutoff = dayjs().tz(LOCAL_TZ).add(3, 'hour');   // “now + 3h” in EST
+
+return slots.filter(s => {
+  const clashes = taken.some(b => b.startAt <= s.start && b.endAt > s.start);
+  const tooSoon = dayjs(s.start).tz(LOCAL_TZ).isBefore(cutoff);
+  return !clashes && !tooSoon;
+});
+
 }
 
 /* ──────────────────────────────────────────────────────────
@@ -109,7 +115,9 @@ exports.renderSelfService = async (req, res, next) => {
 
     /* ⇢ NEW – human-friendly label in Eastern Time */
     const nextBookingLabel = next
-      ? dayjs(next.startAt).tz(LOCAL_TZ).format('ddd, MMM D h:mm A')
+      ? (next.type === 'roofRepair'
+            ? dayjs(next.startAt).tz(LOCAL_TZ).format('ddd, MMM D')
+            : dayjs(next.startAt).tz(LOCAL_TZ).format('ddd, MMM D h:mm A') + ' (EST)')
       : null;
 
     res.render('portal/booking', {
@@ -207,6 +215,25 @@ exports.createOrCancel = async (req, res, next) => {
 
       const snap = booking.toObject();
       await booking.deleteOne();
+
+      /*  Re‑activate the client’s repair invite if a roof‑repair booking was cancelled  */
+if (snap.type === 'roofRepair') {
+  const invite =
+    await require('../models/RepairInvite')
+      .findOne({ userId: snap.userId, active: false });
+  if (invite) {
+    invite.active = true;      // resurrect the original invite
+    await invite.save();
+  } else {
+    // Fallback safety: create a fresh invite with the same duration
+    await require('../models/RepairInvite').create({
+      userId      : snap.userId,
+      durationDays: snap.durationDays || 1,
+      active      : true
+    });
+  }
+}
+
 
       req.app.get('io').to('calendarRoom').emit('calendarUpdated');
       const userDb = await User.findById(req.session.user.id).lean();

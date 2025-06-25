@@ -1,0 +1,56 @@
+extends ../layouts/portalLayout
+
+
+block pageStyles
+  link(rel="stylesheet" href="/css/portalBooking.css")
+
+block content
+  - if (typeof duration === 'undefined')
+    script.
+      console.error('repairBooking.pug: “duration” variable is undefined');
+
+
+  .booking-wizard.container.py-4
+    //—— STEP 1 – day picker —————————————
+    .wizard-step#step1
+      h2.text-center.mb-3 Select a start date (Eastern Time)
+      .d-flex.justify-content-between.align-items-center.mb-3
+        button.btn.btn-link#prevMonth &laquo; Prev
+        span#currentMonthLabel.font-weight-bold
+        button.btn.btn-link#nextMonth Next &raquo;
+      // day grid
+      .day-grid.d-flex.flex-wrap#dayGrid
+
+    //—— STEP 2 – review ————————————————
+    .wizard-step.d-none#step2
+      h2.text-center.mb-3 Review & confirm
+      dl.row.summary-stuff
+        dt.col-sm-4 Duration
+        dd.col-sm-8 #{duration === 0.5 ? 'Half Day' : duration + ' day(s)'}
+        dt.col-sm-4 Start Date
+        dd.col-sm-8#summaryWhen
+
+      .form-group.mt-3
+        label(for="rrNotes") Notes (optional)
+        textarea.form-control#rrNotes(maxlength="120" rows="3")
+
+
+  //—— footer nav (copy of original wizard) ———
+  footer.wizard-footer.fixed-bottom.border-top.bg-white.py-2
+    .container.d-flex.justify-content-between.align-items-center
+      button.btn.btn-primary#btnBack Back
+      .next-cancel
+        button.btn.btn-danger#btnCancel(type="button") Cancel
+        button.btn.btn-primary.disabled#btnNext Next
+
+append pageScripts
+  script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+  script(src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js")
+  script(src="https://cdn.jsdelivr.net/npm/bootbox@5/dist/bootbox.min.js")
+  script(src="/socket.io/socket.io.js")
+  script(src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js")
+  script(src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/utc.js")
+  script(src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/timezone.js")
+  script.
+    window.REPAIR_DURATION = Number(!{duration} || 1);
+  script(src="/js/portalRepairWizard.js")

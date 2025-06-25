@@ -1,3 +1,5 @@
+// routes/portalBooking.js
+
 const router  = require('express').Router();
 const ctrl    = require('../controllers/bookingController');
 

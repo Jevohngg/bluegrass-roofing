@@ -15,46 +15,73 @@ block content
           | This is your personal client portal. Below are actions you can complete now 
           | to speed up the process while you wait for us to handle the rest.
 
-      // ============  NEW  – BOOK APPOINTMENT  ============
-      // ============  NEW  – BOOK APPOINTMENT  ============
+      // ============  ROOF REPAIR CARD  ============
+      // ============  ROOF REPAIR CARD  ============
+      - const repairInvite = typeof repairInviteCard !== 'undefined' ? repairInviteCard : null
+      if repairInvite
+        .portal-action-card.roof-repair-cta
+          h3 Schedule Roof Repair
+          if repairInvite.upcoming
+            .action-state-success
+              p
+                i.fas.fa-check-circle.me-1
+                | Booked for 
+                strong #{repairInvite.upcoming}
+          else if repairInvite.past
+            .action-state-warning
+              p
+                i.fas.fa-history.me-1
+                | Last repair completed #{repairInvite.past}.
+          else
+            p.subtext
+              | Your contractor invited you to schedule a&nbsp;
+              | #{repairInvite.duration} repair.
+            a.btn.btn-primary.mt-2(href="/portal/repair-booking") Schedule Roof Repair
+      
+      // ============  APPOINTMENTS (ALL TYPES)  ============
       .portal-action-card.booking-cta
-        h3 Schedule an Inspection or Shingle Selection Appointment
-        p.subtext
-          | Pick a convenient date and time for us to come out to your home – most visits take less than an hour.
+        if hasUpcoming
+          h3.booking-head-text Upcoming Appointments
+        else
+          h3 Schedule Roof Inspection or Shingle Selection
+          p.subtext
+            | We’ll meet at your home. The visit usually takes less than an hour.
+            | Pick any open time slot that works for you.
+      
+        if upcoming && upcoming.length
+          ul.list-group.mb-3
+            each b in upcoming
+              li.list-group-item.d-flex.justify-content-between.align-items-center.app-list-item
+                // — type label
+                span.fw-bold
+                  if b.type === 'roofRepair'
+                    | Roof Repair
+                  else if b.type === 'inspection'
+                    | Roof Inspection
+                  else
+                    | Shingle Selection
+                // — when
+                span= b.when
+                // — actions
+                .btn-group
+                  //— AJAX cancel button, not a real form submit
+                  button.btn.btn-sm.btn-outline-danger.cancel-booking-btn(
+                    type="button",
+                    data-booking-id=b.id
+                  )
+                    | Cancel
+                  a.btn.btn-sm.btn-outline-secondary(href=b.reschedUrl) Reschedule
+                  input(type="hidden" name="bookingId" value=b.id)
+        else
+          p.text-muted No upcoming appointments.
 
-        //—— show current booking (if any) ——————————
-        // —— show current booking (if any) ——————————
-        if nextBookingDate
-          //‑ use nextBookingLabel instead of new Date(…).toLocaleString(…)
-          .action-state-success
-            p
-              i.fas.fa-check-circle.me-1
-              | You’re booked for 
-              strong #{nextBookingLabel}.
+        if !hasUpcoming
+          a.btn.btn-primary.mt-2(href="/portal/booking")
+            i.fas.fa-calendar-plus.me-1
+            | Book an Appointment
         
 
-
-          //—— ACTION BUTTONS ——————————————————
-          .d-flex.flex-wrap.mt-2.booking-actions
-            // Cancel (opens confirm modal)
-            button.btn.btn-danger.me-2#cancelBookingBtn(
-              type="button",
-              data-booking-id=nextBookingId
-            )
-              i.fas.fa-ban.me-1
-              | Cancel
-          
-            // Reschedule (launches wizard with ?reschedule=ID)
-            a.btn.btn-secondary(
-              href=`/portal/booking?reschedule=${nextBookingId}`
-            )
-              i.fas.fa-calendar-alt.me-1
-              | Reschedule
-        else
-          a.btn.btn-primary.mt-2.booking-button(href="/portal/booking")
-            i.fas.fa-calendar-plus.me-1
-            p Book Now
-          
+       
 
       // ============ 2) SIGN CONTRACTS CONTAINER ============
       .portal-action-card
@@ -362,3 +389,33 @@ block pageScripts
         }
       });
     })();
+  script.
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.cancel-booking-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.dataset.bookingId;
+          if (!id) return alert('Missing booking ID. Please refresh.');
+
+          if (!confirm('Are you sure you want to cancel this appointment?')) {
+            return;
+          }
+
+          try {
+            const res = await fetch('/portal/booking', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ bookingId: id })
+            });
+            const json = await res.json();
+            if (json.ok) {
+              window.location.href = '/portal?success=bookingCanceled';
+            } else {
+              alert(json.msg || 'Failed to cancel booking');
+            }
+          } catch (err) {
+            alert('Network error. Please try again.');
+          }
+        });
+      });
+    });
+

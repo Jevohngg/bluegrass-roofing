@@ -1,0 +1,23 @@
+//‑ _bookingModal.pug   (admin)
+div.modal.fade#bookingModal(tabindex="-1" aria-hidden="true")
+  .modal-dialog
+    .modal-content
+      .modal-header
+        h5.modal-title Booking Details
+        button.btn-close(type="button" data-bs-dismiss="modal" aria-label="Close")
+      .modal-body
+        //‑ Details list
+        dl.row.mb-0
+          dt.col-4 Customer
+          dd.col-8#bkCustomer
+          dt.col-4 E‑mail
+          dd.col-8#bkEmail
+          dt.col-4 Appointment
+          dd.col-8#bkType
+          dt.col-4 Date & Time
+          dd.col-8#bkWhen
+          dt.col-4(data-note-row) Notes From Client
+          dd.col-8#bkNote(data-note-row)
+      .modal-footer
+        button.btn.btn-danger#btnBkCancel(type="button") Cancel Booking
+        button.btn.btn-secondary(type="button" data-bs-dismiss="modal") Close

@@ -187,3 +187,33 @@ body .floating-msg-btn { display:none !important; }
 
 
   }
+
+
+  #nextMonth:hover{
+    color: black !important;
+
+
+  }
+
+  #prevMonth:hover{
+    color: black !important;
+
+  }
+
+  #dayGrid{
+    justify-content: center !important;
+  }
+
+  #rrNotes{
+    border: 1px solid #cecece;
+    
+  }
+
+  #prevWeek:hover{
+    color: black !important;
+
+  }
+  #nextWeek:hover{
+    color: black !important;
+
+  }

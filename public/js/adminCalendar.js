@@ -38,9 +38,12 @@
             }
            ],
            eventContent: info => {
-            if (info.event.display === 'background') return;
-       
-           const timeWithZone = info.timeText + ' EST';
+          if (info.event.display === 'background') return;
+        
+          // roofRepair → all‑day → no timeText
+          const timeWithZone = info.timeText
+            ? info.timeText + ' EST'
+            : '';                     // show nothing
            const title        = info.event.title;
            return {
              html: `<span class="fc-event-time">${timeWithZone}</span>
@@ -48,9 +51,16 @@
            };
           },
     
-    eventClick(info) {
-      if (info.event.display === 'background') openEditModal(info.event);
-    }
+          eventClick(info) {
+            if (info.event.display === 'background') {
+              // availability template
+              openEditModal(info.event);
+              return;
+            }
+            // Booking clicked  –  open details modal
+            openBookingModal(info.event);
+          }
+          
   });
   calendar.render();
 
@@ -109,6 +119,57 @@
       slotModal.show();
     }
 
+/* —— Booking details modal —— */
+const bookingModalEl = document.getElementById('bookingModal');
+const bookingModal   = new bootstrap.Modal(bookingModalEl);
+
+const bkCustomer = document.getElementById('bkCustomer');
+const bkEmail    = document.getElementById('bkEmail');
+const bkType     = document.getElementById('bkType');
+const bkWhen     = document.getElementById('bkWhen');
+const btnBkCancel= document.getElementById('btnBkCancel');
+const bkNote     = document.getElementById('bkNote');
+const noteRows   = bookingModalEl.querySelectorAll('[data-note-row]');
+
+
+let currentBkId  = null;
+
+function openBookingModal(evt){
+  currentBkId = evt.id;
+
+  bkCustomer.textContent = evt.extendedProps.fullName || '—';
+  bkEmail.textContent    = evt.extendedProps.email    || '—';
+  bkType.textContent     = evt.title;
+  // show time in EST regardless of admin TZ
+  bkWhen.textContent = moment.tz(evt.start, 'America/New_York')
+                             .format('ddd, MMM D h:mm A') + ' EST';
+  bkNote.textContent = evt.extendedProps.note || '';
+noteRows.forEach(el =>
+  el.style.display = evt.extendedProps.note ? '' : 'none'
+);
+
+
+  btnBkCancel.style.display =
+      (evt.extendedProps.status !== 'canceled') ? '' : 'none';
+
+  bookingModal.show();
+}
+
+btnBkCancel.addEventListener('click', async ()=>{
+  if (!confirm('Cancel this booking?')) return;
+  btnBkCancel.disabled = true;
+  const res = await fetch(`/admin/calendar/booking/${currentBkId}/cancel`, {
+    method:'POST'
+  });
+  btnBkCancel.disabled = false;
+  if (!res.ok){
+    const { msg } = await res.json().catch(()=>({}));
+    alert(msg || 'Server error');
+    return;
+  }
+  bookingModal.hide();
+  calendar.refetchEvents();
+});
 
     
     

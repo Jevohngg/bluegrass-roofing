@@ -9,6 +9,8 @@ const fs = require('fs');
 const DocumentSend = require('../models/DocumentSend'); // <-- NEW model for admin-sent docs
 const Thread  = require('../models/Thread');
 const Booking = require('../models/Booking');   // ← add just once
+const Availability = require('../models/AvailabilitySlot');
+const RepairInvite = require('../models/RepairInvite');
 // routes/portal.js
 const dayjs = require('dayjs');
 const utc   = require('dayjs/plugin/utc');
@@ -20,7 +22,21 @@ dayjs.extend(tz);
 const LOCAL_TZ = process.env.LOCAL_TZ || 'America/New_York';
 
 
+const { 
+  sendClientRepairConfirm, 
+  sendAdminRepairConfirm,
 
+  /* …other email helpers… */
+} = require('../utils/sendEmail');
+
+// wrap sendGrid calls so they never crash your route
+async function safeSend(promise) {
+  try {
+    return await promise;
+  } catch (err) {
+    console.error('[SendGrid] mail error:', err?.response?.body || err);
+  }
+}
 
 const cheerio = require('cheerio');
 
@@ -48,7 +64,10 @@ const {
   sendTeamDocSignedEmail,
   sendClientWarrantyEmail,     // if you use it here
   sendClientShingleEmail,      // if you use it here
-  notifyAdminShingleResponse   // ← add this
+  notifyAdminShingleResponse,
+  sendClientBookingReschedule,   // ← ADD
+  sendAdminBookingReschedule,
+
 } = require('../utils/sendEmail');
 
 
@@ -166,97 +185,137 @@ I, **[Homeowner’s Full Name]**, hereby express my intent to proceed with roofi
 // 1) Portal Dashboard (Shows claims, shingle choice, etc.)
 //    We'll also fetch DocumentSend for the user's doc list in the Pug file
 // -------------------------------------------------
+// GET  /portal  – client dashboard
 router.get('/portal', requireLogin, async (req, res) => {
   try {
-
     const user = await User.findById(req.session.user.id);
     if (!user) return res.redirect('/login');
 
     const { success, error } = req.query;
-
     const userEmail = user.email.toLowerCase();
 
+    /* ───────────────────────────────────────────────
+       1) documents sent by admin
+    ─────────────────────────────────────────────── */
     const docSends = await DocumentSend.find({
-      $or: [
-        { userId:    user._id },
-        { recipientEmail: userEmail }
-      ],
-      status: { $in: ['sent','signed'] }
+      $or: [{ userId: user._id }, { recipientEmail: userEmail }],
+      status: { $in: ['sent', 'signed'] }
     }).sort({ sentAt: -1 });
 
-    //  Next upcoming confirmed booking (if any)
-// Next upcoming confirmed booking (if any)
-const nextBooking = await Booking.findOne({
-  userId: user._id,
-  status: 'confirmed',
-  startAt: { $gt: new Date() }
-})
-  .sort({ startAt: 1 })
-  .lean();
+    /* ───────────────────────────────────────────────
+       2) ALL upcoming confirmed bookings (soonest →)
+    ─────────────────────────────────────────────── */
+    const upcomingRaw = await Booking.find({
+      userId : user._id,
+      status : 'confirmed',
+      startAt: { $gt: new Date() }
+    }).sort({ startAt: 1 }).lean();
 
-// Pull out raw values
-const nextBookingDate  = nextBooking ? nextBooking.startAt       : null;
-const nextBookingId    = nextBooking ? nextBooking._id.toString() : null;
+    const fmtDay  = dt => dayjs(dt).tz(LOCAL_TZ).format('ddd, MMM D');
+    const fmtTime = dt => dayjs(dt).tz(LOCAL_TZ).format('h:mm A');
 
-// right here, add “ (EST)”:
-const nextBookingLabel = nextBooking
-  ? dayjs(nextBooking.startAt)
-      .tz(LOCAL_TZ)
-      .format('ddd, MMM D h:mm A') + ' (EST)'
-  : null;
+    const upcoming = upcomingRaw.map(b => ({
+      id   : b._id.toString(),
+      type : b.type,
+      when : b.type === 'roofRepair'
+              ? fmtDay(b.startAt)                              // date only
+              : `${fmtDay(b.startAt)} ${fmtTime(b.startAt)} (EST)`,
+      reschedUrl: b.type === 'roofRepair'
+                  ? `/portal/repair-booking?reschedule=${b._id}`
+                  : `/portal/booking?reschedule=${b._id}`
+    }));
 
-    
+    const hasUpcoming = upcoming.length > 0;
 
-    // Shingle options for the user’s portal
-    const shingles = [
-      { name: 'Asphalt 3-Tab', imageUrl: '/images/shingles/asphalt-3tab.jpg' },
-      { name: 'Architectural Asphalt', imageUrl: '/images/shingles/architectural-asphalt.jpg' },
-      { name: 'Luxury Asphalt', imageUrl: '/images/shingles/luxury-asphalt.jpg' },
-      { name: 'Synthetic Slate', imageUrl: '/images/shingles/synthetic-slate.jpg' },
-      { name: 'Synthetic Cedar Shake', imageUrl: '/images/shingles/synthetic-cedar.jpg' },
-      { name: 'Rubber', imageUrl: '/images/shingles/rubber.jpg' },
-      { name: 'Wood Shingle', imageUrl: '/images/shingles/wood-shingle.jpg' },
-      { name: 'Wood Shake', imageUrl: '/images/shingles/wood-shake.jpg' },
-      { name: 'Aluminum', imageUrl: '/images/shingles/aluminum.jpg' },
-      { name: 'Steel', imageUrl: '/images/shingles/steel.jpg' },
-      { name: 'Copper', imageUrl: '/images/shingles/copper.jpg' },
-      { name: 'Zinc', imageUrl: '/images/shingles/zinc.jpg' },
-      { name: 'Clay Tile', imageUrl: '/images/shingles/clay-tile.jpg' },
-      { name: 'Concrete Tile', imageUrl: '/images/shingles/concrete-tile.jpg' },
-      { name: 'Natural Slate', imageUrl: '/images/shingles/natural-slate.jpg' },
-      { name: 'Solar', imageUrl: '/images/shingles/solar.jpg' },
-      { name: 'Fiberglass', imageUrl: '/images/shingles/fiberglass.jpg' },
-      { name: 'Green Roof', imageUrl: '/images/shingles/green-roof.jpg' }
-    ];
 
-    console.log("docSends:", docSends.map(d => ({
-      id: d._id,
-      status: d.status,
-      signedAt: d.signedAt,
-      docUrl: d.docUrl
-    })));
+    const nextBookingLabel = upcoming.length ? upcoming[0].when : null;
 
+    /* most‑recent past (any type) */
+    const pastBooking = await Booking.findOne({
+      userId : user._id,
+      status : 'confirmed',
+      startAt: { $lt: new Date() }
+    }).sort({ startAt: -1 }).lean();
+
+    const pastBookingLabel = pastBooking
+      ? dayjs(pastBooking.startAt).tz(LOCAL_TZ).format('ddd, MMM D h:mm A')
+      : null;
+
+    /* ───────────────────────────────────────────────
+       3) roof‑repair invite card (never deleted)
+    ─────────────────────────────────────────────── */
+    const activeInvite = await RepairInvite.findOne({ userId: user._id, active:true }).lean();
+    let   repairInviteCard = null;
+
+    if (activeInvite){
+      const nextRepair = upcoming.find(b => b.type === 'roofRepair');
+
+      const lastRepair = !nextRepair && await Booking.findOne({
+        userId : user._id,
+        type   : 'roofRepair',
+        status : 'confirmed',
+        endAt  : { $lt: new Date() }
+      }).sort({ endAt:-1 }).lean();
+
+      repairInviteCard = {
+        duration: activeInvite.durationDays === 0.5
+                    ? 'Half Day'
+                    : `${activeInvite.durationDays} day`,
+        upcoming: nextRepair ? nextRepair.when : null,
+        past    : lastRepair ? fmtDay(lastRepair.endAt) : null
+      };
+    }
+
+    /* ───────────────────────────────────────────────
+       4) render
+    ─────────────────────────────────────────────── */
     res.render('auth/portal', {
-      currentPage: 'portal',
-      userName: user.firstName,
-      packageName: user.selectedPackage,
+      currentPage : 'portal',
+      userName    : user.firstName,
+      packageName : user.selectedPackage,
       user,
-      docSends,      // <-- Pass the list of admin-sent docs
-      shingles,
+      docSends,
       success,
       error,
-      pageTitle: 'Client Portal | BlueGrass Roofing',
-      // nextBookingDate: nextBooking ? nextBooking.startAt       : null,
-      // nextBookingId:   nextBooking ? nextBooking._id.toString() : null,
-      nextBookingDate,
-      nextBookingId,
-      nextBookingLabel,   
+      pageTitle   : 'Client Portal | BlueGrass Roofing',
+
+      upcoming,                        // ← NEW list for the view
+      pastBookingLabel,
+      repairInviteCard,
+      hasUpcoming, 
+
+      /* still needed elsewhere */
+      nextBookingLabel,
+
+      /* shingles array unchanged – omitted here for brevity */
+      shingles: [
+        { name:'Asphalt 3-Tab',          imageUrl:'/images/shingles/asphalt-3tab.jpg' },
+        { name:'Architectural Asphalt',  imageUrl:'/images/shingles/architectural-asphalt.jpg' },
+        { name:'Luxury Asphalt',         imageUrl:'/images/shingles/luxury-asphalt.jpg' },
+        { name:'Synthetic Slate',        imageUrl:'/images/shingles/synthetic-slate.jpg' },
+        { name:'Synthetic Cedar Shake',  imageUrl:'/images/shingles/synthetic-cedar.jpg' },
+        { name:'Rubber',                 imageUrl:'/images/shingles/rubber.jpg' },
+        { name:'Wood Shingle',           imageUrl:'/images/shingles/wood-shingle.jpg' },
+        { name:'Wood Shake',             imageUrl:'/images/shingles/wood-shake.jpg' },
+        { name:'Aluminum',               imageUrl:'/images/shingles/aluminum.jpg' },
+        { name:'Steel',                  imageUrl:'/images/shingles/steel.jpg' },
+        { name:'Copper',                 imageUrl:'/images/shingles/copper.jpg' },
+        { name:'Zinc',                   imageUrl:'/images/shingles/zinc.jpg' },
+        { name:'Clay Tile',              imageUrl:'/images/shingles/clay-tile.jpg' },
+        { name:'Concrete Tile',          imageUrl:'/images/shingles/concrete-tile.jpg' },
+        { name:'Natural Slate',          imageUrl:'/images/shingles/natural-slate.jpg' },
+        { name:'Solar',                  imageUrl:'/images/shingles/solar.jpg' },
+        { name:'Fiberglass',             imageUrl:'/images/shingles/fiberglass.jpg' },
+        { name:'Green Roof',             imageUrl:'/images/shingles/green-roof.jpg' }
+      ]
     });
+
   } catch (err) {
     console.error('Error loading portal:', err);
     return res.status(500).send('Server error');
   }
 });
+
 
 // -------------------------------------------------
 // 2) Upload Claim
@@ -1928,7 +1987,235 @@ router.post('/portal/shingle-response', requireLogin, async (req,res)=>{
 });
 
 
+async function buildOpenRepairDays(rangeStart, rangeEnd, dur, ignoreId = null){
 
+  const utc0 = dayjs(rangeStart).startOf('day');
+  const utc1 = dayjs(rangeEnd  ).startOf('day');
+
+  /* 1 ) pull templates once */
+  const templates = await Availability.find().lean();
+
+  /* helper: is this calendar day “on the menu”? */
+  function dayAllowedByTemplate(d){
+    const dow = d.tz(LOCAL_TZ).day();                       // 0‑6
+    return templates.some(t=>{
+      if(t.repeatWeekly)           return t.dayOfWeek === dow;
+      /* one‑day override */
+      if(!t.repeatWeekly && t.dateOverride){
+        return dayjs(t.dateOverride).tz(LOCAL_TZ).isSame(d, 'day');
+      }
+      return false;
+    });
+  }
+
+  /* 2 ) booking counts (unchanged) */
+  // 2 ) booking counts  (✓ skip the booking being rescheduled)
+  const bookings = await Booking.find({
+    ...(ignoreId ? { _id: { $ne: ignoreId } } : {}),
+    startAt: { $lt: utc1.add(dur, 'day').toDate() },
+    endAt  : { $gt: utc0.toDate() },
+    status : { $ne: 'canceled' }
+  }, 'startAt').lean();
+
+  const countByDay = {};
+  bookings.forEach(b=>{
+    const key = dayjs(b.startAt).tz(LOCAL_TZ).startOf('day').toISOString();
+    countByDay[key] = (countByDay[key]||0)+1;
+  });
+
+  /* 3 ) build list */
+  const days = [];
+  for(let d=utc0.clone(); d.isBefore(utc1); d=d.add(1,'day')){
+    const iso = d.toISOString();
+
+    /* a) template constraint */
+    if(!dayAllowedByTemplate(d)) continue;
+
+    /* b) capacity on first day */
+    const cnt = countByDay[iso]||0;
+    if( (dur>=1 && cnt>=2) || (dur===0.5 && cnt>=3) ) continue;
+
+    /* c) consecutive‑day template + capacity */
+    let ok=true;
+    for(let i=0;i<Math.ceil(dur);i++){
+      const cur = d.add(i,'day');
+      if(!dayAllowedByTemplate(cur)){ ok=false; break; }
+
+      const isoCur = cur.toISOString();
+      const c = countByDay[isoCur]||0;
+      if( (dur>=1 && c>=2) || (dur===0.5 && c>=3) ){ ok=false; break; }
+    }
+    if(ok) days.push(iso);
+  }
+  return days;
+}
+
+
+
+
+// GET /portal/repair-booking
+router.get('/portal/repair-booking', requireLogin, async (req,res)=>{
+  try {
+    const { reschedule } = req.query;
+    let durationDays;
+
+    /* ── RESCHEDULE FLOW ─────────────────────────── */
+    if (reschedule) {
+      const booking = await Booking.findById(reschedule);
+      if (!booking ||
+          booking.userId.toString() !== req.session.user.id ||
+          booking.type !== 'roofRepair') {
+        return res.redirect('/portal');                // bad / foreign id
+      }
+      if (!booking.canBeRescheduled()) {
+        return res.redirect('/portal?error=tooLateReschedule');
+      }
+      durationDays = booking.durationDays || 1;        // half / multi‑day
+    }
+
+    /* ── NEW BOOKING (invite) FLOW ───────────────── */
+    if (!reschedule) {
+      const invite = await RepairInvite
+        .findOne({ userId:req.session.user.id, active:true }).lean();
+      if (!invite) return res.redirect('/portal');
+      durationDays = invite.durationDays;
+    }
+
+    res.render('auth/repairBooking', {
+      duration : Number(durationDays || 1),
+      pageTitle: reschedule ? 'Reschedule Roof Repair' : 'Schedule Roof Repair'
+      // (no extra vars needed; wizard reads ?reschedule=… from URL)
+    });
+  } catch (err) {
+    console.error(err);
+    res.redirect('/portal');
+  }
+});
+
+
+
+// GET /portal/repair-feed
+// GET /portal/repair-feed
+router.get('/portal/repair-feed', requireLogin, async (req, res) => {
+  const { start, end, dur, ignoreId } = req.query;
+
+  // 1) Defensive: make sure dur is a positive number
+  const durNum = Number(dur);
+  if (isNaN(durNum) || durNum <= 0) {
+    // no valid duration ⇒ no available days
+    return res.json([]);
+  }
+
+  // 2) Compute allowed repair days, possibly ignoring the booking being rescheduled
+  const days = await buildOpenRepairDays(
+    new Date(start),
+    new Date(end),
+    durNum,
+    ignoreId || null
+  );
+
+  // 3) Send them back as JSON
+  return res.json(days);
+});
+
+
+router.post('/portal/repair-booking', requireLogin, async (req,res)=>{
+  try{
+    const { startAt, purpose = '', bookingId } = req.body;
+    const startDay = dayjs(startAt).startOf('day');
+    if (!startDay.isValid())
+      return res.status(400).json({ ok:false, msg:'Invalid date' });
+
+    /* ───────────────────────────────
+       A)  RESCHEDULE AN EXISTING BOOKING
+    ─────────────────────────────── */
+    if (bookingId){
+      const booking = await Booking.findById(bookingId);
+      if (!booking ||
+          booking.userId.toString() !== req.session.user.id ||
+          booking.type !== 'roofRepair')
+        return res.status(403).json({ ok:false, msg:'Not yours' });
+
+      if (!booking.canBeRescheduled())
+        return res.status(400).json({ ok:false,
+          msg:'Rescheduling requires at least 3 hours’ notice.' });
+
+      const dur   = booking.durationDays || 1;
+      const endAt = startDay.add(dur, 'day').toDate();
+
+      // day still free?
+      const okDays = await buildOpenRepairDays(
+        startDay.toDate(), startDay.add(1,'day').toDate(), dur, bookingId);
+      if(!okDays.includes(startDay.toDate().toISOString()))
+        return res.status(400).json({ ok:false, msg:'Day no longer available' });
+
+      // collision check (skip self)
+      const clash = await Booking.overlaps(startDay.toDate(), endAt, bookingId);
+      if (clash)
+        return res.status(409).json({ ok:false, msg:'Day already full' });
+
+      // update + history
+      const oldStart = booking.startAt;
+      booking.startAt = startDay.toDate();
+      booking.endAt   = endAt;
+      booking.purpose = purpose;
+      booking.history.push({
+        evt:'rescheduled', by:req.session.user.id,
+        details:{ from: oldStart, to: startDay.toDate() }
+      });
+      await booking.save();
+
+      const user = await User.findById(req.session.user.id).lean();
+      await Promise.all([
+        safeSend(sendClientBookingReschedule(user, booking, oldStart)),
+        safeSend(sendAdminBookingReschedule (user, booking, oldStart))
+      ]);
+      req.app.get('io').to('calendarRoom').emit('calendarUpdated');
+      return res.json({ ok:true, rescheduled:true, booking });
+    }
+
+    /* ───────────────────────────────
+       B)  CREATE A NEW REPAIR BOOKING
+    ─────────────────────────────── */
+    const invite = await RepairInvite
+      .findOne({ userId:req.session.user.id, active:true });
+    if (!invite)
+      return res.status(400).json({ ok:false, msg:'No invite' });
+
+    const dur   = invite.durationDays;
+    const endAt = startDay.add(dur,'day').toDate();
+
+    const okDays = await buildOpenRepairDays(
+      startDay.toDate(), startDay.add(1,'day').toDate(), dur);
+    if(!okDays.includes(startDay.toDate().toISOString()))
+      return res.status(400).json({ ok:false, msg:'Day no longer available' });
+
+    const booking = await Booking.create({
+      userId        : req.session.user.id,
+      startAt       : startDay.toDate(),
+      endAt,
+      durationDays  : dur,
+      type          : 'roofRepair',
+      purpose,
+      status        : 'confirmed',
+      isSelfService : false,
+      history       : [{ evt:'created', by:req.session.user.id }]
+    });
+
+    invite.active = false; await invite.save();
+
+    const user = await User.findById(req.session.user.id).lean();
+    await Promise.all([
+      safeSend(sendClientRepairConfirm(user, booking)),
+      safeSend(sendAdminRepairConfirm (user, booking))
+    ]);
+    req.app.get('io').to('calendarRoom').emit('calendarUpdated');
+    res.json({ ok:true, booking });
+  }catch(err){
+    console.error(err);
+    res.status(500).end();
+  }
+});
 
 
 

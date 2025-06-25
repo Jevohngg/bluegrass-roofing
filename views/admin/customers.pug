@@ -23,6 +23,12 @@ block content
                     i.fas.fa-eye 
                     p View Details
                   p.customer-email #{user.email}
+                if user.nextBookingLabel
+                  p.badge.mt-1.upcoming-appointment-badge
+                    i.fas.fa-calendar-alt.me-1
+                    | Upcoming Appointment:&nbsp;
+                    span.time-label='On ' + user.nextBookingLabel
+
 
                 // Package
                 if user.selectedPackage
@@ -81,16 +87,6 @@ block content
                       a(href=user.claimUploadUrl, target="_blank") View/Download
                   else
                     p No claim files uploaded
-
-                // Shingle Choice
-                .customer-section
-                  h4 Shingle Choice
-                  if user.shingleChoice && user.shingleChoice.name
-                    p #{user.shingleChoice.name}
-                    if user.shingleChoice.imageUrl
-                      img.shingle-image(src=user.shingleChoice.imageUrl, alt="Shingle Image")
-                  else
-                    p Not Selected
 
                 // Archive / Delete buttons
                 .customer-actions

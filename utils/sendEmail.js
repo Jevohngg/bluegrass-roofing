@@ -16,7 +16,8 @@ const TYPE_LABEL = {
   inspection : 'Roof Inspection',
   sample     : 'Shingle Selection',
   repair     : 'Repair',
-  installation: 'Installation'
+  installation: 'Installation',
+  roofRepair:'Roof Repair'
 };
 
 async function sendUserConfirmationEmail(lead) {
@@ -338,123 +339,191 @@ async function notifyAdminShingleResponse(user, accepted) {
    function fmt(dt) {
      return dayjs(dt).tz(LOCAL_TZ).format('ddd, MMM D h:mm A') + ' (EST)';
    }
+   function fmtDay(dt){
+      return dayjs(dt).tz(LOCAL_TZ).format('ddd, MMM D');
+    }
    
-   /* ── CONFIRM ────────────────────────────────────────────── */
-   async function sendClientBookingConfirm(user, booking) {
-     return sgMail.send({
-       to  : user.email,
-       from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
-       templateId: process.env.SENDGRID_BOOKING_CONFIRM_CLIENT_TEMPLATE_ID,
-       dynamic_template_data: {
-         firstName: user.firstName,
-         start    : fmt(booking.startAt),
-         type     : TYPE_LABEL[booking.type] || booking.type
-       }
-     });
-   }
-   
-   async function sendAdminBookingConfirm(user, booking) {
-     return sgMail.send({
-       to  : 'gentryofficialmusic@gmail.com', // or process.env.INTERNAL_TEAM_EMAIL
-       from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
-       templateId: process.env.SENDGRID_BOOKING_CONFIRM_ADMIN_TEMPLATE_ID,
-       dynamic_template_data: {
-         fullName: [user.firstName, user.lastName].filter(Boolean).join(' '),
-         start   : fmt(booking.startAt),
-         type    : TYPE_LABEL[booking.type] || booking.type
-       }
-     });
-   }
-   
-   /* ── CANCEL ─────────────────────────────────────────────── */
-   async function sendClientBookingCancel(user, booking) {
-     return sgMail.send({
-       to  : user.email,
-       from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
-       templateId: process.env.SENDGRID_BOOKING_CANCEL_CLIENT_TEMPLATE_ID,
-       dynamic_template_data: {
-         firstName: user.firstName,
-         start    : fmt(booking.startAt),
-         type     : TYPE_LABEL[booking.type] || booking.type
-       }
-     });
-   }
-   
-   async function sendAdminBookingCancel(user, booking) {
-     return sgMail.send({
-       to  : 'gentryofficialmusic@gmail.com',
-       from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
-       templateId: process.env.SENDGRID_BOOKING_CANCEL_ADMIN_TEMPLATE_ID,
-       dynamic_template_data: {
-         fullName: [user.firstName, user.lastName].filter(Boolean).join(' '),
-         start   : fmt(booking.startAt),
-         type    : TYPE_LABEL[booking.type] || booking.type
-       }
-     });
-   }
-   
-   /* ── RESCHEDULE ─────────────────────────────────────────── */
-   async function sendClientBookingReschedule(user, booking, oldStart) {
-     return sgMail.send({
-       to  : user.email,
-       from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
-       templateId: process.env.SENDGRID_BOOKING_RESCHEDULE_CLIENT_TEMPLATE_ID,
-       dynamic_template_data: {
-         firstName: user.firstName,
-         oldTime  : fmt(oldStart),
-         newTime  : fmt(booking.startAt),
-         type     : TYPE_LABEL[booking.type] || booking.type
-       }
-     });
-   }
-   
-   async function sendAdminBookingReschedule(user, booking, oldStart) {
-     return sgMail.send({
-       to  : 'gentryofficialmusic@gmail.com',
-       from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
-       templateId: process.env.SENDGRID_BOOKING_RESCHEDULE_ADMIN_TEMPLATE_ID,
-       dynamic_template_data: {
-         fullName : [user.firstName, user.lastName].filter(Boolean).join(' '),
-         oldTime  : fmt(oldStart),
-         newTime  : fmt(booking.startAt),
-         type     : TYPE_LABEL[booking.type] || booking.type
-       }
-     });
-   }
-   
-   /* ── REMINDERS (24 h / 2 h) ─────────────────────────────── */
-   async function sendClientBookingReminder(user, booking, diffLabel) {
-     return sgMail.send({
-       to  : user.email,
-       from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
-       templateId: process.env.SENDGRID_BOOKING_REMINDER_CLIENT_TEMPLATE_ID,
-       dynamic_template_data: {
-         firstName: user.firstName,
-         type     : TYPE_LABEL[booking.type] || booking.type,
-         start    : fmt(booking.startAt),
-         diffLabel
-       }
-     });
-   }
-   
-   async function sendAdminBookingReminder(user, booking, diffLabel) {
-     return sgMail.send({
-       to  : 'gentryofficialmusic@gmail.com',
-       from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
-       templateId: process.env.SENDGRID_BOOKING_REMINDER_ADMIN_TEMPLATE_ID,
-       dynamic_template_data: {
-         fullName : [user.firstName, user.lastName].filter(Boolean).join(' '),
-         type     : TYPE_LABEL[booking.type] || booking.type,
-         start    : fmt(booking.startAt),
-         diffLabel
-       }
-     });
-   }
+// ── CONFIRM ──────────────────────────────────────────────
+async function sendClientBookingConfirm(user, booking) {
+  return sgMail.send({
+    to: user.email,
+    from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
+    templateId: process.env.SENDGRID_BOOKING_CONFIRM_CLIENT_TEMPLATE_ID,
+    dynamic_template_data: {
+      firstName: user.firstName,
+      start: booking.type === 'roofRepair'
+        ? fmtDay(booking.startAt)
+        : fmt(booking.startAt),
+      type: TYPE_LABEL[booking.type] || booking.type
+    }
+  });
+}
 
+async function sendAdminBookingConfirm(user, booking) {
+  return sgMail.send({
+    to: 'gentryofficialmusic@gmail.com',
+    from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
+    templateId: process.env.SENDGRID_BOOKING_CONFIRM_ADMIN_TEMPLATE_ID,
+    dynamic_template_data: {
+      fullName: [user.firstName, user.lastName].filter(Boolean).join(' '),
+      start: booking.type === 'roofRepair'
+        ? fmtDay(booking.startAt)
+        : fmt(booking.startAt),
+      type: TYPE_LABEL[booking.type] || booking.type
+    }
+  });
+}
+
+// ── CANCEL ───────────────────────────────────────────────
+async function sendClientBookingCancel(user, booking) {
+  return sgMail.send({
+    to: user.email,
+    from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
+    templateId: process.env.SENDGRID_BOOKING_CANCEL_CLIENT_TEMPLATE_ID,
+    dynamic_template_data: {
+      firstName: user.firstName,
+      start: booking.type === 'roofRepair'
+        ? fmtDay(booking.startAt)
+        : fmt(booking.startAt),
+      type: TYPE_LABEL[booking.type] || booking.type
+    }
+  });
+}
+
+async function sendAdminBookingCancel(user, booking) {
+  return sgMail.send({
+    to: 'gentryofficialmusic@gmail.com',
+    from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
+    templateId: process.env.SENDGRID_BOOKING_CANCEL_ADMIN_TEMPLATE_ID,
+    dynamic_template_data: {
+      fullName: [user.firstName, user.lastName].filter(Boolean).join(' '),
+      start: booking.type === 'roofRepair'
+        ? fmtDay(booking.startAt)
+        : fmt(booking.startAt),
+      type: TYPE_LABEL[booking.type] || booking.type
+    }
+  });
+}
+
+// ── RESCHEDULE ───────────────────────────────────────────
+async function sendClientBookingReschedule(user, booking, oldStart) {
+  return sgMail.send({
+    to: user.email,
+    from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
+    templateId: process.env.SENDGRID_BOOKING_RESCHEDULE_CLIENT_TEMPLATE_ID,
+    dynamic_template_data: {
+      firstName: user.firstName,
+      oldTime: booking.type === 'roofRepair'
+        ? fmtDay(oldStart)
+        : fmt(oldStart),
+      newTime: booking.type === 'roofRepair'
+        ? fmtDay(booking.startAt)
+        : fmt(booking.startAt),
+      type: TYPE_LABEL[booking.type] || booking.type
+    }
+  });
+}
+
+async function sendAdminBookingReschedule(user, booking, oldStart) {
+  return sgMail.send({
+    to: 'gentryofficialmusic@gmail.com',
+    from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
+    templateId: process.env.SENDGRID_BOOKING_RESCHEDULE_ADMIN_TEMPLATE_ID,
+    dynamic_template_data: {
+      fullName: [user.firstName, user.lastName].filter(Boolean).join(' '),
+      oldTime: booking.type === 'roofRepair'
+        ? fmtDay(oldStart)
+        : fmt(oldStart),
+      newTime: booking.type === 'roofRepair'
+        ? fmtDay(booking.startAt)
+        : fmt(booking.startAt),
+      type: TYPE_LABEL[booking.type] || booking.type
+    }
+  });
+}
+
+// ── REMINDERS (24 h / 2 h) ───────────────────────────────
+async function sendClientBookingReminder(user, booking, diffLabel) {
+  return sgMail.send({
+    to: user.email,
+    from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
+    templateId: process.env.SENDGRID_BOOKING_REMINDER_CLIENT_TEMPLATE_ID,
+    dynamic_template_data: {
+      firstName: user.firstName,
+      type: TYPE_LABEL[booking.type] || booking.type,
+      start: booking.type === 'roofRepair'
+        ? fmtDay(booking.startAt)
+        : fmt(booking.startAt),
+      diffLabel
+    }
+  });
+}
+
+async function sendAdminBookingReminder(user, booking, diffLabel) {
+  return sgMail.send({
+    to: 'gentryofficialmusic@gmail.com',
+    from: { email: 'noreply@bluegrass-roofing.com', name: 'BlueGrass Roofing' },
+    templateId: process.env.SENDGRID_BOOKING_REMINDER_ADMIN_TEMPLATE_ID,
+    dynamic_template_data: {
+      fullName: [user.firstName, user.lastName].filter(Boolean).join(' '),
+      type: TYPE_LABEL[booking.type] || booking.type,
+      start: booking.type === 'roofRepair'
+        ? fmtDay(booking.startAt)
+        : fmt(booking.startAt),
+      diffLabel
+    }
+  });
+}
+
+
+
+  /* ── ROOF REPAIR INVITE ─────────────────────────── */
+async function sendClientRepairInvite(user, invite){
+  return sgMail.send({
+    to:user.email,
+    from:{ email:'noreply@bluegrass-roofing.com',name:'BlueGrass Roofing'},
+    templateId:process.env.SENDGRID_REPAIR_INVITE_TEMPLATE_ID,
+    dynamic_template_data:{
+      firstName:user.firstName,
+      duration : invite.durationDays === 0.5 ? 'Half Day' : `${invite.durationDays} day${invite.durationDays>1?'s':''}`,
+      link     : `${process.env.BASE_URL}/portal/repair-booking`
+    }
+  });
+}
+
+async function sendClientRepairConfirm(user, booking){
+  return sgMail.send({
+    to:user.email,
+    from:{ email:'noreply@bluegrass-roofing.com',name:'BlueGrass Roofing'},
+    templateId:process.env.SENDGRID_REPAIR_CONFIRM_CLIENT_TEMPLATE_ID,
+    dynamic_template_data:{
+      firstName:user.firstName,
+      start : fmtDay(booking.startAt),
+      end   : fmtDay(booking.endAt),
+      duration: booking.durationDays === 0.5?'Half Day':`${booking.durationDays} day(s)`
+    }
+  });
+}
+async function sendAdminRepairConfirm(user, booking){
+  return sgMail.send({
+    to:'gentryofficialmusic@gmail.com',
+    from:{ email:'noreply@bluegrass-roofing.com',name:'BlueGrass Roofing'},
+    templateId:process.env.SENDGRID_REPAIR_CONFIRM_ADMIN_TEMPLATE_ID,
+    dynamic_template_data:{
+      fullName:[user.firstName,user.lastName].join(' '),
+      start : fmtDay(booking.startAt),
+      end   : fmtDay(booking.endAt),
+      duration: booking.durationDays === 0.5?'Half Day':`${booking.durationDays} day(s)`
+    }
+  });
+}
 
 
 
 module.exports = {
+  sendAdminRepairConfirm,
+  sendClientRepairConfirm,
+  sendClientRepairInvite,
   sendUserConfirmationEmail,
   sendInternalNotificationEmail,
   sendUserSignupEmail,

@@ -49,6 +49,11 @@ document.addEventListener('DOMContentLoaded', function () {
         if (info.event.extendedProps.userId === window.sessionUserId) {
           info.el.classList.add('my-booking');
         }
+   // hide empty <span> that FullCalendar emits for all‑day repairs
+  if(info.event.allDay){
+    const timeSpan = info.el.querySelector('.fc-event-time');
+    if(timeSpan) timeSpan.textContent = '';
+  }
       },
       /* click empty slot (background) */
       selectMirror: false,

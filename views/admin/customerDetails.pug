@@ -1,6 +1,8 @@
 extends ../layouts/adminLayout
 
 block content
+  include ./partials/_repairInviteModal
+
   a.back-button(href="/admin/customers").text-decoration-none &larr; Back to list
   .customer-detail-header
     img.customer-detail-avatar(src="/images/generic-avatar.png" alt="avatar")
@@ -8,6 +10,13 @@ block content
       h2.mb-0 #{user.firstName} #{user.lastName}
       p.text-muted.mb-0 #{user.email}
       p.text-muted.mb-1.joined-date Joined #{joinedDate}
+
+  //–– Invite success alert ––––––––––––––––––––––––––––––––
+  if inviteSuccess
+    .alert.alert-success(role='alert')
+      i.fas.fa-check-circle.me-2
+      | Repair‑invite email sent to client.  
+
 
   .sections-section
     .contracts-section.section
@@ -32,6 +41,59 @@ block content
               span.doc-tile-title #{doc.docType.toUpperCase()}
 
 
+    //–––––––––  APPOINTMENTS  –––––––––
+    .appointments-section.section
+      h3.mt-4.mb-3.details-page-section-header Appointments
+    
+      //‑‑ Upcoming
+      h5.mb-2.d-flex.align-items-center.upcoming-head-text
+        i.fas.fa-calendar-alt.me-2
+        | Upcoming
+      if upcomingBookings.length
+        ul.list-group.mb-4.portal-action-card.booking-cta
+          each bk in upcomingBookings
+            li.contents-appointment
+              span.fw-bold= bk.type
+              |  — #{bk.when}
+
+            if bk.note
+              br
+              small.text-muted Notes from client:&nbsp;#{bk.note}
+      else
+        p.text-muted.mb-4 No upcoming appointments.
+    
+      //‑‑ Past (latest 10)
+      h5.mb-2.d-flex.align-items-center.upcoming-head-text
+        i.fas.fa-history.me-2
+        | Past
+      if pastBookings.length
+        ul.list-group.portal-action-card.booking-cta.past
+          each bk in pastBookings
+            li
+              span.fw-bold= bk.type
+              |  — #{bk.when}
+            if bk.note
+              br
+              small.text-muted Notes from client:&nbsp;#{bk.note}
+      else
+        p.text-muted No past appointments recorded.
+
+    //‑‑ Invite pending banner –––––––––––––––––––––––––––––––
+    if activeInvite && !hasRepairBooking
+      .alert.alert-info.d-flex.align-items-center.mb-3
+        i.fas.fa-envelope-open-text.me-2
+        span.flex-grow-1
+          | Repair‑invite sent; awaiting client to pick a date.
+        // optional: show job length
+        if activeInvite.durationDays
+          span.badge.bg-secondary.ms-2.align-self-start
+            = (activeInvite.durationDays % 1 ? 'Half' : activeInvite.durationDays) + ' day job'
+    
+
+    button.btn.btn-primary.section-button#btnInviteRepair
+      i.fas.fa-calendar-plus.me-1
+      | Invite Client to Schedule Roof Repair
+  
 
 
     //–––––––––  SHINGLE PROPOSAL  –––––––––
@@ -149,3 +211,7 @@ block content
             i.fas.fa-comments.me-1
             | Open full conversation
     
+block scripts
+  script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js")
+  script(src="/js/adminRepairInvite.js")
+

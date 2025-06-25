@@ -9,12 +9,56 @@ const { sendDocumentLinkEmail } = require('../utils/sendEmail');
 const contracts = require('../config/contracts');    
 const Thread         = require('../models/Thread');
 const { uploadClaim } = require('../utils/aws'); 
+const Booking       = require('../models/Booking');
+const RepairInvite = require('../models/RepairInvite');
+const dayjs   = require('dayjs');
+const utc     = require('dayjs/plugin/utc');
+const tz      = require('dayjs/plugin/timezone');
+dayjs.extend(utc);  dayjs.extend(tz);
+const LOCAL_TZ = process.env.LOCAL_TZ || 'America/New_York';
+const TZ = process.env.LOCAL_TZ || 'America/New_York';
+
+/** “Tue, Mar 5 3:00 PM (EST)” */
+function fmt(dt) {
+  return dayjs(dt).tz(LOCAL_TZ).format('ddd, MMM D h:mm A') + ' EST';
+}
+/** “Tue, Mar 5” */
+function fmtDay(dt) {
+  return dayjs(dt).tz(LOCAL_TZ).format('ddd, MMM D');
+}
+
 const {
   sendClientWarrantyEmail,
   sendClientShingleEmail,
 
 } = require('../utils/sendEmail');
 
+
+// routes/admin.js
+const { 
+  sendClientRepairInvite, 
+  /* …other email helpers… */
+} = require('../utils/sendEmail');
+
+// wrap sendGrid calls so they never crash your route
+async function safeSend(promise) {
+  try {
+    return await promise;
+  } catch (err) {
+    console.error('[SendGrid] mail error:', err?.response?.body || err);
+  }
+}
+
+
+const TYPE_LABEL = {
+  inspection  : 'Roof Inspection',
+  sample      : 'Shingle Selection',
+  repair      : 'Repair',
+  installation: 'Installation'
+};
+function fmt(dt){
+  return dayjs(dt).tz(LOCAL_TZ).format('ddd, MMM D h:mm A') + ' EST';
+}
 
 
 // Map docType → full title
@@ -134,9 +178,44 @@ router.get('/customers', checkAuth, async (req, res) => {
   try {
     // Retrieve all users
     const allUsers = await User.find({}).sort({ createdAt: -1 });
+    // Map: userId → earliest upcoming booking doc
+const now = new Date();
+const upcomingByUser = Object.fromEntries(
+  await Booking.aggregate([
+    { $match: { startAt: { $gt: now }, status: { $ne: 'canceled' } } },
+    { $sort:  { startAt: 1 } },
+    { $group: { _id:'$userId', booking:{ $first:'$$ROOT' } } }
+  ]).then(rows =>
+    rows.map(r => [ r._id.toString(), r.booking ])
+  )
+);
+
     // Separate into active vs. archived
     const activeUsers = allUsers.filter(user => user.status !== 'archived');
     const archivedUsers = allUsers.filter(user => user.status === 'archived');
+
+
+function fmt(dt){
+  return dayjs(dt).tz(TZ).format('ddd, MMM D h:mm A') + ' EST';
+}
+function fmtDay(dt) {
+   return dayjs(dt).tz(TZ).format('ddd, MMM D');
+ }
+
+[...activeUsers, ...archivedUsers].forEach(u => {
+  const bk = upcomingByUser[u._id.toString()];
+  if (bk){
+    u.nextBookingLabel = bk.type === 'roofRepair'
+     ? fmtDay(bk.startAt)
+     : fmt(bk.startAt);
+    u.nextBookingType   = bk.type === 'inspection'
+                            ? 'Roof Inspection'
+                            : bk.type === 'sample'
+                                ? 'Shingle Selection'
+                                : bk.type[0].toUpperCase()+bk.type.slice(1);
+  }
+});
+
 
     return res.render('admin/customers', {
       activeUsers,
@@ -206,6 +285,48 @@ router.get('/customer/:id', checkAuth, async (req, res) => {
       .slice(-5)
       .reverse();           // newest first – easier to read
 
+      /* 2‑b)  Bookings — upcoming & past  */
+const now = new Date();
+
+/* 2‑a)  Active repair‑invite (if any) */
+const activeInvite = await RepairInvite.findOne({
+  userId: user._id,
+  active : true
+}).lean();
+
+
+/* Upcoming first (soonest‑first) */
+const upcomingBookingsRaw = await Booking.find({
+  userId : user._id,
+  status : { $ne:'canceled' },
+  startAt: { $gte: now }
+}).sort({ startAt: 1 }).lean();
+
+/* Past (newest‑first) – limit to latest 10 for brevity */
+const pastBookingsRaw = await Booking.find({
+  userId : user._id,
+  status : { $ne:'canceled' },
+  startAt: { $lt: now }
+}).sort({ startAt: -1 }).limit(10).lean();
+
+/* Pre‑format for the template */
+const mapBook = b => ({
+  id    : b._id.toString(),
+  when  : b.type === 'roofRepair'
+            ? fmtDay(b.startAt)
+            : fmt(b.startAt),
+  type  : TYPE_LABEL[b.type] || (b.type[0].toUpperCase() + b.type.slice(1)),
+  status: b.status,
+  note  : b.purpose || ''
+});
+
+
+const upcomingBookings = upcomingBookingsRaw.map(mapBook);
+/* Is there already a roof‑repair booking? */
+const hasRepairBooking = upcomingBookingsRaw.some(b => b.type === 'roofRepair');
+
+const pastBookings     = pastBookingsRaw.map(mapBook);
+
 
     /* 3) Normalise docs → two buckets */
     const docTypes = ['aob', 'aci', 'loi', 'gsa', 'coc'];
@@ -241,13 +362,52 @@ router.get('/customer/:id', checkAuth, async (req, res) => {
     pendingDocs,
     joinedDate,
     lastMessages,
-    threadId: thread?._id
+    threadId: thread?._id,
+    upcomingBookings,
+    pastBookings,
+    activeInvite,      // may be null
+    hasRepairBooking,
+    inviteSuccess: req.query.inviteSuccess === '1'
   });
   } catch (err) {
     console.error('Error loading customer detail:', err);
     res.status(500).send('Server Error');
   }
 });
+
+
+// POST /admin/customer/:id/repair-invite   { durationDays }
+router.post('/customer/:id/repair-invite', checkAuth, async (req,res)=>{
+  try{
+    const { durationDays } = req.body;
+    const days = Number(durationDays);
+    if (![0.5,1,2,3,4,5].includes(days))
+      return res.status(400).json({ ok:false, msg:'Bad duration' });
+
+    await RepairInvite.updateMany(
+      { userId:req.params.id, active:true },
+      { $set:{ active:false } }         // one active invite maximum
+    );
+    const inv = await RepairInvite.create({ userId:req.params.id, durationDays:days });
+
+    // e‑mail ⇢ client
+    const user = await User.findById(req.params.id).lean();
+    await safeSend(sendClientRepairInvite(user, inv));
+
+    res.json({ ok:true, invite:inv });
+  }catch(err){ console.error(err); res.status(500).end(); }
+});
+
+
+// DELETE /admin/customer/:id/repair-invite
+router.delete('/customer/:id/repair-invite', checkAuth, async (req,res)=>{
+  await RepairInvite.updateMany(
+    { userId:req.params.id, active:true },
+    { $set:{ active:false } }
+  );
+  res.json({ ok:true });
+});
+
 
 
 // GET /admin/send-documents
@@ -388,6 +548,8 @@ router.delete('/send-documents/:id', checkAuth, async (req, res) => {
 
 
 
+
+
 // DELETE /admin/customer/:id  — hard-delete a user + cleanup related data
 router.delete('/customer/:id', checkAuth, async (req, res) => {
   try {
@@ -405,7 +567,13 @@ router.delete('/customer/:id', checkAuth, async (req, res) => {
     // 3) Delete all DocumentSend entries tied to them
     await DocumentSend.deleteMany({ userId: user._id });
 
-    // 4) Finally, delete the user record
+    // 4) Delete all bookings (past, present, future) for this user
+   await Booking.deleteMany({ userId: user._id });
+
+   // 5) Delete all repair invites for this user
+   await RepairInvite.deleteMany({ userId: user._id });
+
+    // 6) Finally, delete the user record
     await User.findByIdAndDelete(userId);
 
     return res.json({ success: true });

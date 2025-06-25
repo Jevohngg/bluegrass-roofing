@@ -8,6 +8,15 @@ const dayjs        = require('dayjs');
 const Availability = require('../models/AvailabilitySlot');
 const Booking      = require('../models/Booking');
 
+const User  = require('../models/User');
+const {
+  sendClientBookingCancel,
+  sendAdminBookingCancel
+} = require('../utils/sendEmail');
+
+async function safeSend(p){ try { return await p; } catch(e){ console.error('[SendGrid]', e?.response?.body || e); } }
+
+
 // —— Time‑zone constant ———————————————————————————
 const LOCAL_TZ = process.env.LOCAL_TZ || 'America/New_York';
 // ── add this mapping
@@ -33,15 +42,23 @@ function utcRange(req) {
 function toFcEvent(b) {
   return {
     id       : b._id,
-    start    : b.startAt,       // UTC; FC will shift according to timeZone option
-    end      : b.endAt,
+      start : b.startAt,
+      end   : b.endAt,
+      allDay: b.type === 'roofRepair',
     title: TYPE_LABEL[b.type] || (b.type[0].toUpperCase() + b.type.slice(1)),
 
     className: `fc-${b.type}`,
     extendedProps: {
-      status: b.status,
-      tz    : LOCAL_TZ            // for any future client use / debugging
+      status : b.status,
+      tz     : LOCAL_TZ,
+      userId : b.userId?._id || b.userId,           // for equality checks
+      fullName: b.userId
+                  ? [b.userId.firstName, b.userId.lastName].filter(Boolean).join(' ')
+                  : undefined,
+      email  : b.userId?.email,
+      note   : b.purpose || ''
     }
+    
   };
 }
 
@@ -63,7 +80,10 @@ exports.listEvents = async (req, res) => {
     startAt: { $lt: end  },
     endAt:   { $gt: start },
     status:  { $ne: 'canceled' }
-  }).lean();
+  })
+  .populate('userId', 'firstName lastName email')   //  👈 NEW
+  .lean();
+  
 
   res.json(bookings.map(toFcEvent));
 };
@@ -155,7 +175,9 @@ exports.updateAvailability = async (req, res, next) => {
 // 6 ) Delete availability slot
 exports.deleteAvailability = async (req, res, next) => {
   try {
-    const slot = await Availability.findById(req.params.id);
+
+    const [templateId] = req.params.id.split('-');
+    const slot = await Availability.findById(templateId);
     if (!slot) return res.status(404).end();
 
     // Check for booking conflict this week
@@ -169,6 +191,32 @@ exports.deleteAvailability = async (req, res, next) => {
     res.json({ ok:true });
   } catch (err) { next(err); }
 };
+
+// 8 ) Cancel a booking (admin)
+exports.cancelBooking = async (req, res, next) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+    if (!booking)            return res.status(404).json({ ok:false, msg:'Not found' });
+    if (booking.status === 'canceled')
+      return res.status(409).json({ ok:false, msg:'Already canceled' });
+
+    const snap = booking.toObject();   // preserve for emails
+    await booking.deleteOne();
+
+    // live refresh
+    req.app.get('io').to('calendarRoom').emit('calendarUpdated');
+
+    // e‑mail both sides
+    const user = await User.findById(snap.userId).lean();
+    await Promise.all([
+      safeSend(sendClientBookingCancel(user, snap)),
+      safeSend(sendAdminBookingCancel(user, snap))
+    ]);
+
+    res.json({ ok:true });
+  } catch (err) { next(err); }
+};
+
 
 // 7 ) Optional overlap tester
 exports.testCollision = async (req, res) => {

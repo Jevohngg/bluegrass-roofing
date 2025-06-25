@@ -20,11 +20,12 @@ const BookingSchema = new mongoose.Schema(
     userId:  { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     startAt: { type: Date, required: true },
     endAt:   { type: Date, required: true },
+    durationDays: { type:Number, default: 0.0417 },
 
     /* — Enums — */
     type: {
       type: String,
-      enum: ['inspection', 'sample', 'repair', 'installation'],
+      enum: ['inspection','sample','repair','installation','roofRepair'],
       required: true
     },
     status: {

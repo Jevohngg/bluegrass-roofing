@@ -1,0 +1,20 @@
+.modal.fade#repairInviteModal(tabindex="-1" aria-hidden="true")
+  .modal-dialog
+    .modal-content
+      .modal-header
+        h5.modal-title Schedule Roof Repair
+        button.close(type="button" data-dismiss="modal") &times;
+      form#repairInviteForm
+        .modal-body
+          label.form-label(for="duration") Select job length
+          select#duration.form-select(name="durationDays" required)
+            option(value="" disabled selected) —
+            option(value="0.5") Half Day
+            option(value="1") One Day
+            option(value="2") Two Days
+            option(value="3") Three Days
+            option(value="4") Four Days
+            option(value="5") Five Days
+        .modal-footer
+          button.btn.btn-secondary(type="button" data-dismiss="modal") Cancel
+          button.btn.btn-primary(type="submit") Send Invite

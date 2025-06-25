@@ -10,5 +10,7 @@ router.post('/availability',    ctrl.createAvailability);
 router.put('/availability/:id', ctrl.updateAvailability);
 router.delete('/availability/:id', ctrl.deleteAvailability);
 router.post('/test-collision',  ctrl.testCollision);
+router.post('/booking/:id/cancel', ctrl.cancelBooking);
+
 
 module.exports = router;

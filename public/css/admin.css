@@ -1279,3 +1279,69 @@ font-size: 14px;
 .messages-section{
   margin-bottom: 200px !important;
 }
+
+
+.upcoming-appointment-badge{
+  display: flex !important;
+      justify-content: center;
+      align-content: center;
+      align-items: center;
+      gap: 8px !important;
+      background-color: #e1826329;
+      padding: 8px !important;
+      flex-wrap: wrap;
+
+}
+
+.time-label{
+  margin-left: -8px !important;
+}
+
+.upcoming-head-text{
+  font-size: 16px;
+  display: flex
+;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  color: #6c6a6a;
+  font-weight: 600;
+
+}
+
+/* —— Booking CTA card —— */
+.portal-action-card.booking-cta {
+  border-left: 6px solid #e18263;          /* matches brand accent */
+  padding: 16px;
+  font-size: 14px;
+}
+
+.portal-action-card {
+  background: #fafafa;
+  border: 1px solid #ebebeb;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.past{
+  opacity: 63%;
+}
+
+#btnInviteRepair{
+  max-width: 340px !important;
+}
+
+.alert{
+display: flex
+;
+    align-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.bg-secondary{
+  color: white;
+  padding: 4px;
+}
