@@ -1998,17 +1998,23 @@ async function buildOpenRepairDays(rangeStart, rangeEnd, dur, ignoreId = null){
   const templates = await Availability.find().lean();
 
   /* helper: is this calendar day “on the menu”? */
-  function dayAllowedByTemplate(d){
-    const dow = d.tz(LOCAL_TZ).day();                       // 0‑6
-    return templates.some(t=>{
-      if(t.repeatWeekly)           return t.dayOfWeek === dow;
-      /* one‑day override */
-      if(!t.repeatWeekly && t.dateOverride){
-        return dayjs(t.dateOverride).tz(LOCAL_TZ).isSame(d, 'day');
-      }
-      return false;
-    });
+/* helper: does at least one template allow this calendar day?  
+   ‑ overrides (non‑recurring) take precedence over weekly */
+   function dayAllowedByTemplate(d) {
+    const dow = d.tz(LOCAL_TZ).day();           // 0‑6
+  
+    // 1) check for any override on this exact date
+    const overrides = templates.filter(t =>
+      !t.repeatWeekly &&
+      t.dateOverride &&
+      dayjs(t.dateOverride).tz(LOCAL_TZ).isSame(d, 'day')
+    );
+    if (overrides.length) return true;          // day enabled by override
+  
+    // 2) otherwise fall back to weekly templates
+    return templates.some(t => t.repeatWeekly && t.dayOfWeek === dow);
   }
+  
 
   /* 2 ) booking counts (unchanged) */
   // 2 ) booking counts  (✓ skip the booking being rescheduled)

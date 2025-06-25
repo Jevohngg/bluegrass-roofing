@@ -486,7 +486,7 @@ async function sendClientRepairInvite(user, invite){
     dynamic_template_data:{
       firstName:user.firstName,
       duration : invite.durationDays === 0.5 ? 'Half Day' : `${invite.durationDays} day${invite.durationDays>1?'s':''}`,
-      link     : `${process.env.BASE_URL}/portal/repair-booking`
+      link     : `${process.env.BASE_URL}/portal`
     }
   });
 }

@@ -39,27 +39,24 @@ AvailabilitySlotSchema.index(
 /* ──────────────────────────────────────────────────────────
    Helper – convert to FullCalendar background event
 ────────────────────────────────────────────────────────── */
+/* ---------- PATCH START ---------- */
 AvailabilitySlotSchema.methods.toBackgroundEvent = function (weekStartUtc) {
-  // 1) Take the passed-in UTC date, interpret in LOCAL_TZ,
-  //    move to Sunday 00:00, then shift by this.dayOfWeek days.
-  const localBase = dayjs
-    .tz(weekStartUtc, LOCAL_TZ)   // e.g. “2025-06-21T00:00:00” Eastern
-    .add(this.dayOfWeek, 'day')    // shift to Mon/Tue/etc
-    .startOf('day');               // reset to 00:00 that weekday
+  let localBase;
+  if (this.repeatWeekly) {
+    // weekly template: align to same weekday inside requested week
+    localBase = dayjs
+      .tz(weekStartUtc, LOCAL_TZ)      // Sun 00:00 local
+      .add(this.dayOfWeek, 'day')
+      .startOf('day');
+  } else {
+    // one‑off override: anchor to specific calendar date
+    localBase = dayjs.tz(this.dateOverride, LOCAL_TZ).startOf('day');
+  }
 
-  // 2) Add minutes offset local→UTC
-  const start = localBase
-    .add(this.startMinutes, 'minute')
-    .toDate();
-  const end = localBase
-    .add(this.endMinutes, 'minute')
-    .toDate();
+  const start = localBase.add(this.startMinutes, 'minute').toDate();
+  const end   = localBase.add(this.endMinutes, 'minute').toDate();
+  const iso   = start.toISOString().slice(0, 10);
 
-  // 3) Build a per-day unique suffix so each slot instance
-  //    gets its own ID (prevents FC collapsing them)
-  const iso = start.toISOString().slice(0, 10); // “YYYY-MM-DD”
-
-  // 4) Return the FC “background” event object
   return {
     id             : `${this._id}-${iso}`,
     start,
@@ -67,8 +64,11 @@ AvailabilitySlotSchema.methods.toBackgroundEvent = function (weekStartUtc) {
     display        : 'background',
     backgroundColor: '#28a745',
     borderColor    : '#28a745',
-    className      : 'fc-available'
+    className      : 'fc-available',
+    extendedProps  : { repeatWeekly: this.repeatWeekly, dateOverride: this.dateOverride }
   };
 };
+/* ----------  PATCH END  ---------- */
+
 
 module.exports = mongoose.model('AvailabilitySlot', AvailabilitySlotSchema);

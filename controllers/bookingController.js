@@ -45,31 +45,50 @@ async function safeSend(promise) {
    buildOpenSlots(rangeStartUtc, rangeEndUtc)
 ────────────────────────────────────────────────────────── */
 async function buildOpenSlots(rangeStartUtc, rangeEndUtc) {
-  /* 1) pull weekly templates */
+  /* 1) Pull all templates once */
   const templates = await Availability.find().lean();
 
-  /* 2) expand to concrete local-TZ slots within range */
+  /* 1-a) Separate non-recurring overrides → { 'YYYY-MM-DD': [template,…] } */
+  const overridesByDay = {};
+  templates.forEach(t => {
+    if (!t.repeatWeekly && t.dateOverride) {
+      const key = dayjs.tz(t.dateOverride, LOCAL_TZ).format('YYYY-MM-DD');
+      (overridesByDay[key] = overridesByDay[key] || []).push(t);
+    }
+  });
+
+  /* 1-b) Keep recurring weekly templates in their own list */
+  const weekly = templates.filter(t => t.repeatWeekly);
+
+  /* 2) Expand templates to concrete LOCAL-TZ slots within the range */
   const slots = [];
   for (
     let d = dayjs.tz(rangeStartUtc, LOCAL_TZ);
     d.isBefore(rangeEndUtc);
     d = d.add(1, 'day')
   ) {
-    const dow = d.day(); // 0–6
-    templates
-      .filter(t => t.repeatWeekly && t.dayOfWeek === dow)
-      .forEach(t => {
-        for (let cur = t.startMinutes; cur + SLOT_MINUTES <= t.endMinutes; cur += SLOT_MINUTES) {
-          const localStart = d.startOf('day').add(cur, 'minute'); // LOCAL_TZ
-          slots.push({
-            start: localStart.toDate(),                           // correct UTC instant
-            end:   localStart.add(SLOT_MINUTES, 'minute').toDate()
-          });
-        }
-      });
+    const key = d.format('YYYY-MM-DD');  // calendar date in EST
+    const dow = d.day();                 // 0–6
+
+    // Overrides win: if any override exists for this date, use those; otherwise use weekly templates
+    const todaysTemplates = overridesByDay[key] || weekly.filter(t => t.dayOfWeek === dow);
+
+    todaysTemplates.forEach(t => {
+      for (
+        let cur = t.startMinutes;
+        cur + SLOT_MINUTES <= t.endMinutes;
+        cur += SLOT_MINUTES
+      ) {
+        const localStart = d.startOf('day').add(cur, 'minute');  // LOCAL_TZ
+        slots.push({
+          start: localStart.toDate(),                            // correct UTC instant
+          end:   localStart.add(SLOT_MINUTES, 'minute').toDate()
+        });
+      }
+    });
   }
 
-  /* 3) remove taken bookings */
+  /* 3) Fetch existing bookings into “taken” */
   const taken = await Booking.find(
     {
       startAt: { $lt: rangeEndUtc },
@@ -79,16 +98,15 @@ async function buildOpenSlots(rangeStartUtc, rangeEndUtc) {
     'startAt endAt'
   ).lean();
 
-// ── 4)  Hide slots that are in the past or < 3 h away (LOCAL_TZ)
-const cutoff = dayjs().tz(LOCAL_TZ).add(3, 'hour');   // “now + 3h” in EST
-
-return slots.filter(s => {
-  const clashes = taken.some(b => b.startAt <= s.start && b.endAt > s.start);
-  const tooSoon = dayjs(s.start).tz(LOCAL_TZ).isBefore(cutoff);
-  return !clashes && !tooSoon;
-});
-
+  /* 4) Hide slots that are in the past or <3 h away (LOCAL_TZ) and any that clash */
+  const cutoff = dayjs().tz(LOCAL_TZ).add(3, 'hour');
+  return slots.filter(s => {
+    const clashes = taken.some(b => b.startAt <= s.start && b.endAt > s.start);
+    const tooSoon = dayjs(s.start).tz(LOCAL_TZ).isBefore(cutoff);
+    return !clashes && !tooSoon;
+  });
 }
+
 
 /* ──────────────────────────────────────────────────────────
    Controllers

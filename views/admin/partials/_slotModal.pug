@@ -12,7 +12,7 @@ div.modal.fade#slotModal(tabindex="-1")
             .form-check.form-switch.mb-2
               input#repeatWeekly.form-check-input(type="checkbox" checked)
               label.form-check-label(for="repeatWeekly") Repeat weekly
-            .mb-2
+            .mb-2#dayOfWeekGroup
               label.form-label(for="dayOfWeek") Day of week
               select#dayOfWeek.form-select
                 each val, idx in ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
