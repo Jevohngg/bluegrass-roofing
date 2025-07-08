@@ -553,8 +553,8 @@ async function notifyAdminProposalAccepted(user, proposal){
   const tpl = process.env.SENDGRID_ADMIN_PROPOSAL_ACCEPT_TEMPLATE_ID;
   if (!tpl) return;
   return sgMail.send({
-    // to: internalRecipients,
-    to: 'gentryofficialmusic@gmail.com',
+    to: internalRecipients,
+
     from:{ email:'noreply@bluegrass-roofing.com', name:'BlueGrass Roofing'},
     templateId: tpl,
     dynamic_template_data:{
