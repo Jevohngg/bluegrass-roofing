@@ -1,0 +1,93 @@
+extends ../layouts/adminLayout
+
+block content
+  .container.mt-4
+    h3 Invoice Builder – #{clientName}
+
+    //────────── HEADER FIELDS ──────────
+    form#invForm
+      .form-row
+        .form-group.col-md-4
+          label Invoice #
+          input#invoiceNumber.form-control(type='text', name='invoiceNumber')
+        .form-group.col-md-4
+          label Issued
+          input#issuedDate.form-control(type='date', name='issuedDate')
+        .form-group.col-md-4
+          label Due
+          input#dueDate.form-control(type='date', name='dueDate')
+
+      .form-row
+        .form-group.col-md-4
+          label Business Name
+          input#businessName.form-control(type='text')
+        .form-group.col-md-4
+          label Address
+          textarea#businessAddr.form-control(rows='2')
+        .form-group.col-md-4
+          label Phone
+          input#businessPhone.form-control(type='tel')
+
+      h4.mt-4 Line Items
+      table.table.table-bordered#itemsTable
+        thead
+          tr
+            th Name
+            th(style='width:28%') Description
+            th Color
+            th Qty
+            th Unit
+            th Price
+            th
+        tbody
+      button#addRowBtn.btn.btn-sm.btn-secondary(type='button') + Add Row
+
+      .form-group.mt-4
+        label Builder Notes
+        textarea#builderNotes.form-control(rows='3')
+
+    //────────── ACTION BAR (identical style to Proposal) ──────────
+    .d-flex.form-button-actions
+      button.invoice-back.btn.btn-link.text-muted#backBtn Back
+      .button-group.form-button-group
+        button#pdfBtn.btn.btn-outline-secondary.mr-2
+          i.fa.fa-file-pdf.mr-1
+          | Download PDF
+        button#sendBtn.btn.btn-secondary.mr-2
+          i.fa.fa-paper-plane.mr-1
+          | Send Invoice
+        button#previewBtn.btn.btn-primary.mr-2
+          i.fa.fa-eye.mr-1
+          | Preview
+
+  //────────── SEND INVOICE MODAL ──────────
+  div#sendModal.modal.fade(tabindex='-1', role='dialog')
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          h5.modal-title Send Invoice Email
+          button.close(type='button', data-dismiss='modal') &times;
+        .modal-body
+          form#sendForm
+            .form-group
+              label(for='recipientEmail') Recipient
+              input#recipientEmail.form-control(type='email', readonly)
+            .form-group
+              label(for='customMsg') Email Body (optional)
+              textarea#customMsg.form-control(rows='5' placeholder='Write a personal note…')
+            small.text-muted
+              | The client will receive this message, a link to view the invoice, and a PDF copy.
+        .modal-footer
+          button.btn.btn-secondary(data-dismiss='modal') Cancel
+          button.btn.btn-primary#confirmSendBtn Send
+
+block scripts
+  script.
+    window.INVOICE = !{inv};
+  script(src="https://code.jquery.com/jquery-3.5.1.slim.min.js")
+  script(src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js")
+  script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js")
+  script(src='/js/adminInvoice.js')
+  script(src='/js/deleteConfirm.js')
+  script(src="/js/alert.js")
+  script(src="/js/admin.js")

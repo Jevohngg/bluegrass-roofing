@@ -1,0 +1,45 @@
+extends ../layouts/adminLayout
+
+block content
+  .container.mt-4
+    .d-flex.justify-content-between.align-items-center.new-headers
+      h2.mb-3 Proposals
+      form.d-inline(method='POST' action='/admin/proposals')
+        select.form-control.d-inline-block.w-auto(name='userId' required)
+          option(value='' selected disabled) -- Choose Client --
+          each u in users
+            option(value=u._id)= `${u.firstName} ${u.lastName}`
+        button.btn.btn-primary.ml-2(type='submit') + New Proposal
+    hr
+    if !Object.keys(grouped).length
+      p.text-muted No proposals yet.
+    else
+      each g in Object.values(grouped)
+        h4.mt-4= `${g.user.firstName} ${g.user.lastName}`
+        table.table.table-sm.table-hover
+          thead
+            tr
+              th Title
+              th Status
+              th Updated
+              th
+         
+          tbody
+            each p in g.list
+              tr
+                td
+                  a(href=`/admin/proposal/${p._id}`)= p.title
+                td.text-capitalize= p.status
+                td= new Date(p.updatedAt).toLocaleDateString()
+                td
+                  //‑ Always show Delete
+                  form.d-inline.delete-prop(
+                    method='POST',
+                    action=`/api/proposal/${p._id}?_method=DELETE`)
+                    button.btn.btn-sm.btn-link.text-danger(type='submit') Delete
+          
+block scripts
+  script(src='/js/deleteConfirm.js')
+  script(src="/js/alert.js")
+  script(src="/js/admin.js")
+

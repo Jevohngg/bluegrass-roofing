@@ -1,0 +1,38 @@
+extends ../layouts/adminLayout
+
+block content
+  .container.mt-4
+    .d-flex.justify-content-between.align-items-center
+      h2.mb-3 Catalog
+      a.btn.btn-primary(href='/admin/catalog/new')
+        i.fa.fa-plus
+        |  Add Item
+
+    if !items.length
+      p.text-muted.mt-3 No items in catalog yet.
+    else
+      table.table.table-bordered.table-hover.mt-3
+        thead
+          tr
+            th Name
+            th Type
+            th Builder $
+            th Retail $
+            th Updated
+            th Actions
+        tbody
+          each item in items
+            tr(data-id=item._id)
+              td #{item.name}
+              td.text-capitalize #{item.type}
+              td $#{item.builderCost.toFixed(2)}
+              td $#{item.retailCost.toFixed(2)}
+              td #{new Date(item.updatedAt).toLocaleDateString()}
+              td
+                a.btn.btn-sm.btn-link(href=`/admin/catalog/${item._id}/edit`) Edit
+                button#text-white-delete.btn.btn-sm.btn-link.text-danger.btn-delete.text-white(type='button' data-id=item._id) Delete
+
+block scripts
+  script(src='/js/adminCatalog.js')
+  script(src='/js/adminEstimateBuilder.js')
+  script(src="/js/admin.js")

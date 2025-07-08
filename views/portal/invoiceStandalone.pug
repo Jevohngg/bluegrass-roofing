@@ -1,0 +1,131 @@
+//‑ views/portal/invoiceStandalone.pug
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+
+    // Global styles (shared with portal layout)
+    link(rel="stylesheet" href="/css/main.css")
+    link(rel="stylesheet" href="/css/portal.css")
+    link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap")
+    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css")
+    link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css")
+
+    title= pageTitle || 'BlueGrass Roofing • Invoice'
+    link(rel="icon" type="image/x-icon" href="/images/favicon.png")
+
+    // — Inline page‑specific styles (match preview) —————————
+    style.
+      /* ───── base layout ───── */
+      body{
+        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    
+      }
+      .invoice-wrapper{
+        max-width:900px;margin:0 auto;background:#fff;
+        padding:2.5rem;border-radius:8px;
+      }
+      h4{margin-top:2rem;margin-bottom:1rem;}
+      .bold{font-weight:600!important;}
+
+      /* ───── line‑item table ───── */
+      .item-row{display:flex;padding:.75rem 0;border-bottom:1px solid #eee;}
+      .item-row:last-child{border-bottom:0;}
+      .item-header{font-weight:600;border-bottom:2px solid #ccc;}
+      .item-name{flex:1 1 50%;}
+      .item-qty,.item-unit,.item-price{width:15%;text-align:right;}
+      .total-bar{
+        background:#fafafa;font-weight:600;
+        padding:.85rem 0;border-radius:4px;
+      }
+
+      /* color & description under name */
+      .item-name small{display:block;color:#777;}
+      .color-swatch{
+        display:inline-block;width:14px;height:14px;
+        border:1px solid #ddd;border-radius:3px;
+        margin-right:6px;vertical-align:middle;
+      }
+
+      /* mobile (<600 px) */
+      @media (max-width:600px){
+        .item-header{display:none;}
+        .item-row{flex-direction:column;align-items:flex-start;}
+        .item-name{flex:unset;width:100%;margin-bottom:6px;}
+        .item-qty,.item-unit,.item-price{
+          width:100%;text-align:left;font-size:14px;margin:2px 0;
+        }
+        .item-qty::before{content:"Qty: ";font-weight:600;}
+        .item-unit::before{content:"Unit: ";font-weight:600;}
+        .item-price::before{content:"Price: ";font-weight:600;}
+        .total-bar{flex-direction:row;}
+        .total-bar .item-qty,
+        .total-bar .item-unit{display:none;}
+        .total-bar .item-price{font-weight:700;}
+      }
+
+      /* sticky status bar */
+      .sticky-status{
+        position:fixed;left:0;right:0;bottom:0;background:#fff;
+        border-top:1px solid #ddd;padding:.75rem;text-align:center;z-index:1020;
+      }
+
+  body
+    // — Header with logo ————————————————
+    header.portal-header(style="border-bottom:1px solid #e5e5e5;")
+      .d-flex.justify-content-center
+        a.navbar-brand(href="/")
+          img(src="/images/bg-logo.png" alt="BlueGrass Roofing Logo" width="140")
+
+    // — Main invoice content ————————————————
+    -
+      // helper var for subtotal
+      let subtotal = inv && inv.totals && typeof inv.totals.total === 'number'
+        ? inv.totals.total
+        : 0;
+    main
+      .invoice-wrapper
+        //‑ Meta header (same as preview)
+        .row.mb-4
+          .col-md-6
+            p.bold Issued&nbsp;by:
+            h5.mb-1 #{inv.businessName}
+            pre.mb-0(style='white-space:pre-wrap;border:0;background:transparent') #{inv.businessAddr}
+            p.mb-1 #{inv.businessPhone}
+          .col-md-6.text-right
+            h2 Invoice
+            p.mb-0 Invoice Number: #{inv.invoiceNumber}
+            p.mb-0 Issued: #{new Date(inv.issuedDate).toLocaleDateString()}
+            p.mb-0 Due:    #{new Date(inv.dueDate).toLocaleDateString()}
+
+        //‑ Line items (identical to preview)
+        h4 Items
+        .item-row.item-header
+          span.item-name  Name
+          span.item-qty   Qty
+          span.item-unit  Unit
+          span.item-price Price
+        each li in inv.lineItems
+          .item-row
+            span.item-name
+              | #{li.name}
+              if li.color
+                small
+                  span.color-swatch(style=`background:${li.color};`)
+                  | #{li.color}
+              if li.description
+                small #{li.description}
+            span.item-qty   #{li.qty}
+            span.item-unit  #{li.unit}
+            span.item-price $#{(li.total || li.price*li.qty).toFixed(2)}
+        .item-row.total-bar
+          span.item-name  Total
+          span.item-qty
+          span.item-unit
+          span.item-price $#{subtotal.toFixed(2)}
+
+        if inv.builderNotes
+          h4 Notes
+          p !{inv.builderNotes.replace(/\n/g,'<br>')}
+

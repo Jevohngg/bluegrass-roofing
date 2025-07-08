@@ -1,0 +1,62 @@
+extends ../layouts/adminLayout
+
+block content
+  .container.mt-4
+    .d-flex.justify-content-between.align-items-center.new-headers
+      h2.mb-3 Estimates
+      form.d-inline(method='POST' action='/admin/estimates')
+        // select customer dropdown (simple)
+        select.form-control.d-inline-block.w-auto(name='userId' required)
+          option(value='' selected disabled) -- Choose Client --
+            // Use the users array supplied by the route
+            each u in users
+              option(value=u._id)= `${u.firstName} ${u.lastName}`
+        button.btn.btn-primary.ml-2(type='submit') + New Estimate
+
+    hr
+
+    if !Object.keys(grouped).length
+      p.text-muted No estimates yet.
+    else
+      each g in Object.values(grouped)
+        h4.mt-4= `${g.user.firstName} ${g.user.lastName}`
+        table.table.table-sm.table-hover
+          thead
+            tr
+              th Title
+              th Status
+              th Updated
+              th
+          tbody
+            each est in g.list
+              tr
+                td
+                  a(href=`/admin/estimate/${est._id}`)= est.title
+                td
+                  span.text-capitalize= est.status
+                  if est.used
+                    span.badge.badge-info.ml-1 Used
+                td= new Date(est.updatedAt).toLocaleDateString()
+                td
+                  if est.status!='archived'
+                    form.d-inline.delete-est(
+                      method='POST'
+                      action=`/api/estimate/${est._id}?_method=DELETE`)
+                      //‑- hidden field no longer needed
+                      button.btn.btn-sm.btn-link.text-danger(type='submit') Delete                    
+
+                    
+block scripts
+  script.
+    // vanilla JS confirmation for any delete form
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('form.delete-est').forEach(f => {
+        f.addEventListener('submit', e => {
+          if (!confirm('Delete this estimate permanently? This cannot be undone.')) {
+            e.preventDefault();
+          }
+        });
+      });
+    });
+  script(src="/js/alert.js")
+  script(src="/js/admin.js")

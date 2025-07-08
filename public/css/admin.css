@@ -263,8 +263,7 @@ ul {
 }
 
 .admin-sidebar a.active {
-    background-color: var(--color-accent);
-    color: white;
+  background-color: #0000000d;
 }
 
 .head-text{
@@ -281,13 +280,13 @@ ul {
 }
 
 .admin-sidebar a.active:hover {
-    background-color: var(--color-accent);
-    color: white;
+    background-color: #0000000d;
+    color: #312e2e;
 }
-
+  
 .admin-sidebar a:hover{
-    background-color: #e282642e;
-
+    background-color: #0000000d;
+    color: #312e2e;
 }
 
 .admin-sidebar i {
@@ -1344,4 +1343,153 @@ display: flex
 .bg-secondary{
   color: white;
   padding: 4px;
+}
+
+
+#text-white-delete {
+
+  background-color: transparent !important;
+}
+
+#text-white-delete:hover{
+
+  background-color: transparent !important;
+
+}
+
+tr:hover{
+  background-color: transparent !important;
+
+}
+
+
+/* ==== Catalog dropdown ==== */
+.catalog-menu{
+  position:absolute; z-index:1050; list-style:none; margin:0; padding:0;
+  max-height:200px; overflow-y:auto; width:100%; background:#fff; border:1px solid #ccc;
+}
+.catalog-menu li{ padding:4px 8px; cursor:pointer; }
+.catalog-menu li:hover{ background:#f5f5f5; }
+.swatch{display:inline-block;width:14px;height:14px;border:1px solid #ddd;margin-right:4px;}
+
+
+.estimate-container{
+  max-width: none !important;
+  display: flex
+;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.dollar-amount{
+  min-width: 100px !important;
+}
+
+.form-table{
+  width: 50px !important;
+  padding: 0px !important;
+}
+
+.no-padding{
+  padding: 0px !important;
+}
+
+.min-50{
+  min-width: 50px !important;
+}
+
+#doneBtn{
+  max-width: 200px !important;
+}
+
+
+
+
+
+
+.form-button-actions{
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 24px;
+  margin-bottom: 24px;
+  padding-left: 0px !important;
+  justify-content: space-between;
+}
+
+.button-group{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 0px !important;
+}
+
+.proposal-back{
+  margin-right: auto;
+  margin-left: 0px !important;
+}
+
+.form-button-group button i{
+  font-size: 14px;
+}
+
+.form-button-group button{
+  font-size: 14px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  text-align: center;
+  text-align: center;
+  justify-content: center;
+  max-width: 200px;
+}
+
+@media (max-width: 547px) {
+  .form-button-actions{
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+  }
+  .form-button-group{
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+  .form-button-group button{
+    width: 100% !important;
+    margin: 0px !important;
+    max-width: none !important;
+  }
+
+  .proposal-back{
+    width: 100% !important;
+    margin: 0px !important;
+    max-width: none !important;
+  }
+
+  .new-headers{
+    display: flex
+    ;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+  }
+
+}
+
+.margin-bottom{
+  margin-bottom: 40px !important;
+}
+
+
+.bold{
+  font-weight: 600 !important;
 }

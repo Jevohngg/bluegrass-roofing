@@ -1,0 +1,14 @@
+extends ../layouts/adminLayout
+block content
+  .container.mt-4.estimate-container
+    h3.mb-1 Estimate for #{clientName}
+    div#builder-root(data-estimate=est)
+      // JS will render dynamic table
+    button.btn.btn-primary.mt-3#doneBtn Done
+
+
+block scripts
+
+
+  script(src='/js/adminEstimateBuilder.js')
+  script(src="/js/admin.js")

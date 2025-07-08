@@ -1,0 +1,70 @@
+extends ../layouts/adminLayout
+
+block content
+  .container.mt-4
+    .d-flex.justify-content-between.align-items-center.new-headers
+      h2.mb-3 Invoices
+      //‑ Create wizard (simplified UX)
+      form.d-inline(method='POST' action='/admin/invoices')
+        select.form-control.ml-2.d-inline-block.w-auto(name='sourceType' required)
+          option(value='' disabled selected) -- Source --
+          option(value='proposal') From Proposal
+          option(value='estimate') From Estimate
+          option(value='blank') Blank
+        
+        select.form-control.ml-2.d-inline-block.w-auto(name='userId' required)
+          option(value='' disabled selected) -- Client --
+          each u in users
+            option(value=u._id)= `${u.firstName} ${u.lastName}`
+        
+        select.form-control.ml-2.d-inline-block.w-auto(name='sourceId')
+          option(value='') -- Select Proposal/Estimate --
+        
+        button.btn.btn-primary.ml-2(type='submit') + New Invoice
+    hr
+    if !Object.keys(grouped).length
+      p.text-muted No invoices yet.
+    else
+      each g in Object.values(grouped)
+        h4.mt-4= `${g.user.firstName} ${g.user.lastName}`
+        table.table.table-sm.table-hover
+          thead
+            tr
+              th #
+              th Status
+              th Total
+              th Due
+              th
+          tbody
+            each inv in g.list
+              tr
+                td
+                  a(href=`/admin/invoice/${inv._id}`)= inv.invoiceNumber
+                td.text-capitalize= inv.status
+                td $#{inv.totals.total.toFixed(2)}
+                td= new Date(inv.dueDate).toLocaleDateString()
+                td
+                  form.d-inline.delete-form(
+                    method='POST',
+                    action=`/api/invoice/${inv._id}?_method=DELETE`,
+                    data-confirm='Delete this invoice permanently?')
+                    button.btn.btn-sm.btn-link.text-danger(type='submit') Delete
+                
+
+block scripts
+
+  script(src='/js/adminInvoiceList.js')
+
+
+
+  //‑ inline confirmation — no external file needed
+  script.
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.addEventListener('submit', function (e) {
+        const form = e.target.closest('form.delete-form');
+        if (!form) return;                           // not a delete form
+        const msg = form.dataset.confirm || 'Delete this invoice permanently?';
+        if (!confirm(msg)) e.preventDefault();       // block if cancelled
+      });
+    });
+

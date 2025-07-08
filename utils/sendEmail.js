@@ -526,7 +526,75 @@ async function sendAdminRepairConfirm(user, booking){
 
 
 
+// —————————————  PROPOSAL  ————————————
+async function sendClientProposalEmail(user, proposal, pdfBuffer, portalLink, customMsg){
+  const templateId = process.env.SENDGRID_CLIENT_PROPOSAL_TEMPLATE_ID;
+  if (!templateId) throw new Error('SENDGRID_CLIENT_PROPOSAL_TEMPLATE_ID not set');
+
+  return sgMail.send({
+    to: user.email,
+    from:{ email:'noreply@bluegrass-roofing.com', name:'BlueGrass Roofing'},
+    templateId,
+    dynamic_template_data:{
+      firstName: user.firstName || 'Customer',
+      customMsg: customMsg || '',
+      proposalLink: portalLink
+    },
+    attachments:[{
+      content: pdfBuffer.toString('base64'),
+      filename:`Proposal-${proposal._id}.pdf`,
+      type:'application/pdf',
+      disposition:'attachment'
+    }]
+  });
+}
+
+async function notifyAdminProposalAccepted(user, proposal){
+  const tpl = process.env.SENDGRID_ADMIN_PROPOSAL_ACCEPT_TEMPLATE_ID;
+  if (!tpl) return;
+  return sgMail.send({
+    // to: internalRecipients,
+    to: 'gentryofficialmusic@gmail.com',
+    from:{ email:'noreply@bluegrass-roofing.com', name:'BlueGrass Roofing'},
+    templateId: tpl,
+    dynamic_template_data:{
+      fullName:`${user.firstName} ${user.lastName}`.trim(),
+      proposalId: proposal._id
+    }
+  });
+}
+
+/* ─────────  INVOICE  ───────── */
+async function sendClientInvoiceEmail(user, invoice, pdfBuffer, portalLink, customMsg){
+  const tpl = process.env.SENDGRID_CLIENT_INVOICE_TEMPLATE_ID;
+  if (!tpl) throw new Error('SENDGRID_CLIENT_INVOICE_TEMPLATE_ID not set');
+
+  return sgMail.send({
+    to: user.email,
+    from:{ email:'noreply@bluegrass-roofing.com', name:'BlueGrass Roofing'},
+    templateId: tpl,
+    dynamic_template_data:{
+      firstName: user.firstName || 'Customer',
+      customMsg,
+      invoiceLink: portalLink,
+      invoiceNumber: invoice.invoiceNumber,
+      amountDue: invoice.totals.total.toFixed(2),
+      dueDate: new Date(invoice.dueDate).toLocaleDateString()
+    },
+    attachments:[{
+      content: pdfBuffer.toString('base64'),
+      filename:`Invoice-${invoice.invoiceNumber}.pdf`,
+      type:'application/pdf',
+      disposition:'attachment'
+    }]
+  });
+}
+
+
+
 module.exports = {
+  sendClientProposalEmail,
+  notifyAdminProposalAccepted,
   sendAdminRepairConfirm,
   sendClientRepairConfirm,
   sendClientRepairInvite,
@@ -548,5 +616,6 @@ module.exports = {
   sendClientBookingCancel,
   sendAdminBookingCancel,
   sendClientBookingReminder,
-  sendAdminBookingReminder
+  sendAdminBookingReminder,
+  sendClientInvoiceEmail
 };

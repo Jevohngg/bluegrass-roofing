@@ -72,6 +72,23 @@ html(lang="en")
             a(href="/admin/calendar" class=(activeTab=='calendar' ? 'active' : ''))
               i.fa.fa-calendar
               |  Calendar
+          li
+            a(href='/admin/catalog', class=(activeTab=='catalog' ? 'active' : ''))
+              i.fa.fa-list-alt
+              |  Catalog
+          li
+            a(href='/admin/estimates', class=(activeTab=='estimates' ? 'active' : ''))
+              i.fa.fa-calculator
+              |  Estimates
+          li
+            a(href='/admin/proposals', class=(activeTab=='proposals' ? 'active' : ''))
+              i.fa.fa-file-lines
+              |  Proposals
+          li
+            a(href='/admin/invoices', class=(activeTab=='invoices' ? 'active' : ''))
+              i.fa.fa-file-invoice
+              |  Invoices
+
         // Logout button for mobile only (hidden on desktop via CSS)
         a.btn-logout-mobile(href="/admin/logout") Logout
       // Main Content Area

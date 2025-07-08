@@ -10,6 +10,7 @@ const http = require('http');
 const socketIO = require('socket.io');
 
 const app = express();
+const methodOverride = require('method-override');
 
 // Connect to MongoDB (optional, if you have a URI)
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/bluegrass-roofing';
@@ -32,6 +33,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Parse incoming JSON and form data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use((req, res, next) => { console.log('▶', req.method, req.url, req.body); next(); });
+
+app.use(methodOverride('_method'));      // ✱ add this line ✱
 app.use(morgan('dev'));
 
 const session = require('express-session');
@@ -85,6 +89,11 @@ app.use('/guarantee', guaranteeRoutes);
 const portalRoutes = require('./routes/portal');
 app.use(portalRoutes);
 
+const portalInvoice = require('./routes/portalInvoice');
+
+
+app.use('/portal', portalInvoice); 
+
 const quoteRoutes = require('./routes/quote');
 app.use('/quote', quoteRoutes);
 
@@ -102,6 +111,38 @@ app.use('/admin/messages', messagingRoutes);
 
 const adminCalendarRoutes = require('./routes/adminCalendar');
 app.use('/admin/calendar', adminCalendarRoutes);
+
+const adminCatalogRoutes = require('./routes/adminCatalog');
+app.use('/admin/catalog', adminCatalogRoutes);
+
+// Admin Catalog Routes
+const apiCatalogRoutes = require('./routes/apiCatalog');
+app.use('/api/catalog', apiCatalogRoutes);
+
+// after other admin/router mounts …
+const adminEstimatesRoutes = require('./routes/adminEstimates');
+app.use('/admin', adminEstimatesRoutes);        // keeps sub‑paths inside file
+
+const apiEstimateRoutes   = require('./routes/apiEstimate');
+app.use('/api/estimate', apiEstimateRoutes);
+
+// ——— Invoices ———
+const adminInvoiceRoutes = require('./routes/adminInvoice');
+app.use('/admin', adminInvoiceRoutes);
+
+const apiInvoiceRoutes   = require('./routes/apiInvoice');
+app.use('/api/invoice', apiInvoiceRoutes);
+
+// ——— Proposals ———
+const adminProposalRoutes = require('./routes/adminProposal');
+app.use('/admin', adminProposalRoutes);
+
+const apiProposalRoutes   = require('./routes/apiProposal');
+app.use('/api/proposal', apiProposalRoutes);
+
+const portalProposalRoutes = require('./routes/portalProposal');
+app.use('/portal', portalProposalRoutes);
+
 
 // —— Self‑service booking routes ——
 const portalBookingRoutes = require('./routes/portalBooking');

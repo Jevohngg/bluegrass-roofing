@@ -1,0 +1,74 @@
+extends ../layouts/adminLayout
+block content
+  .container.mt-4
+    h3.margin-bottom Proposal for #{clientName}
+    form#builder-root
+      // Intro section
+      .form-group.form-check
+        input#chkIntro.form-check-input(type='checkbox' data-target='introArea')
+        label.form-check-label(for='chkIntro') Include Intro
+      .collapse#introArea
+        textarea.form-control#introTxt(rows='4' placeholder='Proposal introduction...')
+      hr
+      // Estimate section
+      .form-group.form-check
+        input#chkEst.form-check-input(type='checkbox' data-target='estArea')
+        label.form-check-label(for='chkEst') Include Estimate
+      .collapse#estArea
+        select.form-control#estSelect
+          option(value='' selected disabled) -- Choose Estimate --
+      hr
+      // Outro section
+      .form-group.form-check
+        input#chkOutro.form-check-input(type='checkbox' data-target='outroArea')
+        label.form-check-label(for='chkOutro') Include Outro
+      .collapse#outroArea
+        textarea.form-control#outroTxt(rows='4' placeholder='Closing remarks...')
+
+    // ——— ACTION BAR (inline) ———
+    .d-flex.form-button-actions
+      button.proposal-back.btn.btn-link.text-muted#backBtn Back
+      .button-group.form-button-group
+        button.btn.btn-outline-secondary.mr-2#pdfBtn
+          i.fa.fa-file-pdf.mr-1
+          | Download PDF
+        button.btn.btn-secondary.mr-2#sendBtn
+          i.fa.fa-paper-plane.mr-1
+          | Send Proposal
+        button.btn.btn-primary.mr-2#previewBtn
+          i.fa.fa-eye.mr-1
+          | Preview
+
+  //— Send Proposal Modal ————————————————
+  div#sendModal.modal.fade
+    .modal-dialog
+      .modal-content
+        .modal-header
+          h5.modal-title Send Proposal Email
+          button.close(type='button', data-dismiss='modal') &times;
+        .modal-body
+          form#sendForm
+            .form-group
+              label(for='recipientEmail') Recipient
+              input#recipientEmail.form-control(type='email' readonly)
+            .form-group
+              label(for='customMsg') Email Body (optional)
+              textarea#customMsg.form-control(rows='5' placeholder='Write a personal note…')
+            small.text-muted
+              | The client will receive this message, a link to view &amp; accept the proposal, and a PDF copy.
+        .modal-footer
+          button.btn.btn-secondary(data-dismiss='modal') Cancel
+          button.btn.btn-primary#confirmSendBtn Send
+  
+
+block scripts
+  script.
+    window.PROPOSAL = !{prop};
+    window.ESTIMATES = !{estimates};
+  script(src="https://code.jquery.com/jquery-3.5.1.slim.min.js")
+  script(src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js")
+  script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js")
+  script(src='/js/adminProposal.js')
+  script(src='/js/deleteConfirm.js')
+  script(src="/js/alert.js")
+  script(src="/js/admin.js")

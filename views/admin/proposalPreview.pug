@@ -1,0 +1,88 @@
+//‑ views/admin/proposalPreview.pug
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    title= prop.title || 'Proposal'
+    link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css')
+    style.
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+        padding:3rem 1rem;
+      }
+      .introText {
+        font-size: 14px;
+
+        margin-bottom: 40px;
+      }
+      .outroText {  
+        font-size: 14px;
+
+        margin-top: 40px;
+      }
+      .estimate-title {
+       font-size: 18px;
+        font-weight: 600;
+      }
+      .proposal-wrapper {
+        max-width: 900px;
+        margin:0 auto;
+        background:#fff;
+        padding:2.5rem 3rem;
+        border-radius:8px;
+
+      }
+      h4 { margin-top:2rem; margin-bottom:1rem; }
+      /* line‑item pseudo‑table */
+      .item-row { display:flex; padding:.75rem 0; border-bottom:1px solid #eee; }
+      .item-row:last-child { border-bottom:0; }
+      .item-name     { flex:1 1 50%; }
+      .item-qty,
+      .item-unit,
+      .item-price    { width:15%; text-align:right; }
+      .item-name small { color:#777; display:block; }
+      /* header row */
+      .item-header { font-weight:600; border-bottom:2px solid #ccc; }
+      /* total bar */
+      .total-bar { background:#fafafa; font-weight:600; padding:.85rem 0; border-radius:4px; }
+  body
+    .proposal-wrapper
+      if prop.includeIntro
+        //- h4 Introduction
+        p.introText !{prop.intro.replace(/\n/g,'<br>')}
+      if prop.includeEstimate && prop.estimateId
+        -
+          const est = prop.estimateId;
+          var subtotal = 0;
+          if (est && est.totals && typeof est.totals.subtotal === 'number') {
+            subtotal = est.totals.subtotal;
+          }
+        h4.estimate-title Estimate
+        //‑ pseudo table header
+        .item-row.item-header
+          span.item-name Name
+          span.item-qty Qty
+          span.item-unit Unit
+          span.item-price Price
+        //‑ data rows
+        each li in est.lineItems
+          .item-row
+            span.item-name
+              | #{li.name}
+              if li.color
+                small Color: #{li.color}
+              if li.description
+                small #{li.description}
+            span.item-qty #{li.qty}
+            span.item-unit #{li.unit}
+            span.item-price $#{ (li.total || 0).toFixed(2) }
+        //‑ total bar
+        .item-row.total-bar
+          span.item-name Total
+          span.item-qty
+          span.item-unit
+          span.item-price $#{ subtotal.toFixed(2) }
+      if prop.includeOutro
+        //- h4 Outro
+        p.outroText !{prop.outro.replace(/\n/g,'<br>')}
